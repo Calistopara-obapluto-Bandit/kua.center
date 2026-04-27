@@ -451,44 +451,76 @@
                 <p class="tm-callback-note">
                   Leave your full name, an international phone number with country code, and a short note. The KUAC team will review it during service hours and respond as soon as possible.
                 </p>
-                <form action="mailto:kua.center@gmail.com?subject=KUAC%20Call%20Back%20Request" method="post" enctype="text/plain" class="tm-callback-form">
-                  <div class="row tm-callback-row">
-                    <div class="col-md-6 mb-3">
-                      <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <input id="phone" name="phone" type="tel" placeholder="Phone Number, e.g. +49 151 23456789" class="tm-input mb-0" required />
-                    </div>
+                <button
+                  class="btn tm-btn-primary tm-callback-toggle"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#callbackFormPanel"
+                  aria-expanded="false"
+                  aria-controls="callbackFormPanel"
+                >
+                  Request a Call-back
+                  <i class="fas fa-chevron-down tm-callback-toggle-icon" aria-hidden="true"></i>
+                </button>
+                <div class="collapse" id="callbackFormPanel">
+                  <div class="tm-callback-form-panel">
+                    <form id="callbackForm" class="tm-callback-form" data-endpoint="/api/callback">
+                      <div class="row tm-callback-row">
+                        <div class="col-md-6 mb-3">
+                          <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <input id="phone" name="phone" type="tel" placeholder="Phone Number, e.g. +49 151 23456789" class="tm-input mb-0" required />
+                        </div>
+                      </div>
+                      <textarea id="message" name="message" rows="5" placeholder="Optional note, preferred time, or country of residence" class="tm-input"></textarea>
+                      <button type="submit" class="btn tm-btn-submit">Submit Request</button>
+                      <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
+                    </form>
                   </div>
-                  <textarea id="message" name="message" rows="5" placeholder="Optional note, preferred time, or country of residence" class="tm-input"></textarea>
-                  <button type="submit" class="btn tm-btn-submit">Submit Request</button>
-                </form>
+                </div>
               </div>
             </div>
             
             <div class="col-sm-12 col-md-6">
-
-                <div class="contact-item">
-                  <a rel="nofollow" href="mailto:uau.krai1@gmail.com?subject=KUAC%20Volunteer%20Chat" class="item-link">
-                      <i class="far fa-2x fa-comment mr-4"></i>
-                      <span class="mb-0">Volunteer & Partner Chat</span>
-                  </a>              
+              <div class="tm-contact-card">
+                <p class="tm-kicker tm-kicker-light">Direct Contacts</p>
+                <h3>Reach KUAC the way that suits you best</h3>
+                <p class="tm-contact-note">
+                  Use the callback form for direct support requests, or choose one of the contact channels below for partnership and network questions.
+                </p>
+                <div class="tm-contact-list">
+                  <div class="contact-item">
+                    <a rel="nofollow" href="mailto:uau.krai1@gmail.com?subject=KUAC%20Volunteer%20Chat" class="item-link">
+                        <i class="far fa-comment"></i>
+                        <div>
+                          <strong>Volunteer & Partner Chat</strong>
+                          <span>Questions about helping, partnering, or supporting KUAC</span>
+                        </div>
+                    </a>              
+                  </div>
+                  
+                  <div class="contact-item">
+                    <a rel="nofollow" href="mailto:kua.center@gmail.com" class="item-link">
+                        <i class="far fa-envelope"></i>
+                        <div>
+                          <strong>kua.center@gmail.com</strong>
+                          <span>Email for general requests and follow-up</span>
+                        </div>
+                    </a>              
+                  </div>
+                  
+                  <div class="contact-item">
+                    <a rel="nofollow" href="#gallery" class="item-link">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                          <strong>EU Service Network</strong>
+                          <span>Regional support and arrival hubs</span>
+                        </div>
+                    </a>              
+                  </div>
                 </div>
-                
-                <div class="contact-item">
-                  <a rel="nofollow" href="mailto:kua.center@gmail.com" class="item-link">
-                      <i class="far fa-2x fa-envelope mr-4"></i>
-                      <span class="mb-0">kua.center@gmail.com</span>
-                  </a>              
-                </div>
-                
-                <div class="contact-item">
-                  <a rel="nofollow" href="#gallery" class="item-link">
-                      <i class="fas fa-2x fa-map-marker-alt mr-4"></i>
-                      <span class="mb-0">EU Service Network</span>
-                  </a>              
-                </div>
-                
+              </div>
             </div>
             <div class="col-12 mt-4">
               <div class="tm-footer-grid">
@@ -631,6 +663,58 @@
               }                 
             }
           ]
+        });
+
+        $('#callbackFormPanel').on('shown.bs.collapse', function () {
+          $('html, body').animate({
+            scrollTop: $(this).offset().top - 120
+          }, 450);
+        });
+
+        $('#callbackForm').on('submit', async function (event) {
+          event.preventDefault();
+
+          var $form = $(this);
+          var $button = $form.find('button[type="submit"]');
+          var $status = $('#callbackFormStatus');
+          var endpoint = window.CALLBACK_API_URL || $form.data('endpoint');
+          var payload = {
+            name: $.trim($('#name').val()),
+            phone: $.trim($('#phone').val()),
+            message: $.trim($('#message').val())
+          };
+
+          if (!endpoint) {
+            $status.text('Callback endpoint is not configured yet.');
+            return;
+          }
+
+          $button.prop('disabled', true);
+          $status.removeClass('is-error is-success').text('Sending your callback request...');
+
+          try {
+            var response = await fetch(endpoint, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload)
+            });
+            var result = await response.json().catch(function () {
+              return {};
+            });
+
+            if (!response.ok) {
+              throw new Error(result.error || ('Request failed with status ' + response.status));
+            }
+
+            $form[0].reset();
+            $status.addClass('is-success').text(result.message || 'Your callback request was sent successfully.');
+          } catch (error) {
+            $status.addClass('is-error').text(error.message || 'Sorry, we could not send the request right now.');
+          } finally {
+            $button.prop('disabled', false);
+          }
         });
 
         $('.tm-gallery').slick({
