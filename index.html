@@ -22,7 +22,9 @@
       <nav class="navbar navbar-expand-md tm-navbar" id="tmNav">              
         <div class="container">   
           <div class="tm-next">
-              <a href="#infinite" class="navbar-brand">KUAC</a>
+              <a href="#infinite" class="navbar-brand tm-brand" aria-label="Krains UniAid Center">
+                <img src="img/kuac-logo.png" alt="KUAC logo" class="tm-brand-logo" />
+              </a>
           </div>             
             
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -445,13 +447,19 @@
             <div class="col-sm-12 col-md-6">
               <div class="tm-callback-card">
                 <p class="tm-kicker tm-kicker-light">Request a Call-back</p>
-                <h3>Share your contact details for a faster response</h3>
+                <h3>Leave your details for an EU callback</h3>
                 <p class="tm-callback-note">
-                  Please provide your full name and an international phone number, including the country code, so the KUAC team can respond clearly and without delay. If helpful, add your preferred time to be contacted.
+                  Leave your full name, an international phone number with country code, and a short note. The KUAC team will review it during service hours and respond as soon as possible.
                 </p>
                 <form action="mailto:kua.center@gmail.com?subject=KUAC%20Call%20Back%20Request" method="post" enctype="text/plain" class="tm-callback-form">
-                  <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input" required />
-                  <input id="phone" name="phone" type="tel" placeholder="Phone Number, e.g. +49 151 23456789" class="tm-input" required />
+                  <div class="row tm-callback-row">
+                    <div class="col-md-6 mb-3">
+                      <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <input id="phone" name="phone" type="tel" placeholder="Phone Number, e.g. +49 151 23456789" class="tm-input mb-0" required />
+                    </div>
+                  </div>
                   <textarea id="message" name="message" rows="5" placeholder="Optional note, preferred time, or country of residence" class="tm-input"></textarea>
                   <button type="submit" class="btn tm-btn-submit">Submit Request</button>
                 </form>

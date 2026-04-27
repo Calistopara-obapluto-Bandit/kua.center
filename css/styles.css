@@ -93,6 +93,22 @@ blockquote {
   letter-spacing: 0.04em;
 }
 
+.tm-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.tm-brand-logo {
+  display: block;
+  max-height: 54px;
+  width: auto;
+}
+
 .navbar-brand:hover,
 .tm-navbar.scroll .navbar-brand:hover {
   color: #8fbdb2;
@@ -100,6 +116,10 @@ blockquote {
 
 .tm-navbar.scroll .navbar-brand {
   color: #113b45;
+}
+
+.tm-navbar.scroll .tm-brand {
+  background: rgba(255, 255, 255, 0.98);
 }
 
 .nav-item {
@@ -801,6 +821,21 @@ figure.effect-honey:hover h2 i {
   margin-top: 6px;
 }
 
+.tm-callback-row {
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.tm-callback-row > div {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.tm-callback-form textarea.tm-input {
+  min-height: 128px;
+  resize: vertical;
+}
+
 .tm-btn-submit {
 	font-size: 0.9em;
 	color: #fff;
@@ -1021,6 +1056,14 @@ p {
     border-radius: 18px;
   }
 
+  .tm-brand {
+    padding: 5px 10px;
+  }
+
+  .tm-brand-logo {
+    max-height: 44px;
+  }
+
   .tm-footer-grid {
     grid-template-columns: 1fr;
   }
@@ -1131,5 +1174,15 @@ p {
 
   .tm-callback-card {
     padding: 24px 18px;
+  }
+
+  .tm-callback-row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .tm-callback-row > div {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
