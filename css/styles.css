@@ -734,7 +734,7 @@ figure.effect-honey:hover h2 i {
 
 .contact-item {
   margin-left: 0;
-  margin-bottom: 50px;
+  margin-bottom: 18px;
 }
 
 .contact-item .item-link {
@@ -767,20 +767,48 @@ figure.effect-honey:hover h2 i {
 
 .tm-input {
 	margin: 0 0 20px 0;
-	width: 90%;
-  padding: 8px 20px;
-  border-radius: 6px;
+	width: 100%;
+  padding: 14px 18px;
+  border-radius: 14px;
   border: 1px solid #bcc9c2;
   background: rgba(255, 255, 255, 0.96);
   color: #0f1b24;
+}
+
+.tm-callback-card {
+  height: 100%;
+  padding: 34px 30px 28px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.16);
+}
+
+.tm-callback-card h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.tm-callback-note {
+  color: rgba(255, 255, 255, 0.84);
+  margin-bottom: 22px;
+  line-height: 1.75;
+}
+
+.tm-callback-form {
+  margin-top: 6px;
 }
 
 .tm-btn-submit {
 	font-size: 0.9em;
 	color: #fff;
 	background-color: #155e67;
-	width: 50%;
-	margin-bottom: 60px;
+	width: 100%;
+	margin-bottom: 0;
+	padding: 14px 20px;
+	border-radius: 999px;
   border: none;
   font-weight: 700;
 }
@@ -988,6 +1016,11 @@ p {
     padding: 28px 22px;
   }
 
+  .tm-callback-card {
+    padding: 28px 22px;
+    border-radius: 18px;
+  }
+
   .tm-footer-grid {
     grid-template-columns: 1fr;
   }
@@ -1071,6 +1104,10 @@ p {
   .tm-hero-note {
     max-width: 92%;
   }
+
+  .tm-callback-card h3 {
+    font-size: 1.2rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1090,5 +1127,9 @@ p {
 
   .tm-gallery-item {
     margin: 0;
+  }
+
+  .tm-callback-card {
+    padding: 24px 18px;
   }
 }
