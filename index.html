@@ -709,7 +709,7 @@
             }
 
             $form[0].reset();
-            $status.addClass('is-success').text(result.message || 'Your callback request was sent successfully.');
+            $status.addClass('is-success').text(result.message || 'Your callback request was emailed successfully.');
           } catch (error) {
             $status.addClass('is-error').text(error.message || 'Sorry, we could not send the request right now.');
           } finally {

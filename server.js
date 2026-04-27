@@ -2,9 +2,29 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
+const nodemailer = require('nodemailer');
 
 const PORT = parseInt(process.env.PORT || '10000', 10);
 const ROOT = __dirname;
+const CALLBACK_TO_EMAIL = process.env.CALLBACK_TO_EMAIL || 'kua.center@gmail.com';
+const SMTP_HOST = process.env.SMTP_HOST;
+const SMTP_PORT = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined;
+const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_FROM = process.env.CALLBACK_FROM_EMAIL || SMTP_USER || 'no-reply@kua.center';
+
+const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
+  ? nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_SECURE,
+      auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASS,
+      },
+    })
+  : null;
 
 const MIME_TYPES = {
   '.css': 'text/css; charset=utf-8',
@@ -85,6 +105,31 @@ function readJsonBody(req) {
   });
 }
 
+async function sendCallbackEmail(submission) {
+  if (!mailTransport) {
+    throw new Error('Email is not configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS on Render.');
+  }
+
+  const lines = [
+    'New KUAC callback request',
+    '',
+    `Name: ${submission.name}`,
+    `Phone: ${submission.phone}`,
+    `Message: ${submission.message || '(none)'}`,
+    `Received at: ${submission.receivedAt}`,
+    `IP: ${submission.ip || '(unknown)'}`,
+    `User Agent: ${submission.userAgent || '(unknown)'}`,
+  ];
+
+  await mailTransport.sendMail({
+    from: SMTP_FROM,
+    to: CALLBACK_TO_EMAIL,
+    replyTo: SMTP_USER || undefined,
+    subject: `KUAC Callback Request: ${submission.name}`,
+    text: lines.join('\n'),
+  });
+}
+
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
 
@@ -122,11 +167,11 @@ const server = http.createServer(async (req, res) => {
         userAgent: req.headers['user-agent'] || null,
       };
 
-      console.log('KUAC callback submission:', JSON.stringify(submission, null, 2));
+      await sendCallbackEmail(submission);
 
       send(res, 200, {
         ok: true,
-        message: 'Callback request received',
+        message: 'Callback request sent successfully',
       });
     } catch (error) {
       send(res, 400, {
@@ -167,4 +212,5 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`KUAC site listening on port ${PORT}`);
+  console.log(`Callback emails will be sent to ${CALLBACK_TO_EMAIL}`);
 });
