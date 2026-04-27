@@ -107,7 +107,8 @@ function readJsonBody(req) {
 
 async function sendCallbackEmail(submission) {
   if (!mailTransport) {
-    throw new Error('Email is not configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS on Render.');
+    const missing = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS'].filter((key) => !process.env[key]);
+    throw new Error(`Email is not configured. Add ${missing.join(', ')} on Render.`);
   }
 
   const lines = [
@@ -174,7 +175,7 @@ const server = http.createServer(async (req, res) => {
         message: 'Callback request sent successfully',
       });
     } catch (error) {
-      send(res, 400, {
+      send(res, mailTransport ? 400 : 503, {
         ok: false,
         error: error.message || 'Unable to process callback request',
       });
