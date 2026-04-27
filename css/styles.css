@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&display=swap");
-
 body {
 	font-family: "Libre Franklin", sans-serif;
 	font-size: 1.06rem;
@@ -147,7 +145,7 @@ blockquote {
 
 #infinite {
 	background-color: #10212b;
-  background-image: linear-gradient(180deg, rgba(8, 26, 38, 0.42), rgba(8, 26, 38, 0.82)), url("https://images.pexels.com/photos/13566304/pexels-photo-13566304.jpeg?cs=srgb&dl=pexels-marichka-dorosh-110229078-13566304.jpg&fm=jpg");
+  background-image: linear-gradient(180deg, rgba(8, 26, 38, 0.42), rgba(8, 26, 38, 0.82)), url("https://images.pexels.com/photos/13566304/pexels-photo-13566304.jpeg?auto=compress&cs=tinysrgb&w=1200&dpr=1");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -338,7 +336,7 @@ blockquote {
 
 #testimonials {
   color: white;
-  background-image: linear-gradient(180deg, rgba(8, 26, 38, 0.54), rgba(8, 26, 38, 0.82)), url("https://images.pexels.com/photos/7385834/pexels-photo-7385834.jpeg?cs=srgb&dl=pexels-ahmed-akacha-3313934-7385834.jpg&fm=jpg");
+  background-image: linear-gradient(180deg, rgba(8, 26, 38, 0.54), rgba(8, 26, 38, 0.82)), url("https://images.pexels.com/photos/7385834/pexels-photo-7385834.jpeg?auto=compress&cs=tinysrgb&w=1200&dpr=1");
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
@@ -717,7 +715,7 @@ figure.effect-honey:hover h2 i {
 #contact {
   color: white;
   background-color: #081a26;
-  background-image: linear-gradient(180deg, rgba(8, 26, 38, 0.78), rgba(8, 26, 38, 0.94)), url("https://images.pexels.com/photos/6647115/pexels-photo-6647115.jpeg?cs=srgb&dl=pexels-rdne-6647115.jpg&fm=jpg");
+  background-image: linear-gradient(180deg, rgba(8, 26, 38, 0.78), rgba(8, 26, 38, 0.94)), url("https://images.pexels.com/photos/6647115/pexels-photo-6647115.jpeg?auto=compress&cs=tinysrgb&w=1200&dpr=1");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
