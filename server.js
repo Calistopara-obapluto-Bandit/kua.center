@@ -20,6 +20,9 @@ const SMTP_FROM = process.env.CALLBACK_FROM_EMAIL || SMTP_USER || 'no-reply@kua.
 const SMTP_CONNECTION_TIMEOUT = parseInt(process.env.SMTP_CONNECTION_TIMEOUT || '10000', 10);
 const SMTP_GREETING_TIMEOUT = parseInt(process.env.SMTP_GREETING_TIMEOUT || '10000', 10);
 const SMTP_SOCKET_TIMEOUT = parseInt(process.env.SMTP_SOCKET_TIMEOUT || '15000', 10);
+const FORMSUBMIT_EMAIL = process.env.CALLBACK_TO_EMAIL || 'kua.center@gmail.com';
+const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${encodeURIComponent(FORMSUBMIT_EMAIL)}`;
+const FORMSUBMIT_ORIGIN = process.env.FORMSUBMIT_ORIGIN || 'https://kuac-center.onrender.com';
 
 const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
     ? nodemailer.createTransport({
@@ -116,14 +119,6 @@ function readJsonBody(req) {
 }
 
 async function sendCallbackEmail(submission) {
-  if (!mailTransport) {
-    const missing = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS'].filter((key) => !process.env[key] && !process.env[key.replace('SMTP_', 'MAIL_')]);
-    throw new Error(
-      `Email is not configured. Add ${missing.join(', ')} and set CALLBACK_TO_EMAIL on your host. ` +
-      'This callback form needs a Node backend with SMTP credentials; a pure static deployment cannot send email by itself.'
-    );
-  }
-
   const lines = [
     'New KUAC callback request',
     '',
@@ -135,7 +130,54 @@ async function sendCallbackEmail(submission) {
     `User Agent: ${submission.userAgent || '(unknown)'}`,
   ];
 
+  const formSubmitPayload = new URLSearchParams({
+    name: submission.name,
+    phone: submission.phone,
+    message: submission.message || '',
+    _subject: `KUAC Callback Request: ${submission.name}`,
+    _template: 'table',
+    _captcha: 'false',
+    _replyto: SMTP_USER || CALLBACK_TO_EMAIL,
+  });
+
   try {
+    const response = await fetch(FORMSUBMIT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Origin': FORMSUBMIT_ORIGIN,
+        'Referer': `${FORMSUBMIT_ORIGIN}/`,
+      },
+      body: formSubmitPayload.toString(),
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.message || `FormSubmit returned ${response.status}`);
+    }
+
+    if (typeof result.success === 'string' && result.success === 'false' && typeof result.message === 'string' && /activation/i.test(result.message)) {
+      return {
+        message: 'Callback request received. Check the inbox for the FormSubmit activation email and confirm it once, then future submissions will arrive there.',
+      };
+    }
+
+    if (result.success === 'false' && typeof result.message === 'string' && /activation/i.test(result.message)) {
+      return {
+        message: 'Callback request received. Check the inbox for the FormSubmit activation email and confirm it once, then future submissions will arrive there.',
+      };
+    }
+
+    return {
+      message: result.message || 'Callback request sent successfully',
+    };
+  } catch (formSubmitError) {
+    if (!mailTransport) {
+      throw new Error(`Unable to send callback email: ${formSubmitError.message || 'FormSubmit failure'}`);
+    }
+
     await mailTransport.sendMail({
       from: SMTP_FROM,
       to: CALLBACK_TO_EMAIL,
@@ -143,8 +185,10 @@ async function sendCallbackEmail(submission) {
       subject: `KUAC Callback Request: ${submission.name}`,
       text: lines.join('\n'),
     });
-  } catch (error) {
-    throw new Error(`Unable to send callback email: ${error.message || 'SMTP failure'}`);
+
+    return {
+      message: 'Callback request sent successfully',
+    };
   }
 }
 
@@ -185,11 +229,11 @@ const server = http.createServer(async (req, res) => {
         userAgent: req.headers['user-agent'] || null,
       };
 
-      await sendCallbackEmail(submission);
+      const result = await sendCallbackEmail(submission);
 
       send(res, 200, {
         ok: true,
-        message: 'Callback request sent successfully',
+        message: result.message || 'Callback request sent successfully',
       });
     } catch (error) {
       send(res, mailTransport ? 400 : 503, {

@@ -1,6 +1,6 @@
 # Render Setup for KUAC
 
-This project needs a **Render Web Service**, not a static site, because the callback form sends email from `server.js`.
+This project needs a **Render Web Service**, not a static site, because the callback form is handled by `server.js`.
 
 ## Service Type
 
@@ -14,6 +14,10 @@ This project needs a **Render Web Service**, not a static site, because the call
 Set these in the Render service settings:
 
 - `CALLBACK_TO_EMAIL=kua.center@gmail.com`
+- `FORMSUBMIT_ORIGIN=https://kuac-center.onrender.com`
+
+Optional SMTP fallback:
+
 - `SMTP_HOST=smtp.gmail.com`
 - `SMTP_PORT=587`
 - `SMTP_SECURE=false`
@@ -35,6 +39,7 @@ After deploy, verify:
 
 - `GET /api/health` should return JSON like `{ "ok": true, "status": "healthy" }`
 - `POST /api/callback` should accept JSON with `name`, `phone`, and optional `message`
+- The first FormSubmit delivery may send an activation email to `kua.center@gmail.com`; confirm it once if prompted
 
 ## Quick Test
 
