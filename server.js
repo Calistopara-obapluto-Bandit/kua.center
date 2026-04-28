@@ -17,12 +17,18 @@ const SMTP_PORT = process.env.SMTP_PORT
 const SMTP_USER = process.env.SMTP_USER || process.env.MAIL_USER;
 const SMTP_PASS = process.env.SMTP_PASS || process.env.MAIL_PASS;
 const SMTP_FROM = process.env.CALLBACK_FROM_EMAIL || SMTP_USER || 'no-reply@kua.center';
+const SMTP_CONNECTION_TIMEOUT = parseInt(process.env.SMTP_CONNECTION_TIMEOUT || '10000', 10);
+const SMTP_GREETING_TIMEOUT = parseInt(process.env.SMTP_GREETING_TIMEOUT || '10000', 10);
+const SMTP_SOCKET_TIMEOUT = parseInt(process.env.SMTP_SOCKET_TIMEOUT || '15000', 10);
 
 const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
-  ? nodemailer.createTransport({
+    ? nodemailer.createTransport({
       host: SMTP_HOST,
       port: SMTP_PORT,
       secure: SMTP_SECURE,
+      connectionTimeout: SMTP_CONNECTION_TIMEOUT,
+      greetingTimeout: SMTP_GREETING_TIMEOUT,
+      socketTimeout: SMTP_SOCKET_TIMEOUT,
       auth: {
         user: SMTP_USER,
         pass: SMTP_PASS,
@@ -129,13 +135,17 @@ async function sendCallbackEmail(submission) {
     `User Agent: ${submission.userAgent || '(unknown)'}`,
   ];
 
-  await mailTransport.sendMail({
-    from: SMTP_FROM,
-    to: CALLBACK_TO_EMAIL,
-    replyTo: SMTP_USER || undefined,
-    subject: `KUAC Callback Request: ${submission.name}`,
-    text: lines.join('\n'),
-  });
+  try {
+    await mailTransport.sendMail({
+      from: SMTP_FROM,
+      to: CALLBACK_TO_EMAIL,
+      replyTo: SMTP_USER || undefined,
+      subject: `KUAC Callback Request: ${submission.name}`,
+      text: lines.join('\n'),
+    });
+  } catch (error) {
+    throw new Error(`Unable to send callback email: ${error.message || 'SMTP failure'}`);
+  }
 }
 
 const server = http.createServer(async (req, res) => {
