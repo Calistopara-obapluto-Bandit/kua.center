@@ -7,11 +7,15 @@ const nodemailer = require('nodemailer');
 const PORT = parseInt(process.env.PORT || '10000', 10);
 const ROOT = __dirname;
 const CALLBACK_TO_EMAIL = process.env.CALLBACK_TO_EMAIL || 'kua.center@gmail.com';
-const SMTP_HOST = process.env.SMTP_HOST;
-const SMTP_PORT = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined;
+const SMTP_HOST = process.env.SMTP_HOST || process.env.MAIL_HOST;
 const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
-const SMTP_USER = process.env.SMTP_USER;
-const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_PORT = process.env.SMTP_PORT
+  ? parseInt(process.env.SMTP_PORT, 10)
+  : SMTP_SECURE
+    ? 465
+    : 587;
+const SMTP_USER = process.env.SMTP_USER || process.env.MAIL_USER;
+const SMTP_PASS = process.env.SMTP_PASS || process.env.MAIL_PASS;
 const SMTP_FROM = process.env.CALLBACK_FROM_EMAIL || SMTP_USER || 'no-reply@kua.center';
 
 const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
@@ -107,8 +111,11 @@ function readJsonBody(req) {
 
 async function sendCallbackEmail(submission) {
   if (!mailTransport) {
-    const missing = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS'].filter((key) => !process.env[key]);
-    throw new Error(`Email is not configured. Add ${missing.join(', ')} on Render.`);
+    const missing = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS'].filter((key) => !process.env[key] && !process.env[key.replace('SMTP_', 'MAIL_')]);
+    throw new Error(
+      `Email is not configured. Add ${missing.join(', ')} and set CALLBACK_TO_EMAIL on your host. ` +
+      'This callback form needs a Node backend with SMTP credentials; a pure static deployment cannot send email by itself.'
+    );
   }
 
   const lines = [
