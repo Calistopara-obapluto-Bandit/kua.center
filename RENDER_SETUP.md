@@ -1,55 +1,35 @@
 # Render Setup for KUAC
 
-This project can be deployed as a **static site** for the callback form, because the form now sends through FormSubmit.
+This project is set up for Render's **Static Site** plan.
 
-If you still want to keep the Node server for the `/api/health` route or other app behavior, Render can run it as a Web Service too.
+The callback form posts directly to FormSubmit from the browser, so no Node server or paid backend is required for the live site.
 
 ## Service Type
 
-- Type: `Web Service`
-- Runtime: `Node`
-- Build command: `npm install`
-- Start command: `npm start`
+- Type: `Static Site`
+- Build command: `echo "Static site ready"`
+- Publish directory: `.`
 
-## Required Environment Variables
+## Required Render Settings
 
-If you keep the Node service, set these in the Render service settings:
+No runtime environment variables are needed for the static deployment.
 
-- `CALLBACK_TO_EMAIL=kua.center@gmail.com`
-- `FORMSUBMIT_ORIGIN=https://kuac-center.onrender.com`
+If you change the site domain, update the form `_next` URL in [`index.html`](./index.html) so the redirect comes back to the right page.
 
-Optional SMTP fallback:
+## Callback Flow
 
-- `SMTP_HOST=smtp.gmail.com`
-- `SMTP_PORT=587`
-- `SMTP_SECURE=false`
-- `SMTP_USER=kua.center@gmail.com`
-- `SMTP_PASS=<Gmail app password>`
-- `CALLBACK_FROM_EMAIL=kua.center@gmail.com` or another approved sender address
+- Client fills in name, email, phone, and note.
+- FormSubmit emails the submission to `kua.center@gmail.com`.
+- The `_autoresponse` field sends the confirmation email to the client's email address.
+- The hidden `_replyto` field makes replies from the support inbox point back to the client email.
 
-## Frontend API URL
+## First-Time Activation
 
-The frontend uses:
-
-- `https://kua-center.onrender.com/api/callback`
-
-That value is set in [`config.js`](./config.js). If your backend URL changes, update that file and redeploy the frontend.
-
-## Health Check
-
-After deploy, verify:
-
-- `GET /api/health` should return JSON like `{ "ok": true, "status": "healthy" }` if you keep the Node service
-- The callback form should post to FormSubmit and may send an activation email to `kua.center@gmail.com` the first time
+The first submission usually triggers a FormSubmit activation message to the recipient inbox. Confirm that email once, then later submissions should deliver normally.
 
 ## Quick Test
 
-1. Open the site.
-2. Submit the callback form with a test name and phone number.
-3. Check the inbox at `kua.center@gmail.com`.
-4. If it fails, inspect Render logs for SMTP auth or connection errors.
-
-## Notes
-
-- A plain static deployment is now enough for the callback form.
-- If you use Gmail SMTP, the password must be a Gmail app password, not your normal Google password.
+1. Open the live site.
+2. Submit the callback form with a test name, client email, and phone number.
+3. Check `kua.center@gmail.com` for the submission email.
+4. Check the client inbox for the autoresponse message.

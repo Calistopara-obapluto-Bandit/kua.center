@@ -517,6 +517,7 @@
                         <div class="col-md-6 mb-3">
                           <input id="email" name="email" type="email" placeholder="Client Email" class="tm-input mb-0" required />
                         </div>
+                        <input type="hidden" name="_replyto" id="callbackReplyTo" />
                         <div class="col-md-6 mb-3">
                           <input id="phone" name="phone" type="tel" placeholder="Phone Number, e.g. +49 151 23456789" class="tm-input mb-0" required />
                         </div>
@@ -551,7 +552,7 @@
                 </p>
                 <div class="tm-contact-list">
                   <div class="contact-item">
-                    <a rel="nofollow" href="mailto:uau.krai1@gmail.com?subject=KUAC%20Volunteer%20Chat" class="item-link">
+                    <a rel="nofollow" href="mailto:kua.center@gmail.com?subject=KUAC%20Volunteer%20Chat" class="item-link">
                         <i class="far fa-comment"></i>
                         <div>
                           <strong>Volunteer & Partner Chat</strong>
@@ -688,11 +689,16 @@
           if (this.hash !== "") {
             event.preventDefault();
             var hash = this.hash;
+            var navOffset = $('.tm-navbar').outerHeight() || 0;
 
             $('html, body').animate({
-              scrollTop: $(hash).offset().top
+              scrollTop: Math.max($(hash).offset().top - navOffset - 12, 0)
             }, 600, 'easeInOutExpo', function(){
-              window.location.hash = hash;
+              if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, document.title, hash);
+              } else {
+                window.location.hash = hash;
+              }
             });
           } // End if
         });
@@ -733,6 +739,7 @@
         });
 
         $('#callbackForm').on('submit', function () {
+          $('#callbackReplyTo').val($('#email').val().trim());
           $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request...');
         });
 
