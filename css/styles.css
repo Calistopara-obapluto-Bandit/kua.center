@@ -538,6 +538,50 @@ blockquote {
   padding: 12px 22px;
 }
 
+.tm-partner-section {
+  background: linear-gradient(180deg, #f5faf7 0%, #edf4f0 100%);
+}
+
+.tm-partner-header {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tm-partner-card {
+  position: relative;
+  text-align: left;
+}
+
+.tm-partner-card strong {
+  display: inline-block;
+  margin-top: 10px;
+  color: #102833;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.tm-partner-card-featured {
+  transform: translateY(-10px);
+  border: 1px solid rgba(21, 94, 103, 0.26);
+  box-shadow: 0 28px 55px rgba(21, 94, 103, 0.18);
+}
+
+.tm-partner-card-featured::before {
+  content: "Most Popular";
+  position: absolute;
+  top: -14px;
+  left: 24px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #155e67;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .tm-support-icon {
   display: inline-block;
   font-size: 2rem;
@@ -1183,6 +1227,10 @@ p {
   .tm-about-panel,
   .tm-support-card {
     padding: 28px 22px;
+  }
+
+  .tm-partner-card-featured {
+    transform: none;
   }
 
   .tm-callback-card {
