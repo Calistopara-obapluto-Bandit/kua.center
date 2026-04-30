@@ -492,9 +492,9 @@
             <div class="col-sm-12 col-md-6">
               <div class="tm-callback-card">
                 <p class="tm-kicker tm-kicker-light">Request a Call-back</p>
-                <h3>Leave your details for an EU callback</h3>
+                <h3>Send a request to KUAC</h3>
                 <p class="tm-callback-note">
-                  Leave the client’s full name, client email address, international phone number with country code, and a short note. The request will be sent to KUAC at <strong>kua.center@gmail.com</strong>. The client’s email only receives the auto-reply message.
+                  Enter the client's name, client email, phone number, and a short note. The request goes to KUAC at <strong>kua.center@gmail.com</strong>. The auto-reply goes to the client email.
                 </p>
                 <button
                   class="btn tm-btn-primary tm-callback-toggle"
@@ -524,7 +524,6 @@
                       <textarea id="message" name="message" rows="5" placeholder="Optional note, preferred time, or country of residence" class="tm-input"></textarea>
                       <input type="hidden" name="_subject" value="KUAC Callback Request" />
                       <input type="hidden" name="_template" value="table" />
-                      <input type="hidden" name="_replyto" value="email" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <input type="hidden" name="_next" value="https://kuac-center.onrender.com/#contact" />
                       <input
@@ -533,7 +532,7 @@
                         value="Dear Client,&#10;&#10;Your request has been successfully submitted and is now being reviewed.&#10;&#10;We are currently matching your request with relevant support partners who may be able to assist you.&#10;&#10;Please note that submitting a request on our platform is completely free.&#10;&#10;You will be contacted if a suitable partner is available.&#10;&#10;Kind regards,&#10;Support Team"
                       />
                       <p class="tm-form-status tm-form-hint">
-                        Request emails go to KUAC. The auto-reply is sent to the client email entered above.
+                        Requests go to KUAC. Auto-reply goes to the client email entered above.
                       </p>
                       <button type="submit" class="btn tm-btn-submit">Submit Request</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>

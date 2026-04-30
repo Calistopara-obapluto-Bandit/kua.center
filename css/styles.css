@@ -510,6 +510,8 @@ blockquote {
 
 .tm-support-desc {
   color: rgba(255, 255, 255, 0.84);
+  font-size: 0.95rem;
+  line-height: 1.8;
 }
 
 .tm-support-card {
@@ -850,6 +852,12 @@ figure.effect-honey:hover h2 i {
 
 .tm-contact-list {
   margin-top: 22px;
+}
+
+.tm-contact-card > p:first-of-type,
+.tm-callback-note {
+  font-size: 0.95rem;
+  line-height: 1.8;
 }
 
 .item-link i,
