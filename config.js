@@ -1,2 +1,2 @@
-// Callback API for the Render backend.
-window.CALLBACK_API_URL = window.CALLBACK_API_URL || 'https://kuac-center.onrender.com/api/callback';
+// Form-mail endpoint for the callback form.
+window.CALLBACK_API_URL = window.CALLBACK_API_URL || 'https://formsubmit.co/ajax/kua.center@gmail.com';

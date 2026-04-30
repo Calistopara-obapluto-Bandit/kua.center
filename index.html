@@ -464,7 +464,7 @@
                 </button>
                 <div class="collapse" id="callbackFormPanel">
                   <div class="tm-callback-form-panel">
-                    <form id="callbackForm" class="tm-callback-form" data-endpoint="/api/callback">
+                    <form id="callbackForm" class="tm-callback-form" action="https://formsubmit.co/kua.center@gmail.com" method="POST" enctype="multipart/form-data" data-endpoint="https://formsubmit.co/ajax/kua.center@gmail.com">
                       <div class="row tm-callback-row">
                         <div class="col-md-6 mb-3">
                           <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
@@ -474,6 +474,10 @@
                         </div>
                       </div>
                       <textarea id="message" name="message" rows="5" placeholder="Optional note, preferred time, or country of residence" class="tm-input"></textarea>
+                      <input type="hidden" name="_subject" value="KUAC Callback Request" />
+                      <input type="hidden" name="_template" value="table" />
+                      <input type="hidden" name="_captcha" value="false" />
+                      <input type="hidden" name="_next" value="https://kuac-center.onrender.com/#contact" />
                       <button type="submit" class="btn tm-btn-submit">Submit Request</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
                     </form>
@@ -679,11 +683,14 @@
           var $button = $form.find('button[type="submit"]');
           var $status = $('#callbackFormStatus');
           var endpoint = window.CALLBACK_API_URL || $form.data('endpoint');
-          var payload = {
+          var payload = new URLSearchParams({
             name: $.trim($('#name').val()),
             phone: $.trim($('#phone').val()),
-            message: $.trim($('#message').val())
-          };
+            message: $.trim($('#message').val()),
+            _subject: 'KUAC Callback Request',
+            _template: 'table',
+            _captcha: 'false'
+          });
 
           if (!endpoint) {
             $status.text('Callback endpoint is not configured yet.');
@@ -697,9 +704,10 @@
             var response = await fetch(endpoint, {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
               },
-              body: JSON.stringify(payload)
+              body: payload.toString()
             });
             var result = await response.json().catch(function () {
               return {};

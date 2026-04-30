@@ -1,6 +1,8 @@
 # Render Setup for KUAC
 
-This project needs a **Render Web Service**, not a static site, because the callback form is handled by `server.js`.
+This project can be deployed as a **static site** for the callback form, because the form now sends through FormSubmit.
+
+If you still want to keep the Node server for the `/api/health` route or other app behavior, Render can run it as a Web Service too.
 
 ## Service Type
 
@@ -11,7 +13,7 @@ This project needs a **Render Web Service**, not a static site, because the call
 
 ## Required Environment Variables
 
-Set these in the Render service settings:
+If you keep the Node service, set these in the Render service settings:
 
 - `CALLBACK_TO_EMAIL=kua.center@gmail.com`
 - `FORMSUBMIT_ORIGIN=https://kuac-center.onrender.com`
@@ -37,9 +39,8 @@ That value is set in [`config.js`](./config.js). If your backend URL changes, up
 
 After deploy, verify:
 
-- `GET /api/health` should return JSON like `{ "ok": true, "status": "healthy" }`
-- `POST /api/callback` should accept JSON with `name`, `phone`, and optional `message`
-- The first FormSubmit delivery may send an activation email to `kua.center@gmail.com`; confirm it once if prompted
+- `GET /api/health` should return JSON like `{ "ok": true, "status": "healthy" }` if you keep the Node service
+- The callback form should post to FormSubmit and may send an activation email to `kua.center@gmail.com` the first time
 
 ## Quick Test
 
@@ -50,5 +51,5 @@ After deploy, verify:
 
 ## Notes
 
-- A plain static deployment cannot send callback emails.
+- A plain static deployment is now enough for the callback form.
 - If you use Gmail SMTP, the password must be a Gmail app password, not your normal Google password.
