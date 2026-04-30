@@ -843,11 +843,11 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-contact-card h3 {
-  font-size: 1.2rem;
+  font-size: 1.12rem;
   font-weight: 800;
   color: #fff;
   margin-bottom: 10px;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .tm-contact-list {
@@ -888,12 +888,12 @@ figure.effect-honey:hover h2 i {
 }
 
 .item-link strong {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   line-height: 1.2;
 }
 
 .item-link span {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: rgba(255, 255, 255, 0.78);
   line-height: 1.5;
 }
@@ -977,16 +977,18 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-callback-card h3 {
-  font-size: 1.35rem;
+  font-size: 1.22rem;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
 }
 
 .tm-callback-note {
   color: rgba(255, 255, 255, 0.84);
   margin-bottom: 22px;
-  line-height: 1.75;
+  line-height: 1.7;
+  font-size: 0.96rem;
 }
 
 .tm-callback-form {
@@ -1149,7 +1151,7 @@ figure.effect-honey:hover h2 i {
   display: block;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.72);
   margin-bottom: 8px;
 }
