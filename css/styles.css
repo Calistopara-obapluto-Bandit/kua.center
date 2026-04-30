@@ -512,29 +512,31 @@ blockquote {
   color: rgba(255, 255, 255, 0.84);
   font-size: 0.95rem;
   line-height: 1.8;
+  max-width: 780px;
 }
 
 .tm-support-card {
   height: 100%;
-  padding: 32px 26px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.16);
+  padding: 34px 28px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(249, 251, 250, 0.94));
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 26px 52px rgba(0, 0, 0, 0.16);
+  text-align: center;
 }
 
 .tm-support-card h3 {
-  font-size: 1.08rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: #102833;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   letter-spacing: -0.02em;
 }
 
 .tm-support-card p {
   color: #4c5e6b;
-  font-size: 0.95rem;
-  line-height: 1.7;
+  font-size: 0.96rem;
+  line-height: 1.75;
 }
 
 .tm-support-card .tm-btn-primary {
@@ -555,19 +557,21 @@ blockquote {
 
 .tm-partner-card {
   position: relative;
-  text-align: left;
+  text-align: center;
 }
 
 .tm-partner-card strong {
-  display: inline-block;
-  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
   color: #102833;
   font-size: 1.1rem;
   font-weight: 900;
 }
 
 .tm-partner-card-featured {
-  transform: translateY(-10px);
+  transform: translateY(-12px);
   border: 1px solid rgba(21, 94, 103, 0.26);
   box-shadow: 0 28px 55px rgba(21, 94, 103, 0.18);
 }
@@ -834,19 +838,20 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-contact-card {
-  padding: 34px 30px 28px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.12);
+  padding: 34px 30px 30px;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 28px 54px rgba(0, 0, 0, 0.14);
   height: 100%;
+  backdrop-filter: blur(10px);
 }
 
 .tm-contact-card h3 {
-  font-size: 1.12rem;
+  font-size: 1.18rem;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   letter-spacing: -0.01em;
 }
 
@@ -916,11 +921,12 @@ figure.effect-honey:hover h2 i {
 
 .tm-callback-card {
   height: 100%;
-  padding: 34px 30px 28px;
-  border-radius: 24px;
+  padding: 34px 30px 30px;
+  border-radius: 26px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.06));
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 24px 44px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 28px 54px rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(10px);
 }
 
 .tm-callback-toggle {
@@ -957,9 +963,9 @@ figure.effect-honey:hover h2 i {
 
 .tm-callback-form-panel {
   margin-top: 22px;
-  padding: 20px 18px 18px;
-  border-radius: 20px;
-  background: rgba(8, 26, 38, 0.28);
+  padding: 22px 20px 20px;
+  border-radius: 22px;
+  background: rgba(8, 26, 38, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -980,14 +986,14 @@ figure.effect-honey:hover h2 i {
   font-size: 1.22rem;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   letter-spacing: -0.02em;
 }
 
 .tm-callback-note {
   color: rgba(255, 255, 255, 0.84);
   margin-bottom: 22px;
-  line-height: 1.7;
+  line-height: 1.76;
   font-size: 0.96rem;
 }
 
@@ -1087,8 +1093,8 @@ figure.effect-honey:hover h2 i {
   max-width: 520px;
   margin-left: auto;
   margin-right: auto;
-  font-size: 0.9rem;
-  line-height: 1.8;
+  font-size: 0.92rem;
+  line-height: 1.85;
 }
 
 .tm-footer-grid {
@@ -1225,7 +1231,7 @@ p {
 
   .tm-trust-card,
   .tm-container-contact {
-    border-radius: 18px;
+    border-radius: 20px;
   }
 
   .tm-input {
@@ -1248,6 +1254,7 @@ p {
   .tm-about-panel,
   .tm-support-card {
     padding: 28px 22px;
+    border-radius: 18px;
   }
 
   .tm-partner-card-featured {
@@ -1256,12 +1263,12 @@ p {
 
   .tm-callback-card {
     padding: 28px 22px;
-    border-radius: 18px;
+    border-radius: 20px;
   }
 
   .tm-contact-card {
     padding: 28px 22px;
-    border-radius: 18px;
+    border-radius: 20px;
   }
 
   .tm-brand {
@@ -1368,7 +1375,19 @@ p {
   }
 
   .tm-callback-card h3 {
-    font-size: 1.2rem;
+    font-size: 1.12rem;
+  }
+
+  .tm-callback-note,
+  .tm-contact-note {
+    font-size: 0.92rem;
+    line-height: 1.75;
+  }
+
+  .tm-support-card,
+  .tm-partner-card,
+  .tm-contact-card {
+    text-align: left;
   }
 }
 
@@ -1403,5 +1422,22 @@ p {
   .tm-callback-row > div {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  .tm-callback-form-panel {
+    padding: 18px 14px 16px;
+  }
+
+  .tm-form-hint {
+    font-size: 0.8rem;
+  }
+
+  .tm-support-card,
+  .tm-partner-card {
+    text-align: left;
+  }
+
+  .tm-partner-card-featured::before {
+    left: 18px;
   }
 }

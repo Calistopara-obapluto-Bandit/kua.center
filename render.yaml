@@ -2,7 +2,6 @@ services:
   - type: web
     name: kuac-site
     runtime: static
-    plan: free
     buildCommand: echo "Static site ready"
     staticPublishPath: .
     autoDeploy: true
