@@ -1017,6 +1017,53 @@ figure.effect-honey:hover h2 i {
   resize: vertical;
 }
 
+.tm-file-wrap {
+  margin-bottom: 18px;
+}
+
+.tm-file-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.tm-file-input {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.tm-file-input::-webkit-file-upload-button {
+  margin-right: 12px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #155e67;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tm-file-input::file-selector-button {
+  margin-right: 12px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #155e67;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tm-file-help {
+  margin-top: 8px;
+  margin-bottom: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .tm-btn-submit {
 	font-size: 0.9em;
 	color: #fff;
@@ -1427,6 +1474,17 @@ p {
 
   .tm-callback-form-panel {
     padding: 18px 14px 16px;
+  }
+
+  .tm-file-input {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .tm-file-input::-webkit-file-upload-button,
+  .tm-file-input::file-selector-button {
+    display: block;
+    margin-bottom: 10px;
   }
 
   .tm-form-hint {

@@ -523,6 +523,11 @@
                         </div>
                       </div>
                       <textarea id="message" name="message" rows="5" placeholder="Optional note, preferred time, or country of residence" class="tm-input"></textarea>
+                      <div class="tm-file-wrap">
+                        <label for="attachment" class="tm-file-label">Attach a photo or document</label>
+                        <input id="attachment" name="attachment" type="file" class="tm-input tm-file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx" />
+                        <p class="tm-file-help">Optional. You can include a photo, ID scan, or other supporting file with the request.</p>
+                      </div>
                       <input type="hidden" name="_subject" value="KUAC Callback Request" />
                       <input type="hidden" name="_template" value="table" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />

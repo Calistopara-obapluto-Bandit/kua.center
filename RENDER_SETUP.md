@@ -19,9 +19,16 @@ If you change the site domain, update the form `_next` URL in [`index.html`](./i
 ## Callback Flow
 
 - Client fills in name, email, phone, and note.
+- Client can also attach a photo or document if it helps explain the request.
 - FormSubmit emails the submission to `kua.center@gmail.com`.
 - The `_autoresponse` field sends the confirmation email to the client's email address.
 - The hidden `_replyto` field makes replies from the support inbox point back to the client email.
+
+## Attachment Notes
+
+- The form uses normal browser form submission, so FormSubmit can receive file uploads.
+- Keep the total file size under FormSubmit's 10 MB limit.
+- Good formats for this workflow are `pdf`, `png`, `jpg`, `jpeg`, `webp`, `doc`, and `docx`.
 
 ## First-Time Activation
 
