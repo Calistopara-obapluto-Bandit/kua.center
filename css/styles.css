@@ -522,14 +522,17 @@ blockquote {
 }
 
 .tm-support-card h3 {
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   font-weight: 800;
   color: #102833;
   margin-bottom: 12px;
+  letter-spacing: -0.02em;
 }
 
 .tm-support-card p {
   color: #4c5e6b;
+  font-size: 0.95rem;
+  line-height: 1.7;
 }
 
 .tm-support-card .tm-btn-primary {
@@ -838,10 +841,11 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-contact-card h3 {
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #fff;
   margin-bottom: 10px;
+  letter-spacing: -0.02em;
 }
 
 .tm-contact-list {
@@ -876,12 +880,12 @@ figure.effect-honey:hover h2 i {
 }
 
 .item-link strong {
-  font-size: 1rem;
+  font-size: 0.98rem;
   line-height: 1.2;
 }
 
 .item-link span {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: rgba(255, 255, 255, 0.78);
   line-height: 1.5;
 }
@@ -1031,6 +1035,12 @@ figure.effect-honey:hover h2 i {
   color: #f2b6b6;
 }
 
+.tm-form-hint {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.86rem;
+}
+
 ::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #6b7c8c;
@@ -1067,7 +1077,8 @@ figure.effect-honey:hover h2 i {
   max-width: 520px;
   margin-left: auto;
   margin-right: auto;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
 }
 
 .tm-footer-grid {
@@ -1129,8 +1140,8 @@ figure.effect-honey:hover h2 i {
 .tm-footer-label {
   display: block;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.72);
   margin-bottom: 8px;
 }
