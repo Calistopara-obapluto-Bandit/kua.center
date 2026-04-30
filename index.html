@@ -676,54 +676,8 @@
           }, 450);
         });
 
-        $('#callbackForm').on('submit', async function (event) {
-          event.preventDefault();
-
-          var $form = $(this);
-          var $button = $form.find('button[type="submit"]');
-          var $status = $('#callbackFormStatus');
-          var endpoint = window.CALLBACK_API_URL || $form.data('endpoint');
-          var payload = new URLSearchParams({
-            name: $.trim($('#name').val()),
-            phone: $.trim($('#phone').val()),
-            message: $.trim($('#message').val()),
-            _subject: 'KUAC Callback Request',
-            _template: 'table',
-            _captcha: 'false'
-          });
-
-          if (!endpoint) {
-            $status.text('Callback endpoint is not configured yet.');
-            return;
-          }
-
-          $button.prop('disabled', true);
-          $status.removeClass('is-error is-success').text('Sending your callback request...');
-
-          try {
-            var response = await fetch(endpoint, {
-              method: 'POST',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-              },
-              body: payload.toString()
-            });
-            var result = await response.json().catch(function () {
-              return {};
-            });
-
-            if (!response.ok) {
-              throw new Error(result.error || ('Request failed with status ' + response.status));
-            }
-
-            $form[0].reset();
-            $status.addClass('is-success').text(result.message || 'Your callback request was emailed successfully.');
-          } catch (error) {
-            $status.addClass('is-error').text(error.message || 'Sorry, we could not send the request right now.');
-          } finally {
-            $button.prop('disabled', false);
-          }
+        $('#callbackForm').on('submit', function () {
+          $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request...');
         });
 
         $('.tm-gallery').slick({
