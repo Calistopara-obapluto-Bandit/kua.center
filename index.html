@@ -481,18 +481,11 @@
                       <input type="hidden" name="_template" value="table" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <input type="hidden" name="_next" value="https://kuac-center.onrender.com/#contact" />
-                      <textarea name="_autoresponse" hidden>Dear [Name],
-
-Your request has been successfully submitted and is now being reviewed.
-
-We are currently matching your request with relevant support partners who may be able to assist you.
-
-Please note that submitting a request on our platform is completely free.
-
-You will be contacted if a suitable partner is available.
-
-Kind regards,
-Support Team</textarea>
+                      <input
+                        type="hidden"
+                        name="_autoresponse"
+                        value="Dear [Name],&#10;&#10;Your request has been successfully submitted and is now being reviewed.&#10;&#10;We are currently matching your request with relevant support partners who may be able to assist you.&#10;&#10;Please note that submitting a request on our platform is completely free.&#10;&#10;You will be contacted if a suitable partner is available.&#10;&#10;Kind regards,&#10;Support Team"
+                      />
                       <button type="submit" class="btn tm-btn-submit">Submit Request</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
                     </form>
