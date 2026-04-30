@@ -449,7 +449,7 @@
                 <p class="tm-kicker tm-kicker-light">Request a Call-back</p>
                 <h3>Leave your details for an EU callback</h3>
                 <p class="tm-callback-note">
-                  Leave your full name, an international phone number with country code, and a short note. The KUAC team will review it during service hours and respond as soon as possible.
+                  Leave your full name, email address, international phone number with country code, and a short note. You will get an instant confirmation email, then the KUAC team will review it during service hours and respond as soon as possible.
                 </p>
                 <button
                   class="btn tm-btn-primary tm-callback-toggle"
@@ -470,14 +470,29 @@
                           <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
                         </div>
                         <div class="col-md-6 mb-3">
+                          <input id="email" name="email" type="email" placeholder="Email Address" class="tm-input mb-0" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
                           <input id="phone" name="phone" type="tel" placeholder="Phone Number, e.g. +49 151 23456789" class="tm-input mb-0" required />
                         </div>
                       </div>
                       <textarea id="message" name="message" rows="5" placeholder="Optional note, preferred time, or country of residence" class="tm-input"></textarea>
                       <input type="hidden" name="_subject" value="KUAC Callback Request" />
                       <input type="hidden" name="_template" value="table" />
-                      <input type="hidden" name="_captcha" value="false" />
+                      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <input type="hidden" name="_next" value="https://kuac-center.onrender.com/#contact" />
+                      <textarea name="_autoresponse" hidden>Dear [Name],
+
+Your request has been successfully submitted and is now being reviewed.
+
+We are currently matching your request with relevant support partners who may be able to assist you.
+
+Please note that submitting a request on our platform is completely free.
+
+You will be contacted if a suitable partner is available.
+
+Kind regards,
+Support Team</textarea>
                       <button type="submit" class="btn tm-btn-submit">Submit Request</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
                     </form>
@@ -565,6 +580,51 @@
           <p class="mb-0">Copyright &copy; 2026 Krains UniAid Center (KUAC). <span>Humanitarian support and relocation assistance.</span></p>
         </footer>
 
+    </section>
+
+    <section id="partner-access" class="tm-section-pad-top tm-partner-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center mb-5">
+            <p class="tm-kicker">Partner Access</p>
+            <h2 class="tm-text-primary tm-section-title mb-3">Monetize access to full request details</h2>
+            <p class="mx-auto tm-section-desc">
+              Partner organizations can preview requests for free, then pay to unlock the full details they need to respond faster.
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card">
+              <i class="fas fa-eye tm-support-icon"></i>
+              <h3>Basic</h3>
+              <p>Free preview access with limited request details and summary-only visibility.</p>
+              <strong>Free</strong>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card">
+              <i class="fas fa-unlock-alt tm-support-icon"></i>
+              <h3>Unlock Full Request</h3>
+              <p>Pay once to open the full request details for a specific support lead.</p>
+              <strong>$10 per request</strong>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card">
+              <i class="fas fa-calendar-alt tm-support-icon"></i>
+              <h3>Pro Subscription</h3>
+              <p>Monthly access to all new requests, better for long-term partners and teams.</p>
+              <strong>$50 / month</strong>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <a href="#contact" class="btn tm-btn-primary tm-hero-btn">Request Partner Access</a>
+          </div>
+        </div>
+      </div>
     </section>
     
     <script src="js/jquery-1.9.1.min.js"></script>     
