@@ -1,5 +1,4 @@
 const http = require('http');
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
@@ -288,11 +287,7 @@ async function sendCallbackEmail(submission) {
       attachments,
     });
   } catch (smtpError) {
-    if (attachments.length > 0) {
-      throw new Error(`SMTP delivery failed for attachment request: ${smtpError.message || 'Unknown error'}`);
-    }
-
-    return sendViaFormSubmit(submission, smtpError);
+    return sendViaFormSubmit(submission, attachments, smtpError);
   }
 
   return {
@@ -300,74 +295,63 @@ async function sendCallbackEmail(submission) {
   };
 }
 
-function sendViaFormSubmit(submission, previousError = null) {
-  const payload = new URLSearchParams({
-    name: submission.name,
-    email: submission.email,
-    phone: submission.phone,
-    message: submission.message || '',
-    _subject: `${CALLBACK_FROM_NAME} | Callback Request: ${submission.name}`,
-    _template: 'table',
-    _captcha: 'false',
-    _honey: '',
-  }).toString();
+async function sendViaFormSubmit(submission, attachments = [], previousError = null) {
+  const formData = new FormData();
+  formData.append('name', submission.name);
+  formData.append('email', submission.email);
+  formData.append('phone', submission.phone);
+  formData.append('message', submission.message || '');
+  formData.append('_subject', `${CALLBACK_FROM_NAME} | Callback Request: ${submission.name}`);
+  formData.append('_template', 'table');
+  formData.append('_captcha', 'false');
+  formData.append('_honey', '');
+  formData.append('_replyto', submission.email);
 
-  return new Promise((resolve, reject) => {
-    const request = https.request(FORMSUBMIT_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Content-Length': Buffer.byteLength(payload),
-      },
-      timeout: 10000,
-    }, (response) => {
-      let raw = '';
+  for (const attachment of attachments) {
+    formData.append(
+      'attachment',
+      new Blob([attachment.content], { type: attachment.contentType || 'application/octet-stream' }),
+      attachment.filename || 'attachment'
+    );
+  }
 
-      response.setEncoding('utf8');
-      response.on('data', (chunk) => {
-        raw += chunk;
-      });
-      response.on('end', () => {
-        let result = {};
-
-        if (raw) {
-          try {
-            result = JSON.parse(raw);
-          } catch (parseError) {
-            result = { message: raw };
-          }
-        }
-
-        if (response.statusCode && response.statusCode >= 200 && response.statusCode < 300 && result.success !== 'false') {
-          resolve({
-            message: result.message || 'Callback request sent successfully',
-          });
-          return;
-        }
-
-        const activationMessage = typeof result.message === 'string' && /activation/i.test(result.message)
-          ? 'Callback request received. Check the inbox for the FormSubmit activation email and confirm it once, then future submissions will arrive there.'
-          : null;
-
-        if (activationMessage) {
-          resolve({ message: activationMessage });
-          return;
-        }
-
-        const fallbackReason = previousError ? ` SMTP fallback triggered after: ${previousError.message || previousError}` : '';
-        reject(new Error(`FormSubmit delivery failed.${fallbackReason}${raw ? ` Response: ${raw}` : ''}`));
-      });
-    });
-
-    request.on('error', (error) => {
-      const fallbackReason = previousError ? ` SMTP fallback triggered after: ${previousError.message || previousError}` : '';
-      reject(new Error(`FormSubmit request failed.${fallbackReason} ${error.message || 'Unknown error'}`));
-    });
-
-    request.write(payload);
-    request.end();
+  const response = await fetch(FORMSUBMIT_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      Origin: FORMSUBMIT_ORIGIN,
+      Referer: `${FORMSUBMIT_ORIGIN}/`,
+    },
+    body: formData,
   });
+
+  const raw = await response.text();
+  let result = {};
+
+  if (raw) {
+    try {
+      result = JSON.parse(raw);
+    } catch (parseError) {
+      result = { message: raw };
+    }
+  }
+
+  if (response.ok && result.success !== 'false') {
+    return {
+      message: result.message || 'Callback request sent successfully',
+    };
+  }
+
+  const activationMessage = typeof result.message === 'string' && /activation/i.test(result.message)
+    ? 'Callback request received. Check the inbox for the FormSubmit activation email and confirm it once, then future submissions will arrive there.'
+    : null;
+
+  if (activationMessage) {
+    return { message: activationMessage };
+  }
+
+  const fallbackReason = previousError ? ` SMTP fallback triggered after: ${previousError.message || previousError}` : '';
+  throw new Error(`FormSubmit delivery failed.${fallbackReason}${raw ? ` Response: ${raw}` : ''}`);
 }
 
 const server = http.createServer(async (req, res) => {

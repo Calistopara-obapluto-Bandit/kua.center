@@ -28,6 +28,7 @@ Required runtime environment variables:
 - `CALLBACK_FROM_EMAIL=no-reply@kua.center`
 
 If SMTP is not configured yet, the backend falls back to FormSubmit so the site still stays alive while you finish setup.
+That fallback also relays uploaded files, although the sender branding will be FormSubmit until SMTP is configured.
 
 ## Callback Flow
 
