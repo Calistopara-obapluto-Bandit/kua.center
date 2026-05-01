@@ -1,278 +1,788 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const { URL } = require('url');
-const nodemailer = require('nodemailer');
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="Krains UniAid Center (KUAC) provides humanitarian travel guidance, arrival assistance, and relocation support for Ukrainians and displaced families across Europe, including Poland, Slovakia, and Romania." />
+    <meta name="theme-color" content="#0f4c66" />
+    <title>Krains UniAid Center (KUAC) | EU Humanitarian Support</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.pexels.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="fontawesome-5.5/css/all.min.css" />
+    <link rel="stylesheet" href="slick/slick.css">
+    <link rel="stylesheet" href="slick/slick-theme.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>    
+    <section id="infinite" class="text-white tm-font-big tm-parallax">
+      <nav class="navbar navbar-expand-md tm-navbar" id="tmNav">              
+        <div class="container">   
+          <div class="tm-next">
+              <a href="#infinite" class="navbar-brand tm-brand" aria-label="Krains UniAid Center">
+                <img src="img/kuac-logo.png" alt="KUAC logo" class="tm-brand-logo" />
+              </a>
+          </div>             
+            
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars navbar-toggler-icon"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                  <a class="nav-link tm-nav-link" href="#infinite">Home</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link tm-nav-link" href="#about">About</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link tm-nav-link" href="#whatwedo">Mission</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link tm-nav-link" href="#testimonials">Impact</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link tm-nav-link" href="#support">Support</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link tm-nav-link" href="#gallery">Regions</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link tm-nav-link" href="#contact">Contact</a>
+              </li>                    
+            </ul>
+          </div>        
+        </div>
+      </nav>
 
-const PORT = parseInt(process.env.PORT || '10000', 10);
-const ROOT = __dirname;
-const CALLBACK_TO_EMAIL = process.env.CALLBACK_TO_EMAIL || 'kua.center@gmail.com';
-const SMTP_HOST = process.env.SMTP_HOST || process.env.MAIL_HOST;
-const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
-const SMTP_PORT = process.env.SMTP_PORT
-  ? parseInt(process.env.SMTP_PORT, 10)
-  : SMTP_SECURE
-    ? 465
-    : 587;
-const SMTP_USER = process.env.SMTP_USER || process.env.MAIL_USER;
-const SMTP_PASS = process.env.SMTP_PASS || process.env.MAIL_PASS;
-const SMTP_FROM = process.env.CALLBACK_FROM_EMAIL || SMTP_USER || 'no-reply@kua.center';
-const SMTP_CONNECTION_TIMEOUT = parseInt(process.env.SMTP_CONNECTION_TIMEOUT || '10000', 10);
-const SMTP_GREETING_TIMEOUT = parseInt(process.env.SMTP_GREETING_TIMEOUT || '10000', 10);
-const SMTP_SOCKET_TIMEOUT = parseInt(process.env.SMTP_SOCKET_TIMEOUT || '15000', 10);
-const FORMSUBMIT_EMAIL = process.env.CALLBACK_TO_EMAIL || 'kua.center@gmail.com';
-const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${encodeURIComponent(FORMSUBMIT_EMAIL)}`;
-const FORMSUBMIT_ORIGIN = process.env.FORMSUBMIT_ORIGIN || 'https://kuac-center.onrender.com';
+      <div class="text-center tm-hero-text-container">
+        <div class="tm-hero-text-container-inner">
+            <h2 class="tm-hero-title">Krains UniAid Center</h2>
+            <p class="tm-hero-subtitle">
+              Humanitarian travel and relocation support for Ukrainians and displaced families across Europe, including Poland, Slovakia, and Romania
+              <br>with practical guidance, trusted referrals, and a calmer path forward
+            </p>
+            <p class="tm-hero-note">
+              We help people move safely, arrive with dignity, and connect to the right local support when the next step is not clear.
+            </p>
+            <div class="tm-hero-actions">
+              <a href="#contact" class="btn tm-btn-primary tm-hero-btn">Request Help</a>
+              <a href="#whatwedo" class="btn tm-btn-secondary tm-hero-btn">How We Help</a>
+            </div>
+        </div>        
+      </div>
 
-const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
-    ? nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: SMTP_PORT,
-      secure: SMTP_SECURE,
-      connectionTimeout: SMTP_CONNECTION_TIMEOUT,
-      greetingTimeout: SMTP_GREETING_TIMEOUT,
-      socketTimeout: SMTP_SOCKET_TIMEOUT,
-      auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS,
-      },
-    })
-  : null;
+      <div class="tm-next tm-intro-next">
+        <a href="#whatwedo" class="text-center tm-down-arrow-link">
+          <i class="fas fa-2x fa-arrow-down tm-down-arrow"></i>
+        </a>
+      </div>      
+    </section>
 
-const MIME_TYPES = {
-  '.css': 'text/css; charset=utf-8',
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'application/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-  '.ttf': 'font/ttf',
-  '.eot': 'application/vnd.ms-fontobject',
-};
+    <section id="trust" class="tm-section-pad-top tm-trust-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center mb-5">
+            <h2 class="tm-text-primary tm-section-title mb-3">Who We Help</h2>
+            <p class="mx-auto tm-section-desc">
+              KUAC is built for people facing displacement, not for generic traffic or lead capture. The focus is practical support for those who need trustworthy help now.
+            </p>
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="tm-trust-card">
+              <i class="fas fa-2x fa-globe-europe tm-trust-icon"></i>
+              <h3>Displaced Families</h3>
+              <p>Families moving through Europe who need travel guidance, shelter referrals, documents, and a stable next step, especially in Poland, Slovakia, and Romania.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="tm-trust-card">
+              <i class="fas fa-2x fa-shield-alt tm-trust-icon"></i>
+              <h3>Women and Children</h3>
+              <p>People who often need the safest routes, calmer arrivals, family coordination, and respectful handling.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="tm-trust-card">
+              <i class="fas fa-2x fa-language tm-trust-icon"></i>
+              <h3>Elderly Adults</h3>
+              <p>Older people who may need slower-paced support, accessibility considerations, medication guidance, and care links.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="tm-trust-card">
+              <i class="fas fa-2x fa-hands-helping tm-trust-icon"></i>
+              <h3>Local Partners</h3>
+              <p>NGOs, volunteers, host groups, and community services that help turn referrals into real support on the ground.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-function send(res, statusCode, body, headers = {}) {
-  res.writeHead(statusCode, {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    ...headers,
-  });
-  res.end(JSON.stringify(body));
-}
+    <section id="about" class="tm-section-pad-top tm-about-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="tm-about-panel">
+              <p class="tm-kicker">About KUAC</p>
+              <h2 class="tm-text-primary tm-section-title mb-4">A Practical, Human Response to Displacement</h2>
+              <p class="tm-intro-text mb-4">
+                Krains UniAid Center exists to help Ukrainians and other displaced families navigate travel, arrival, and settlement across Europe, including Poland, Slovakia, Romania, and neighboring routes, with less fear and more clarity. We are built around simple, human support: listening first, giving clear guidance, and connecting people to the right help quickly.
+              </p>
+              <p class="tm-intro-text mb-0">
+                The goal is not just to move people from one place to another. It is to help them arrive safely, stay informed, and find the support systems that make the next stage of life more stable.
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="tm-about-panel tm-about-panel-alt">
+              <h3 class="tm-text-primary mb-4">What KUAC covers</h3>
+              <ul class="tm-service-list">
+                <li>Travel planning, route guidance, and document preparation</li>
+                <li>Arrival help, shelter referrals, and emergency contacts</li>
+                <li>Food, healthcare, and essentials coordination through partners</li>
+                <li>Family support, school access, and settlement referrals across EU regions</li>
+              </ul>
+              <div class="row tm-mini-stats text-center mt-4">
+                <div class="col-4">
+                  <div class="tm-mini-stat">
+                    <strong>24/7</strong>
+                    <span>Reachable intent</span>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="tm-mini-stat">
+                    <strong>EU</strong>
+                    <span>Support focus</span>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="tm-mini-stat">
+                    <strong>Safe</strong>
+                    <span>First response</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-function serveFile(res, filePath) {
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end('Not found');
-      return;
-    }
+    <section id="whatwedo" class="tm-section-pad-top">
+      
+      <div class="container">
 
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-    res.writeHead(200, {
-      'Content-Type': contentType,
-      'Cache-Control': 'no-cache',
-      'Access-Control-Allow-Origin': '*',
-    });
-    res.end(content);
-  });
-}
+            <div class="row tm-content-box">
+                <div class="col-lg-12 col-xl-12">
+                    <div class="tm-intro-text-container">
+                        <h2 class="tm-text-primary mb-4 tm-section-title">How KUAC Helps</h2>
+                        <p class="mb-4 tm-intro-text">
+                          KUAC is a humanitarian support hub focused on the EU region. We help people move safely, reach trusted local services, and take the next step toward housing, schooling, work, and stability with dignity, especially across Poland, Slovakia, and Romania.</p>
+                        <p class="mb-4 tm-intro-text">
+                          The work is simple and direct: reduce confusion, protect dignity, and connect each person to the right help as quickly as possible. That can include route planning, emergency contacts, shelter referrals, local language support, and follow-up after arrival.</p>
+                    </div>
+                </div>
 
-function getSafePath(urlPath) {
-  const requested = urlPath === '/' ? '/index.html' : urlPath;
-  const normalized = path.normalize(decodeURIComponent(requested)).replace(/^(\.\.[/\\])+/, '');
-  const resolved = path.join(ROOT, normalized);
-  return resolved.startsWith(ROOT) ? resolved : null;
-}
+            </div>
+            
+            <div class="row tm-content-box">
+                <div class="col-lg-1">
+                    <i class="fas fa-3x fa-route text-center tm-icon"></i>
+                </div>
+                <div class="col-lg-5">
+                    <div class="tm-intro-text-container">
+                        <h2 class="tm-text-primary mb-4">Travel Support</h2>
+                        <p class="mb-4 tm-intro-text">
+                          Help with route planning, transit guidance, documentation checklists, and practical travel preparation for people moving across borders safely and with dignity.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-1">
+                    <i class="fas fa-3x fa-hand-holding-heart text-center tm-icon"></i>
+                </div>
+                <div class="col-lg-5">
+                    <div class="tm-intro-text-container">
+                        <h2 class="tm-text-primary mb-4">Arrival Assistance</h2>
+                        <p class="mb-4 tm-intro-text">
+                          Coordinating temporary shelter referrals, local contacts, emergency guidance, and the first steps toward housing, food, and healthcare access.</p>
+                    </div>
+                </div>
 
-function readJsonBody(req) {
-  return new Promise((resolve, reject) => {
-    let raw = '';
-    req.on('data', (chunk) => {
-      raw += chunk;
-      if (raw.length > 1e6) {
-        reject(new Error('Payload too large'));
-        req.destroy();
-      }
-    });
-    req.on('end', () => {
-      if (!raw) {
-        resolve({});
-        return;
-      }
-      try {
-        resolve(JSON.parse(raw));
-      } catch (error) {
-        reject(new Error('Invalid JSON body'));
-      }
-    });
-    req.on('error', reject);
-  });
-}
+            </div>
+            
+            <div class="row tm-content-box">
+                <div class="col-lg-1">
+                    <i class="fas fa-3x fa-home text-center tm-icon"></i>
+                </div>
+                <div class="col-lg-5">
+                    <div class="tm-intro-text-container">
+                        <h2 class="tm-text-primary mb-4">Stability Path</h2>
+                        <p class="mb-4 tm-intro-text">
+                      Support for longer-term stability, including education referrals, job search preparation, and access to reliable community resources that help families rebuild.</p>
+                          
+                          <div class="tm-continue">
+                            <a href="#testimonials" class="tm-intro-text tm-btn-primary">Our Impact</a>
+                          </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-1">
+                    <i class="fas fa-3x fa-users text-center tm-icon"></i>
+                </div>
+                <div class="col-lg-5">
+                    <div class="tm-intro-text-container">
+                      <h2 class="tm-text-primary mb-4">Community Network</h2>
+                        <p class="mb-4 tm-intro-text">
+                      We work with volunteers, partner groups, and local support teams so people are not navigating displacement alone.</p>
+                        <p class="mb-4 tm-intro-text">
+                      Our referrals are meant to be useful in real life: arrival help, food and essentials, family support, school access, and links to trusted local services across the EU.</p>
+                          
+                          <div class="tm-continue">
+                            <a href="#contact" class="tm-intro-text tm-btn-primary">Get In Touch</a>
+                          </div>
+                    </div>
+                </div>
 
-async function sendCallbackEmail(submission) {
-  const lines = [
-    'New KUAC callback request',
-    '',
-    `Name: ${submission.name}`,
-    `Phone: ${submission.phone}`,
-    `Message: ${submission.message || '(none)'}`,
-    `Received at: ${submission.receivedAt}`,
-    `IP: ${submission.ip || '(unknown)'}`,
-    `User Agent: ${submission.userAgent || '(unknown)'}`,
-  ];
+            </div>
 
-  const formSubmitPayload = new URLSearchParams({
-    name: submission.name,
-    phone: submission.phone,
-    message: submission.message || '',
-    _subject: `KUAC Callback Request: ${submission.name}`,
-    _template: 'table',
-    _captcha: 'false',
-    _replyto: SMTP_USER || CALLBACK_TO_EMAIL,
-  });
+        </div>
+      
+    </section>
 
-  try {
-    const response = await fetch(FORMSUBMIT_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Origin': FORMSUBMIT_ORIGIN,
-        'Referer': `${FORMSUBMIT_ORIGIN}/`,
-      },
-      body: formSubmitPayload.toString(),
-    });
+    <section id="support" class="tm-section-pad-top tm-support-band">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center mb-5">
+            <p class="tm-kicker tm-kicker-light">Support KUAC</p>
+            <h2 class="text-white tm-section-title mb-3">Help People Move Toward Safety and Stability</h2>
+            <p class="mx-auto tm-section-desc tm-support-desc">
+              This work depends on volunteers, local partners, and donors who care about practical help. A small contribution can help connect someone to transport, information, or an essential referral.
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card">
+              <i class="fas fa-hand-holding-usd tm-support-icon"></i>
+              <h3>Donate Support</h3>
+              <p>Help fund referrals, communication, travel coordination, and emergency response support for families in need.</p>
+              <a href="#contact" class="tm-intro-text tm-btn-primary">Give Support</a>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card">
+              <i class="fas fa-hands-helping tm-support-icon"></i>
+              <h3>Volunteer With KUAC</h3>
+              <p>Join intake, translation, local coordination, and outreach work that helps people move through the process more safely.</p>
+              <a href="#contact" class="tm-intro-text tm-btn-primary">Volunteer</a>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card">
+              <i class="fas fa-network-wired tm-support-icon"></i>
+              <h3>Partner With Us</h3>
+              <p>We welcome NGOs, hosts, interpreters, care teams, and service providers across Europe, especially in Poland, Slovakia, Romania, and surrounding routes, who can strengthen the network.</p>
+              <a href="#contact" class="tm-intro-text tm-btn-primary">Partner</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section id="testimonials" class="tm-section-pad-top tm-parallax-2">      
+      <div class="container tm-testimonials-content">
+        <div class="row">
+          <div class="col-lg-12 tm-content-box">
+            <h2 class="text-white text-center mb-4 tm-section-title">How Support Works</h2>
+            <p class="mx-auto tm-section-desc text-center">
+                A simple intake-to-referral process designed to reduce confusion and move people toward the right support as quickly as possible.
+              </p>
+            <div class="mx-auto tm-gallery-container tm-gallery-container-2">
+              <div class="tm-testimonials-carousel">
+                <figure class="tm-testimonial-item">
+                  <img src="https://images.pexels.com/photos/6647115/pexels-photo-6647115.jpeg?cs=srgb&dl=pexels-rdne-6647115.jpg&fm=jpg" alt="Volunteers opening aid boxes" class="img-fluid mx-auto" loading="lazy" decoding="async">
+                  <blockquote>1. We start with a short intake to understand needs, urgency, language, family situation, and destination goals.</blockquote>
+                  <figcaption>Start Here</figcaption>
+                </figure>
 
-    const result = await response.json().catch(() => ({}));
+                <figure class="tm-testimonial-item">
+                  <img src="https://images.pexels.com/photos/6646920/pexels-photo-6646920.jpeg?cs=srgb&dl=pexels-rdne-6646920.jpg&fm=jpg" alt="Volunteer carrying food aid" class="img-fluid mx-auto" loading="lazy" decoding="async">
+                  <blockquote>2. We map out route guidance, border transit considerations, and practical documents before travel begins.</blockquote>
+                  <figcaption>Plan Safely</figcaption>
+                </figure>
 
-    if (!response.ok) {
-      throw new Error(result.message || `FormSubmit returned ${response.status}`);
-    }
+                <figure class="tm-testimonial-item">
+                  <img src="https://images.pexels.com/photos/6918512/pexels-photo-6918512.jpeg?cs=srgb&dl=pexels-ahmed-akacha-3313934-6918512.jpg&fm=jpg" alt="Family in refugee camp" class="img-fluid mx-auto" loading="lazy" decoding="async">
+                  <blockquote>3. We connect people to trusted local partners for shelter, food, healthcare, and arrival assistance.</blockquote>
+                  <figcaption>Get Referred</figcaption>
+                </figure>
 
-    if (typeof result.success === 'string' && result.success === 'false' && typeof result.message === 'string' && /activation/i.test(result.message)) {
-      return {
-        message: 'Callback request received. Check the inbox for the FormSubmit activation email and confirm it once, then future submissions will arrive there.',
+                <figure class="tm-testimonial-item">
+                  <img src="https://images.pexels.com/photos/12102732/pexels-photo-12102732.jpeg?cs=srgb&dl=pexels-ahmed-akacha-3313934-12102732.jpg&fm=jpg" alt="Volunteers at refugee camp" class="img-fluid mx-auto" loading="lazy" decoding="async">
+                  <blockquote>4. Follow-up support helps keep the process organized and reduces the stress of trying to coordinate everything alone.</blockquote>
+                  <figcaption>Stay Supported</figcaption>
+                </figure>
+
+                <figure class="tm-testimonial-item">
+                  <img src="https://images.pexels.com/photos/6647115/pexels-photo-6647115.jpeg?cs=srgb&dl=pexels-rdne-6647115.jpg&fm=jpg" alt="Aid supplies being packed" class="img-fluid mx-auto" loading="lazy" decoding="async">
+                  <blockquote>5. We stay aligned with volunteers and partner groups so the next step is practical, safe, and consistent.</blockquote>
+                  <figcaption>Next Step</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tm-bg-overlay"></div>
+    </section>
+    
+    <section id="gallery" class="tm-section-pad-top">
+      <div class="container tm-container-gallery">
+        <div class="row">
+          <div class="text-center col-12">
+              <h2 class="tm-text-primary tm-section-title mb-4">Support in Action</h2>
+              <p class="mx-auto tm-section-desc">
+                Realistic scenes that reflect the work KUAC is built around: relief supplies, refugee support, and compassionate help at the point of need.
+              </p>
+          </div>            
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="mx-auto tm-gallery-container">
+                    <div class="grid tm-gallery">
+                      <a href="https://images.pexels.com/photos/6647115/pexels-photo-6647115.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1">
+                        <figure class="effect-honey tm-gallery-item">
+                          <img src="https://images.pexels.com/photos/6647115/pexels-photo-6647115.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1" alt="Volunteers opening aid boxes" class="img-fluid" loading="lazy" decoding="async">
+                          <figcaption>
+                            <h2><i>Aid <span>Boxes</span></i></h2>
+                          </figcaption>
+                        </figure>
+                      </a>
+                      <a href="https://images.pexels.com/photos/6647116/pexels-photo-6647116.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1">
+                        <figure class="effect-honey tm-gallery-item">
+                          <img src="https://images.pexels.com/photos/6647116/pexels-photo-6647116.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1" alt="Volunteer wearing a mask and gloves" class="img-fluid" loading="lazy" decoding="async">
+                          <figcaption>
+                            <h2><i>Safety <span>Care</span></i></h2>
+                          </figcaption>
+                        </figure>
+                      </a>
+                      <a href="https://images.pexels.com/photos/6646920/pexels-photo-6646920.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1">
+                        <figure class="effect-honey tm-gallery-item">
+                          <img src="https://images.pexels.com/photos/6646920/pexels-photo-6646920.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1" alt="Volunteer carrying a box of food aid" class="img-fluid" loading="lazy" decoding="async">
+                          <figcaption>
+                            <h2><i>Food <span>Support</span></i></h2>
+                          </figcaption>
+                        </figure>
+                      </a>
+                      <a href="https://images.pexels.com/photos/6646862/pexels-photo-6646862.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1">
+                        <figure class="effect-honey tm-gallery-item">
+                          <img src="https://images.pexels.com/photos/6646862/pexels-photo-6646862.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1" alt="Volunteer holding a box of food aid" class="img-fluid" loading="lazy" decoding="async">
+                          <figcaption>
+                            <h2><i>Volunteer <span>Care</span></i></h2>
+                          </figcaption>
+                        </figure>
+                      </a>
+                      <a href="https://images.pexels.com/photos/6646869/pexels-photo-6646869.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1">
+                        <figure class="effect-honey tm-gallery-item">
+                          <img src="https://images.pexels.com/photos/6646869/pexels-photo-6646869.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1" alt="Volunteers carrying relief goods" class="img-fluid" loading="lazy" decoding="async">
+                          <figcaption>
+                            <h2><i>Relief <span>Team</span></i></h2>
+                          </figcaption>
+                        </figure>
+                      </a>
+                      <a href="https://images.pexels.com/photos/7156156/pexels-photo-7156156.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1">
+                        <figure class="effect-honey tm-gallery-item">
+                          <img src="https://images.pexels.com/photos/7156156/pexels-photo-7156156.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1" alt="Close-up of donation boxes" class="img-fluid" loading="lazy" decoding="async">
+                          <figcaption>
+                            <h2><i>Supply <span>Flow</span></i></h2>
+                          </figcaption>
+                        </figure>
+                      </a>
+                      <a href="https://images.pexels.com/photos/13566304/pexels-photo-13566304.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1">
+                        <figure class="effect-honey tm-gallery-item">
+                          <img src="https://images.pexels.com/photos/13566304/pexels-photo-13566304.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1" alt="Women receiving medical aid in Ukraine" class="img-fluid" loading="lazy" decoding="async">
+                          <figcaption>
+                            <h2><i>Medical <span>Aid</span></i></h2>
+                          </figcaption>
+                        </figure>
+                      </a>
+                      <a href="https://images.pexels.com/photos/7385834/pexels-photo-7385834.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1">
+                        <figure class="effect-honey tm-gallery-item">
+                          <img src="https://images.pexels.com/photos/7385834/pexels-photo-7385834.jpeg?auto=compress&cs=tinysrgb&w=900&h=675&dpr=1" alt="Mother and child in refugee camp" class="img-fluid" loading="lazy" decoding="async">
+                          <figcaption>
+                            <h2><i>Refugee <span>Care</span></i></h2>
+                          </figcaption>
+                        </figure>
+                      </a>
+                    </div>
+                </div>                
+            </div>        
+          </div>
+      </div>
+    </section>
+
+    <section id="partner-access" class="tm-section-pad-top tm-partner-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center mb-5 tm-partner-header">
+            <p class="tm-kicker">Partner Access</p>
+            <h2 class="tm-text-primary tm-section-title mb-3">Partner access to full request details</h2>
+            <p class="mx-auto tm-section-desc">
+              Partner organizations can preview requests for free, then pay to unlock the full details they need to respond faster.
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card tm-partner-card">
+              <i class="fas fa-eye tm-support-icon"></i>
+              <h3>Basic</h3>
+              <p>Free preview access with limited request details and summary-only visibility.</p>
+              <strong>Free</strong>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card tm-partner-card tm-partner-card-featured">
+              <i class="fas fa-unlock-alt tm-support-icon"></i>
+              <h3>Unlock Full Request</h3>
+              <p>Pay once to open the full request details for a specific support lead.</p>
+              <strong>$10 per request</strong>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-4">
+            <div class="tm-support-card tm-partner-card">
+              <i class="fas fa-calendar-alt tm-support-icon"></i>
+              <h3>Pro Subscription</h3>
+              <p>Monthly access to all new requests, better for long-term partners and teams.</p>
+              <strong>$50 / month</strong>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <a href="#contact" class="btn tm-btn-primary tm-hero-btn">Request Partner Access</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section id="contact" class="tm-section-pad-top tm-parallax-2">
+    
+      <div class="container tm-container-contact">
+        
+        <div class="row">
+            
+            <div class="text-center col-12">
+                <h2 class="tm-section-title mb-4">Contact KUAC</h2>
+                <p class="mb-4">
+                  If you need help, want to volunteer, or can partner with KUAC to support displaced families across Europe, please reach out through the channels below.
+                </p>
+                <p class="mb-5 tm-contact-note">
+                  If someone is in immediate danger, contact local emergency services first. KUAC is a support and referral hub, not an emergency response agency.
+                </p>
+            </div>
+            
+            <div class="col-sm-12 col-md-6">
+              <div class="tm-callback-card">
+                <p class="tm-kicker tm-kicker-light">Request a Call-back</p>
+                <h3>Start a callback request</h3>
+                <p class="tm-callback-note">
+                  Put the <strong>client's email</strong> in the email field, not KUAC's. KUAC receives the request at <strong>kua.center@gmail.com</strong>, and the client gets the auto-reply.
+                </p>
+                <button
+                  class="btn tm-btn-primary tm-callback-toggle"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#callbackFormPanel"
+                  aria-expanded="false"
+                  aria-controls="callbackFormPanel"
+                >
+                  Request a Call-back
+                  <i class="fas fa-chevron-down tm-callback-toggle-icon" aria-hidden="true"></i>
+                </button>
+                <div class="collapse" id="callbackFormPanel">
+                  <div class="tm-callback-form-panel">
+                    <form id="callbackForm" class="tm-callback-form" action="https://formsubmit.co/kua.center@gmail.com" method="POST" enctype="multipart/form-data" data-form-endpoint="https://formsubmit.co/kua.center@gmail.com">
+                      <div class="row tm-callback-row">
+                        <div class="col-md-6 mb-3">
+                          <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <input id="email" name="email" type="email" placeholder="Client Email for Auto-reply, not KUAC's" class="tm-input mb-0" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <input id="phone" name="phone" type="tel" placeholder="Phone Number, e.g. +49 151 23456789" class="tm-input mb-0" required />
+                        </div>
+                      </div>
+                      <textarea id="message" name="message" rows="5" placeholder="Optional note, preferred time, or country of residence" class="tm-input"></textarea>
+                      <div class="tm-file-wrap">
+                        <label for="attachment" class="tm-file-label">Attach a photo or document</label>
+                        <input id="attachment" name="attachment" type="file" class="tm-input tm-file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx" />
+                        <p class="tm-file-help">Optional. You can include a photo, ID scan, or other supporting file with the request.</p>
+                      </div>
+                      <input type="hidden" name="_subject" value="KUAC Callback Request" />
+                      <input type="hidden" name="_template" value="table" />
+                      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+                      <input type="hidden" name="_next" value="https://kua-center.onrender.com/#contact" />
+                      <input
+                        type="hidden"
+                        name="_autoresponse"
+                        value="Dear Client,&#10;&#10;Your request has been successfully submitted and is now being reviewed.&#10;&#10;We are currently matching your request with relevant support partners who may be able to assist you.&#10;&#10;Please note that submitting a request on our platform is completely free.&#10;&#10;You will be contacted if a suitable partner is available.&#10;&#10;Kind regards,&#10;Support Team"
+                      />
+                      <p class="tm-form-status tm-form-hint">
+                        Next step: press Send to KUAC. The support inbox gets the request, and the email field must contain the client's address for the auto-reply.
+                      </p>
+                      <button type="submit" class="btn tm-btn-submit">Send to KUAC</button>
+                      <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-sm-12 col-md-6">
+              <div class="tm-contact-card">
+                <p class="tm-kicker tm-kicker-light">Direct Contacts</p>
+                <h3>Reach KUAC the way that suits you best</h3>
+                <p class="tm-contact-note">
+                  Use the callback form for direct support requests, or choose one of the contact channels below for partnership and network questions.
+                </p>
+                <div class="tm-contact-list">
+                  <div class="contact-item">
+                    <a rel="nofollow" href="mailto:kua.center@gmail.com?subject=KUAC%20Volunteer%20Chat" class="item-link">
+                        <i class="far fa-comment"></i>
+                        <div>
+                          <strong>Volunteer & Partner Chat</strong>
+                          <span>Questions about helping, partnering, or supporting KUAC</span>
+                        </div>
+                    </a>              
+                  </div>
+                  
+                  <div class="contact-item">
+                    <a rel="nofollow" href="mailto:kua.center@gmail.com" class="item-link">
+                        <i class="far fa-envelope"></i>
+                        <div>
+                          <strong>kua.center@gmail.com</strong>
+                          <span>Email for general requests and follow-up</span>
+                        </div>
+                    </a>              
+                  </div>
+                  
+                  <div class="contact-item">
+                    <a rel="nofollow" href="#gallery" class="item-link">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                          <strong>EU Service Network</strong>
+                          <span>Regional support and arrival hubs</span>
+                        </div>
+                    </a>              
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mt-4">
+              <div class="tm-footer-grid">
+                <div>
+                  <span class="tm-footer-label">Service Hours</span>
+                  <strong>Monday to Friday, 9:00 to 18:00 CET</strong>
+                </div>
+                <div>
+                  <span class="tm-footer-label">Primary Region</span>
+                  <strong>EU support routes, arrival hubs, and local referrals</strong>
+                </div>
+                <div>
+                  <span class="tm-footer-label">Core Focus</span>
+                  <strong>Travel help, shelter, essentials, and settlement support</strong>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mt-4">
+              <div class="tm-footer-links">
+                <div class="tm-footer-links-left">
+                  <span class="tm-footer-label">Stay Connected</span>
+                  <a href="mailto:kua.center@gmail.com">kua.center@gmail.com</a>
+                </div>
+                <div class="tm-footer-links-right">
+                  <a href="#infinite" aria-label="Back to top"><i class="fas fa-arrow-up"></i></a>
+                  <a href="mailto:kua.center@gmail.com?subject=KUAC%20Volunteer%20Chat" aria-label="Email KUAC"><i class="far fa-envelope"></i></a>
+                  <a href="#contact" aria-label="Contact KUAC"><i class="fas fa-hands-helping"></i></a>
+                </div>
+              </div>
+            </div>
+            
+            
+        </div>
+        
+      </div>
+
+      <footer class="text-center small tm-footer">
+          <p class="mb-0">Copyright &copy; 2026 Krains UniAid Center (KUAC). <span>Humanitarian support and relocation assistance.</span></p>
+        </footer>
+
+    </section>
+
+    <script src="js/jquery-1.9.1.min.js"></script>     
+    <script src="slick/slick.min.js"></script>
+    <script src="js/easing.min.js"></script>
+    <script src="js/jquery.singlePageNav.min.js"></script>     
+    <script src="js/bootstrap.min.js"></script> 
+    <script src="config.js"></script>
+    <script>
+
+      // Parallax function
+        var background_image_parallax = function($object, multiplier, forceSet){
+        multiplier = typeof multiplier !== 'undefined' ? multiplier : 0.5;
+        multiplier = 1 - multiplier;
+        var $doc = $(document);
+        // $object.css({"background-attatchment" : "fixed"});
+
+        if(forceSet) {
+          var offset = window.innerHeight > 830 ? 210 : window.innerHeight > 680 ? 300 : window.innerHeight > 500 ? 400 : 450;
+          var from_top = $doc.scrollTop(),
+            bg_css = 'center ' +(multiplier * from_top - offset) + 'px';
+          $object.css({"background-position" : bg_css });
+        } else {
+          $(window).scroll(function(){          
+            var offset = window.innerHeight > 830 ? 210 : window.innerHeight > 680 ? 300 : window.innerHeight > 500 ? 400 : 450;
+            var from_top = $doc.scrollTop(),
+              bg_css = 'center ' +(multiplier * from_top - offset) + 'px';
+            $object.css({"background-position" : bg_css });
+          });
+        }
       };
-    }
+      
+      $(function(){
+        // Hero Section - Background Parallax
+        background_image_parallax($(".tm-parallax"), 0.30, false);
+        
+        // Handle window resize
+        window.addEventListener('resize', function(){
+          background_image_parallax($(".tm-parallax"), 0.30, true);
+        }, true);
 
-    if (result.success === 'false' && typeof result.message === 'string' && /activation/i.test(result.message)) {
-      return {
-        message: 'Callback request received. Check the inbox for the FormSubmit activation email and confirm it once, then future submissions will arrive there.',
-      };
-    }
-
-    return {
-      message: result.message || 'Callback request sent successfully',
-    };
-  } catch (formSubmitError) {
-    if (!mailTransport) {
-      throw new Error(`Unable to send callback email: ${formSubmitError.message || 'FormSubmit failure'}`);
-    }
-
-    await mailTransport.sendMail({
-      from: SMTP_FROM,
-      to: CALLBACK_TO_EMAIL,
-      replyTo: SMTP_USER || undefined,
-      subject: `KUAC Callback Request: ${submission.name}`,
-      text: lines.join('\n'),
-    });
-
-    return {
-      message: 'Callback request sent successfully',
-    };
-  }
-}
-
-const server = http.createServer(async (req, res) => {
-  const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    });
-    res.end();
-    return;
-  }
-
-  if (req.method === 'POST' && requestUrl.pathname === '/api/callback') {
-    try {
-      const body = await readJsonBody(req);
-      const name = String(body.name || '').trim();
-      const phone = String(body.phone || '').trim();
-      const message = String(body.message || '').trim();
-
-      if (!name || !phone) {
-        send(res, 400, {
-          ok: false,
-          error: 'name and phone are required',
+        // Detect window scroll and update navbar
+        $(window).scroll(function(e){          
+          if($(document).scrollTop() > 120) {
+            $('.tm-navbar').addClass("scroll");
+          } else {
+            $('.tm-navbar').removeClass("scroll");
+          }
         });
-        return;
-      }
+        
+        // Close mobile menu after click 
+        $('#tmNav a').on('click', function(){
+          $('.navbar-collapse').removeClass('show'); 
+        })
 
-      const submission = {
-        name,
-        phone,
-        message,
-        receivedAt: new Date().toISOString(),
-        ip: req.socket.remoteAddress || null,
-        userAgent: req.headers['user-agent'] || null,
-      };
+        // Scroll to corresponding section with animation
+        $('#tmNav').singlePageNav({
+          'easing': 'easeInOutExpo',
+          'speed': 600
+        });        
+        
+        // Add smooth scrolling to all links
+        // https://www.w3schools.com/howto/howto_css_smooth_scroll.asp
+        $("a").on('click', function(event) {
+          if (this.hash !== "") {
+            event.preventDefault();
+            var hash = this.hash;
+            var navOffset = $('.tm-navbar').outerHeight() || 0;
 
-      const result = await sendCallbackEmail(submission);
+            $('html, body').animate({
+              scrollTop: Math.max($(hash).offset().top - navOffset - 12, 0)
+            }, 600, 'easeInOutExpo', function(){
+              if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, document.title, hash);
+              } else {
+                window.location.hash = hash;
+              }
+            });
+          } // End if
+        });
 
-      send(res, 200, {
-        ok: true,
-        message: result.message || 'Callback request sent successfully',
+        $('.tm-testimonials-carousel').slick({
+          dots: true,
+          prevArrow: false,
+          nextArrow: false,
+          infinite: false,
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          responsive: [
+            {
+              breakpoint: 992,
+              settings: {
+                slidesToShow: 2
+              }
+            },
+            {
+              breakpoint: 768,
+              settings: {
+                slidesToShow: 2
+              }
+            }, 
+            {
+              breakpoint: 480,
+              settings: {
+                  slidesToShow: 1
+              }                 
+            }
+          ]
+        });
+
+        $('#callbackFormPanel').on('shown.bs.collapse', function () {
+          $('html, body').animate({
+            scrollTop: $(this).offset().top - 120
+          }, 450);
+        });
+
+        $('#callbackForm').on('submit', function () {
+          $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request...');
+        });
+
+        $('.tm-gallery').slick({
+          dots: true,
+          infinite: false,
+          slidesToShow: 5,
+          slidesToScroll: 2,
+          responsive: [
+          {
+            breakpoint: 1199,
+            settings: {
+              slidesToShow: 4,
+              slidesToScroll: 2
+            }
+          },
+          {
+            breakpoint: 991,
+            settings: {
+              slidesToShow: 3,
+              slidesToScroll: 2
+            }
+          },
+          {
+            breakpoint: 767,
+            settings: {
+              slidesToShow: 2,
+              slidesToScroll: 1
+            }
+          },
+          {
+            breakpoint: 480,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1
+            }
+          }
+        ]
+        });
       });
-    } catch (error) {
-      send(res, mailTransport ? 400 : 503, {
-        ok: false,
-        error: error.message || 'Unable to process callback request',
-      });
-    }
-    return;
-  }
-
-  if (req.method === 'GET' && requestUrl.pathname === '/api/health') {
-    send(res, 200, { ok: true, status: 'healthy' });
-    return;
-  }
-
-  const safePath = getSafePath(requestUrl.pathname);
-  if (!safePath) {
-    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('Bad request');
-    return;
-  }
-
-  fs.stat(safePath, (err, stats) => {
-    if (!err && stats.isFile()) {
-      serveFile(res, safePath);
-      return;
-    }
-
-    if (!path.extname(safePath)) {
-      serveFile(res, path.join(ROOT, 'index.html'));
-      return;
-    }
-
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('Not found');
-  });
-});
-
-server.listen(PORT, () => {
-  console.log(`KUAC site listening on port ${PORT}`);
-  console.log(`Callback emails will be sent to ${CALLBACK_TO_EMAIL}`);
-});
+    </script>
+  </body>
+</html>
