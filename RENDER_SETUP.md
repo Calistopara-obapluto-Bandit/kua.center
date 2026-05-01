@@ -19,13 +19,13 @@ This project is set up for Render's **Web Service** plan so the email can be sen
 Required runtime environment variables:
 
 - `CALLBACK_TO_EMAIL=kua.center@gmail.com`
-- `SMTP_HOST=...`
+- `SMTP_HOST=smtp.gmail.com`
 - `SMTP_PORT=587`
 - `SMTP_SECURE=false`
-- `SMTP_USER=...`
-- `SMTP_PASS=...`
+- `SMTP_USER=kua.center@gmail.com`
+- `SMTP_PASS=your-gmail-app-password`
 - `CALLBACK_FROM_NAME=Krains UniAid Center`
-- `CALLBACK_FROM_EMAIL=no-reply@kua.center`
+- `CALLBACK_FROM_EMAIL=kua.center@gmail.com`
 
 If SMTP is not configured yet, the backend falls back to FormSubmit so the site still stays alive while you finish setup.
 That fallback also relays uploaded files, although the sender branding will be FormSubmit until SMTP is configured.
@@ -49,6 +49,7 @@ That fallback also relays uploaded files, although the sender branding will be F
 ## First-Time Activation
 
 If you're using Gmail SMTP, create and use an app password instead of your normal Google password.
+Keep `SMTP_USER` and `CALLBACK_FROM_EMAIL` set to the same Gmail address so Gmail accepts the sender as authenticated.
 
 ## Quick Test
 
