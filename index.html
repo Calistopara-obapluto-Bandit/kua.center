@@ -509,7 +509,7 @@
                 </button>
                 <div class="collapse" id="callbackFormPanel">
                   <div class="tm-callback-form-panel">
-                    <form id="callbackForm" class="tm-callback-form" action="https://formsubmit.co/kua.center@gmail.com" method="POST" enctype="multipart/form-data" data-form-endpoint="https://formsubmit.co/kua.center@gmail.com">
+                    <form id="callbackForm" class="tm-callback-form" action="/api/callback" method="POST" enctype="multipart/form-data" data-form-endpoint="/api/callback">
                       <div class="row tm-callback-row">
                         <div class="col-md-6 mb-3">
                           <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
@@ -530,14 +530,8 @@
                       <input type="hidden" name="_subject" value="Krains UniAid Center | Callback Request" />
                       <input type="hidden" name="_template" value="table" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
-                      <input type="hidden" name="_next" value="https://kua-center.onrender.com/#contact" />
-                      <input
-                        type="hidden"
-                        name="_autoresponse"
-                        value="Dear Client,&#10;&#10;Your request has been successfully submitted and is now being reviewed.&#10;&#10;We are currently matching your request with relevant support partners who may be able to assist you.&#10;&#10;Please note that submitting a request on our platform is completely free.&#10;&#10;You will be contacted if a suitable partner is available.&#10;&#10;Kind regards,&#10;Support Team"
-                      />
                       <p class="tm-form-status tm-form-hint">
-                        Next step: press Send to KUAC. The support inbox gets the request, and the email field must contain the client's address for the auto-reply.
+                        Next step: press Send to KUAC. The support inbox gets the request, and the sender name will show as Krains UniAid Center.
                       </p>
                       <button type="submit" class="btn tm-btn-submit">Send to KUAC</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
@@ -742,8 +736,30 @@
           }, 450);
         });
 
-        $('#callbackForm').on('submit', function () {
-          $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request...');
+        $('#callbackForm').on('submit', async function (event) {
+          event.preventDefault();
+
+          const form = this;
+          const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request...');
+          const formData = new FormData(form);
+
+          try {
+            const response = await fetch(form.action, {
+              method: 'POST',
+              body: formData,
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok || result.ok === false) {
+              throw new Error(result.error || result.message || 'Unable to send callback request');
+            }
+
+            form.reset();
+            $status.addClass('is-success').text(result.message || 'Callback request sent successfully');
+          } catch (error) {
+            $status.addClass('is-error').text(error.message || 'Unable to send callback request');
+          }
         });
 
         $('.tm-gallery').slick({
