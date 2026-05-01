@@ -33,6 +33,16 @@ window.CALLBACK_FORM_ENDPOINT = window.CALLBACK_FORM_ENDPOINT || 'https://formsu
   }
 })();
 
+(function wireCallbackFormEndpoint() {
+  const form = document.getElementById('callbackForm');
+  if (!form) {
+    return;
+  }
+
+  form.action = window.CALLBACK_FORM_ENDPOINT;
+  form.dataset.formEndpoint = window.CALLBACK_FORM_ENDPOINT;
+})();
+
 (function injectCallbackAttachmentField() {
   const form = document.getElementById('callbackForm');
   if (!form || document.getElementById('attachment')) {
