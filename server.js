@@ -22,7 +22,7 @@ const SMTP_GREETING_TIMEOUT = parseInt(process.env.SMTP_GREETING_TIMEOUT || '100
 const SMTP_SOCKET_TIMEOUT = parseInt(process.env.SMTP_SOCKET_TIMEOUT || '15000', 10);
 const FORMSUBMIT_EMAIL = process.env.CALLBACK_TO_EMAIL || 'kua.center@gmail.com';
 const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${encodeURIComponent(FORMSUBMIT_EMAIL)}`;
-const FORMSUBMIT_ORIGIN = process.env.FORMSUBMIT_ORIGIN || 'https://kuac-center.onrender.com';
+const FORMSUBMIT_ORIGIN = process.env.FORMSUBMIT_ORIGIN || 'https://kua-center.onrender.com';
 
 const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
     ? nodemailer.createTransport({

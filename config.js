@@ -1,5 +1,5 @@
-// Submission endpoint for the callback form.
-window.CALLBACK_FORM_ENDPOINT = window.CALLBACK_FORM_ENDPOINT || 'https://formsubmit.co/kua.center@gmail.com';
+// Static-site submission endpoint for the callback form.
+window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
 (function rewriteCallbackCopy() {
   const card = document.querySelector('.tm-callback-card');
