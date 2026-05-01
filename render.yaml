@@ -1,8 +1,10 @@
 services:
   - type: web
     name: kuac-site
-    runtime: static
+    env: node
     branch: main
-    buildCommand: echo "Static site ready"
-    staticPublishPath: .
-    autoDeployTrigger: commit
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
