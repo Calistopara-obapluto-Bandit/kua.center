@@ -16,6 +16,8 @@ No runtime environment variables are needed for the static deployment.
 
 If you change the site domain, update the form `_next` URL in [`index.html`](./index.html) so the redirect comes back to the right page.
 
+If the live Render URL is still serving old backend content, delete the existing service and recreate it as a Static Site from this repo's [`render.yaml`](./render.yaml). Render will not convert an existing web service into a static site in place.
+
 ## Callback Flow
 
 - Fill in the client's name, phone, and note.
