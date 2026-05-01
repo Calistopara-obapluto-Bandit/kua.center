@@ -1,4 +1,5 @@
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
@@ -23,6 +24,8 @@ const SMTP_CONNECTION_TIMEOUT = parseInt(process.env.SMTP_CONNECTION_TIMEOUT || 
 const SMTP_GREETING_TIMEOUT = parseInt(process.env.SMTP_GREETING_TIMEOUT || '10000', 10);
 const SMTP_SOCKET_TIMEOUT = parseInt(process.env.SMTP_SOCKET_TIMEOUT || '15000', 10);
 const MAX_ATTACHMENT_BYTES = parseInt(process.env.MAX_ATTACHMENT_BYTES || String(10 * 1024 * 1024), 10);
+const FORMSUBMIT_EMAIL = process.env.CALLBACK_TO_EMAIL || 'kua.center@gmail.com';
+const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${encodeURIComponent(FORMSUBMIT_EMAIL)}`;
 
 const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
   ? nodemailer.createTransport({
@@ -272,21 +275,99 @@ async function sendCallbackEmail(submission) {
     : [];
 
   if (!mailTransport) {
-    throw new Error('SMTP is not configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS.');
+    return sendViaFormSubmit(submission);
   }
 
-  await mailTransport.sendMail({
-    from: `"${CALLBACK_FROM_NAME}" <${CALLBACK_FROM_EMAIL}>`,
-    to: CALLBACK_TO_EMAIL,
-    replyTo: submission.email,
-    subject: `${CALLBACK_FROM_NAME} | Callback Request: ${submission.name}`,
-    text: lines.join('\n'),
-    attachments,
-  });
+  try {
+    await mailTransport.sendMail({
+      from: `"${CALLBACK_FROM_NAME}" <${CALLBACK_FROM_EMAIL}>`,
+      to: CALLBACK_TO_EMAIL,
+      replyTo: submission.email,
+      subject: `${CALLBACK_FROM_NAME} | Callback Request: ${submission.name}`,
+      text: lines.join('\n'),
+      attachments,
+    });
+  } catch (smtpError) {
+    if (attachments.length > 0) {
+      throw new Error(`SMTP delivery failed for attachment request: ${smtpError.message || 'Unknown error'}`);
+    }
+
+    return sendViaFormSubmit(submission, smtpError);
+  }
 
   return {
     message: 'Callback request sent successfully',
   };
+}
+
+function sendViaFormSubmit(submission, previousError = null) {
+  const payload = new URLSearchParams({
+    name: submission.name,
+    email: submission.email,
+    phone: submission.phone,
+    message: submission.message || '',
+    _subject: `${CALLBACK_FROM_NAME} | Callback Request: ${submission.name}`,
+    _template: 'table',
+    _captcha: 'false',
+    _honey: '',
+  }).toString();
+
+  return new Promise((resolve, reject) => {
+    const request = https.request(FORMSUBMIT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Content-Length': Buffer.byteLength(payload),
+      },
+      timeout: 10000,
+    }, (response) => {
+      let raw = '';
+
+      response.setEncoding('utf8');
+      response.on('data', (chunk) => {
+        raw += chunk;
+      });
+      response.on('end', () => {
+        let result = {};
+
+        if (raw) {
+          try {
+            result = JSON.parse(raw);
+          } catch (parseError) {
+            result = { message: raw };
+          }
+        }
+
+        if (response.statusCode && response.statusCode >= 200 && response.statusCode < 300 && result.success !== 'false') {
+          resolve({
+            message: result.message || 'Callback request sent successfully',
+          });
+          return;
+        }
+
+        const activationMessage = typeof result.message === 'string' && /activation/i.test(result.message)
+          ? 'Callback request received. Check the inbox for the FormSubmit activation email and confirm it once, then future submissions will arrive there.'
+          : null;
+
+        if (activationMessage) {
+          resolve({ message: activationMessage });
+          return;
+        }
+
+        const fallbackReason = previousError ? ` SMTP fallback triggered after: ${previousError.message || previousError}` : '';
+        reject(new Error(`FormSubmit delivery failed.${fallbackReason}${raw ? ` Response: ${raw}` : ''}`));
+      });
+    });
+
+    request.on('error', (error) => {
+      const fallbackReason = previousError ? ` SMTP fallback triggered after: ${previousError.message || previousError}` : '';
+      reject(new Error(`FormSubmit request failed.${fallbackReason} ${error.message || 'Unknown error'}`));
+    });
+
+    request.write(payload);
+    request.end();
+  });
 }
 
 const server = http.createServer(async (req, res) => {

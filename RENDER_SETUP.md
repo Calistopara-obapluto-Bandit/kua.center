@@ -27,6 +27,8 @@ Required runtime environment variables:
 - `CALLBACK_FROM_NAME=Krains UniAid Center`
 - `CALLBACK_FROM_EMAIL=no-reply@kua.center`
 
+If SMTP is not configured yet, the backend falls back to FormSubmit so the site still stays alive while you finish setup.
+
 ## Callback Flow
 
 - Fill in the client's name, phone, and note.
