@@ -2,6 +2,11 @@
 
 This project is set up for Render's **Web Service** plan so the email can be sent with a branded sender name.
 
+## Live Site
+
+- Canonical URL: `https://kuac-center.onrender.com/`
+- Use this URL for redirects, bookmarks, and any future deployment notes.
+
 ## Service Type
 
 - Type: `Web Service`
