@@ -26,9 +26,24 @@ const MAX_ATTACHMENT_BYTES = parseInt(process.env.MAX_ATTACHMENT_BYTES || String
 const FORMSUBMIT_EMAIL = process.env.CALLBACK_TO_EMAIL || 'kua.center@gmail.com';
 const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${encodeURIComponent(FORMSUBMIT_EMAIL)}`;
 
-const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
+function normalizeSmtpHost(host) {
+  const trimmed = String(host || '').trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  if (/^stmp\./i.test(trimmed)) {
+    return `smtp.${trimmed.slice(5)}`;
+  }
+
+  return trimmed;
+}
+
+const NORMALIZED_SMTP_HOST = normalizeSmtpHost(SMTP_HOST);
+
+const mailTransport = NORMALIZED_SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
   ? nodemailer.createTransport({
-      host: SMTP_HOST,
+      host: NORMALIZED_SMTP_HOST,
       port: SMTP_PORT,
       secure: SMTP_SECURE,
       connectionTimeout: SMTP_CONNECTION_TIMEOUT,
