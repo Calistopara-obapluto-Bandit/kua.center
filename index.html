@@ -75,20 +75,12 @@
         </div>        
       </div>
 
-const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
-    ? nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: SMTP_PORT,
-      secure: SMTP_SECURE,
-      connectionTimeout: SMTP_CONNECTION_TIMEOUT,
-      greetingTimeout: SMTP_GREETING_TIMEOUT,
-      socketTimeout: SMTP_SOCKET_TIMEOUT,
-      auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS,
-      },
-    })
-  : null;
+      <div class="tm-next tm-intro-next">
+        <a href="#whatwedo" class="text-center tm-down-arrow-link">
+          <i class="fas fa-2x fa-arrow-down tm-down-arrow"></i>
+        </a>
+      </div>      
+    </section>
 
     <section id="trust" class="tm-section-pad-top tm-trust-section">
       <div class="container">
@@ -183,13 +175,9 @@ const mailTransport = SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS
       </div>
     </section>
 
-function serveFile(res, filePath) {
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end('Not found');
-      return;
-    }
+    <section id="whatwedo" class="tm-section-pad-top">
+      
+      <div class="container">
 
             <div class="row tm-content-box">
                 <div class="col-lg-12 col-xl-12">
@@ -202,59 +190,71 @@ function serveFile(res, filePath) {
                     </div>
                 </div>
 
-function getSafePath(urlPath) {
-  const requested = urlPath === '/' ? '/index.html' : urlPath;
-  const normalized = path.normalize(decodeURIComponent(requested)).replace(/^(\.\.[/\\])+/, '');
-  const resolved = path.join(ROOT, normalized);
-  return resolved.startsWith(ROOT) ? resolved : null;
-}
+            </div>
+            
+            <div class="row tm-content-box">
+                <div class="col-lg-1">
+                    <i class="fas fa-3x fa-route text-center tm-icon"></i>
+                </div>
+                <div class="col-lg-5">
+                    <div class="tm-intro-text-container">
+                        <h2 class="tm-text-primary mb-4">Travel Support</h2>
+                        <p class="mb-4 tm-intro-text">
+                          Help with route planning, transit guidance, documentation checklists, and practical travel preparation for people moving across borders safely and with dignity.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-1">
+                    <i class="fas fa-3x fa-hand-holding-heart text-center tm-icon"></i>
+                </div>
+                <div class="col-lg-5">
+                    <div class="tm-intro-text-container">
+                        <h2 class="tm-text-primary mb-4">Arrival Assistance</h2>
+                        <p class="mb-4 tm-intro-text">
+                          Coordinating temporary shelter referrals, local contacts, emergency guidance, and the first steps toward housing, food, and healthcare access.</p>
+                    </div>
+                </div>
 
-function readJsonBody(req) {
-  return new Promise((resolve, reject) => {
-    let raw = '';
-    req.on('data', (chunk) => {
-      raw += chunk;
-      if (raw.length > 1e6) {
-        reject(new Error('Payload too large'));
-        req.destroy();
-      }
-    });
-    req.on('end', () => {
-      if (!raw) {
-        resolve({});
-        return;
-      }
-      try {
-        resolve(JSON.parse(raw));
-      } catch (error) {
-        reject(new Error('Invalid JSON body'));
-      }
-    });
-    req.on('error', reject);
-  });
-}
+            </div>
+            
+            <div class="row tm-content-box">
+                <div class="col-lg-1">
+                    <i class="fas fa-3x fa-home text-center tm-icon"></i>
+                </div>
+                <div class="col-lg-5">
+                    <div class="tm-intro-text-container">
+                        <h2 class="tm-text-primary mb-4">Stability Path</h2>
+                        <p class="mb-4 tm-intro-text">
+                      Support for longer-term stability, including education referrals, job search preparation, and access to reliable community resources that help families rebuild.</p>
+                          
+                          <div class="tm-continue">
+                            <a href="#testimonials" class="tm-intro-text tm-btn-primary">Our Impact</a>
+                          </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-1">
+                    <i class="fas fa-3x fa-users text-center tm-icon"></i>
+                </div>
+                <div class="col-lg-5">
+                    <div class="tm-intro-text-container">
+                      <h2 class="tm-text-primary mb-4">Community Network</h2>
+                        <p class="mb-4 tm-intro-text">
+                      We work with volunteers, partner groups, and local support teams so people are not navigating displacement alone.</p>
+                        <p class="mb-4 tm-intro-text">
+                      Our referrals are meant to be useful in real life: arrival help, food and essentials, family support, school access, and links to trusted local services across the EU.</p>
+                          
+                          <div class="tm-continue">
+                            <a href="#contact" class="tm-intro-text tm-btn-primary">Get In Touch</a>
+                          </div>
+                    </div>
+                </div>
 
-async function sendCallbackEmail(submission) {
-  const lines = [
-    'New KUAC callback request',
-    '',
-    `Name: ${submission.name}`,
-    `Phone: ${submission.phone}`,
-    `Message: ${submission.message || '(none)'}`,
-    `Received at: ${submission.receivedAt}`,
-    `IP: ${submission.ip || '(unknown)'}`,
-    `User Agent: ${submission.userAgent || '(unknown)'}`,
-  ];
+            </div>
 
-  const formSubmitPayload = new URLSearchParams({
-    name: submission.name,
-    phone: submission.phone,
-    message: submission.message || '',
-    _subject: `KUAC Callback Request: ${submission.name}`,
-    _template: 'table',
-    _captcha: 'false',
-    _replyto: SMTP_USER || CALLBACK_TO_EMAIL,
-  });
+        </div>
+      
+    </section>
 
     <section id="support" class="tm-section-pad-top tm-support-band">
       <div class="container">
@@ -312,11 +312,17 @@ async function sendCallbackEmail(submission) {
                   <figcaption>Start Here</figcaption>
                 </figure>
 
-    const result = await response.json().catch(() => ({}));
+                <figure class="tm-testimonial-item">
+                  <img src="https://images.pexels.com/photos/6646920/pexels-photo-6646920.jpeg?cs=srgb&dl=pexels-rdne-6646920.jpg&fm=jpg" alt="Volunteer carrying food aid" class="img-fluid mx-auto" loading="lazy" decoding="async">
+                  <blockquote>2. We map out route guidance, border transit considerations, and practical documents before travel begins.</blockquote>
+                  <figcaption>Plan Safely</figcaption>
+                </figure>
 
-    if (!response.ok) {
-      throw new Error(result.message || `FormSubmit returned ${response.status}`);
-    }
+                <figure class="tm-testimonial-item">
+                  <img src="https://images.pexels.com/photos/6918512/pexels-photo-6918512.jpeg?cs=srgb&dl=pexels-ahmed-akacha-3313934-6918512.jpg&fm=jpg" alt="Family in refugee camp" class="img-fluid mx-auto" loading="lazy" decoding="async">
+                  <blockquote>3. We connect people to trusted local partners for shelter, food, healthcare, and arrival assistance.</blockquote>
+                  <figcaption>Get Referred</figcaption>
+                </figure>
 
                 <figure class="tm-testimonial-item">
                   <img src="https://images.pexels.com/photos/12102732/pexels-photo-12102732.jpeg?cs=srgb&dl=pexels-ahmed-akacha-3313934-12102732.jpg&fm=jpg" alt="Volunteers at refugee camp" class="img-fluid mx-auto" loading="lazy" decoding="async">
@@ -646,63 +652,29 @@ async function sendCallbackEmail(submission) {
           });
         }
       };
-    }
+      
+      $(function(){
+        // Hero Section - Background Parallax
+        background_image_parallax($(".tm-parallax"), 0.30, false);
+        
+        // Handle window resize
+        window.addEventListener('resize', function(){
+          background_image_parallax($(".tm-parallax"), 0.30, true);
+        }, true);
 
-    if (result.success === 'false' && typeof result.message === 'string' && /activation/i.test(result.message)) {
-      return {
-        message: 'Callback request received. Check the inbox for the FormSubmit activation email and confirm it once, then future submissions will arrive there.',
-      };
-    }
-
-    return {
-      message: result.message || 'Callback request sent successfully',
-    };
-  } catch (formSubmitError) {
-    if (!mailTransport) {
-      throw new Error(`Unable to send callback email: ${formSubmitError.message || 'FormSubmit failure'}`);
-    }
-
-    await mailTransport.sendMail({
-      from: SMTP_FROM,
-      to: CALLBACK_TO_EMAIL,
-      replyTo: SMTP_USER || undefined,
-      subject: `KUAC Callback Request: ${submission.name}`,
-      text: lines.join('\n'),
-    });
-
-    return {
-      message: 'Callback request sent successfully',
-    };
-  }
-}
-
-const server = http.createServer(async (req, res) => {
-  const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    });
-    res.end();
-    return;
-  }
-
-  if (req.method === 'POST' && requestUrl.pathname === '/api/callback') {
-    try {
-      const body = await readJsonBody(req);
-      const name = String(body.name || '').trim();
-      const phone = String(body.phone || '').trim();
-      const message = String(body.message || '').trim();
-
-      if (!name || !phone) {
-        send(res, 400, {
-          ok: false,
-          error: 'name and phone are required',
+        // Detect window scroll and update navbar
+        $(window).scroll(function(e){          
+          if($(document).scrollTop() > 120) {
+            $('.tm-navbar').addClass("scroll");
+          } else {
+            $('.tm-navbar').removeClass("scroll");
+          }
         });
-        return;
-      }
+        
+        // Close mobile menu after click 
+        $('#tmNav a').on('click', function(){
+          $('.navbar-collapse').removeClass('show'); 
+        })
 
         // Scroll to corresponding section with animation
         $('#tmNav').singlePageNav({
@@ -828,44 +800,6 @@ const server = http.createServer(async (req, res) => {
         ]
         });
       });
-    } catch (error) {
-      send(res, mailTransport ? 400 : 503, {
-        ok: false,
-        error: error.message || 'Unable to process callback request',
-      });
-    }
-    return;
-  }
-
-  if (req.method === 'GET' && requestUrl.pathname === '/api/health') {
-    send(res, 200, { ok: true, status: 'healthy' });
-    return;
-  }
-
-  const safePath = getSafePath(requestUrl.pathname);
-  if (!safePath) {
-    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('Bad request');
-    return;
-  }
-
-  fs.stat(safePath, (err, stats) => {
-    if (!err && stats.isFile()) {
-      serveFile(res, safePath);
-      return;
-    }
-
-    if (!path.extname(safePath)) {
-      serveFile(res, path.join(ROOT, 'index.html'));
-      return;
-    }
-
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('Not found');
-  });
-});
-
-server.listen(PORT, () => {
-  console.log(`KUAC site listening on port ${PORT}`);
-  console.log(`Callback emails will be sent to ${CALLBACK_TO_EMAIL}`);
-});
+    </script>
+  </body>
+</html>
