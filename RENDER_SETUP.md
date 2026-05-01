@@ -18,11 +18,13 @@ If you change the site domain, update the form `_next` URL in [`index.html`](./i
 
 ## Callback Flow
 
-- Client fills in name, email, phone, and note.
-- Client can also attach a photo or document if it helps explain the request.
+- Fill in the client's name, email, phone, and note.
+- Attach a photo or document if it helps explain the request.
+- Press `Send to KUAC` to submit the callback form.
 - FormSubmit emails the submission to `kua.center@gmail.com`.
 - The `_autoresponse` field sends the confirmation email to the client's email address.
-- The hidden `_replyto` field makes replies from the support inbox point back to the client email.
+- The client email field is the only address used for the auto-reply.
+- The support inbox is already the recipient via the form `action`.
 
 ## Attachment Notes
 
@@ -37,6 +39,7 @@ The first submission usually triggers a FormSubmit activation message to the rec
 ## Quick Test
 
 1. Open the live site.
-2. Submit the callback form with a test name, client email, and phone number.
-3. Check `kua.center@gmail.com` for the submission email.
-4. Check the client inbox for the autoresponse message.
+2. Fill in the callback form with a test name, client email, and phone number.
+3. Click `Send to KUAC`.
+4. Check `kua.center@gmail.com` for the submission email.
+5. Check the client inbox for the autoresponse message.
