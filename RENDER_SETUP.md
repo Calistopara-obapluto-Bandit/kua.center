@@ -16,6 +16,15 @@ No runtime environment variables are needed for the static deployment.
 
 If you change the site domain, update the form `_next` URL in [`index.html`](./index.html) so the redirect comes back to the right page.
 
+## Optional Backend Mode
+
+If you decide to run [`server.js`](./server.js) instead of the static FormSubmit flow, set these Render environment variables:
+
+- `CALLBACK_TO_EMAIL=kua.center@gmail.com`
+- `FORMSUBMIT_ORIGIN=https://kuac-center.onrender.com`
+
+The `FORMSUBMIT_ORIGIN` value should match the live Render domain exactly.
+
 ## Callback Flow
 
 - Fill in the client's name, phone, and note.
