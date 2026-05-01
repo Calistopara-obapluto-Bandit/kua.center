@@ -14,12 +14,12 @@ window.CALLBACK_FORM_ENDPOINT = window.CALLBACK_FORM_ENDPOINT || 'https://formsu
 
   const note = card.querySelector('.tm-callback-note');
   if (note) {
-    note.innerHTML = 'Fill in the client details, add a file if it helps, then submit the request. KUAC receives it at <strong>kua.center@gmail.com</strong> and the client gets the auto-reply.';
+    note.innerHTML = 'Put the <strong>client\'s email</strong> in the email field, not KUAC\'s. KUAC receives the request at <strong>kua.center@gmail.com</strong>, and the client gets the auto-reply.';
   }
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = 'Next step: press Submit Request. The support inbox receives the request, and the client email is used for the auto-reply.';
+    hint.textContent = "Next step: press Send to KUAC. The support inbox gets the request, and the email field must contain the client's address for the auto-reply.";
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
