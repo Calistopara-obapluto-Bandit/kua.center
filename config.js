@@ -1,5 +1,5 @@
-// Static-site submission endpoint for the callback form.
-window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
+// Backend submission endpoint for the callback form.
+window.CALLBACK_FORM_ENDPOINT = '/api/callback';
 
 (function rewriteCallbackCopy() {
   const card = document.querySelector('.tm-callback-card');
@@ -14,12 +14,12 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const note = card.querySelector('.tm-callback-note');
   if (note) {
-    note.innerHTML = 'Put the <strong>client\'s email</strong> in the email field, not KUAC\'s. KUAC receives the request at <strong>kua.center@gmail.com</strong>, and the client gets the auto-reply.';
+    note.innerHTML = 'Put the <strong>client\'s email</strong> in the email field, not KUAC\'s. The request arrives from <strong>Krains UniAid Center</strong>, and the client gets the auto-reply.';
   }
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = "Next step: press Send to KUAC. The support inbox gets the request, and the email field must contain the client's address for the auto-reply.";
+    hint.textContent = "Next step: press Send to KUAC. The support inbox gets the request, and the sender name will show as Krains UniAid Center.";
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
