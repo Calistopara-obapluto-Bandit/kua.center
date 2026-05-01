@@ -67,6 +67,11 @@ function send(res, statusCode, body, headers = {}) {
   res.end(JSON.stringify(body));
 }
 
+function wantsHtmlResponse(req) {
+  const accept = (req.headers.accept || '').toLowerCase();
+  return accept.includes('text/html') && !accept.includes('application/json');
+}
+
 function serveFile(res, filePath) {
   fs.readFile(filePath, (err, content) => {
     if (err) {
@@ -334,6 +339,16 @@ const server = http.createServer(async (req, res) => {
       };
 
       const result = await sendCallbackEmail(submission);
+
+      if (wantsHtmlResponse(req)) {
+        res.writeHead(303, {
+          Location: '/#contact',
+          'Cache-Control': 'no-cache',
+          'Access-Control-Allow-Origin': '*',
+        });
+        res.end();
+        return;
+      }
 
       send(res, 200, {
         ok: true,
