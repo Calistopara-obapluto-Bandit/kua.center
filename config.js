@@ -14,7 +14,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const note = card.querySelector('.tm-callback-note');
   if (note) {
-    note.innerHTML = 'Put the <strong>client\'s email</strong> in the email field, not KUAC\'s. FormSubmit will receive the request and deliver it to KUAC.';
+    note.innerHTML = 'Insert your <strong>active email</strong> in the email field, not KUAC\'s. Your request will be sent to KUAC, and the auto-reply will go to that address.';
   }
 
   const hint = card.querySelector('.tm-form-hint');
@@ -41,4 +41,42 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   form.action = window.CALLBACK_FORM_ENDPOINT;
   form.dataset.formEndpoint = window.CALLBACK_FORM_ENDPOINT;
+})();
+
+(function wireCallbackReplyTo() {
+  const form = document.getElementById('callbackForm');
+  if (!form) {
+    return;
+  }
+
+  form.addEventListener('submit', function () {
+    const replyToField = form.querySelector('input[name="_replyto"]');
+    const emailField = form.querySelector('input[name="email"]');
+
+    if (replyToField && emailField) {
+      replyToField.value = emailField.value.trim();
+    }
+  });
+})();
+
+(function rewriteFooterLinks() {
+  const footerLeft = document.querySelector('.tm-footer-links-left');
+  if (footerLeft) {
+    footerLeft.innerHTML = '<span class="tm-footer-label">Stay Connected</span><a href="mailto:kua.center@gmail.com">kua.center@gmail.com</a>';
+  }
+
+  const footerLinks = document.querySelector('.tm-footer-links-right');
+  if (!footerLinks) {
+    return;
+  }
+
+  const links = footerLinks.querySelectorAll('a');
+  if (links.length > 1) {
+    const siteLink = links[1];
+    siteLink.href = 'https://kua-center.onrender.com/';
+    siteLink.target = '_blank';
+    siteLink.rel = 'noopener';
+    siteLink.setAttribute('aria-label', 'Open KUAC website');
+    siteLink.innerHTML = '<i class="fas fa-external-link-alt"></i>';
+  }
 })();
