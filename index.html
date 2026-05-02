@@ -743,12 +743,43 @@
           const form = this;
           const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request...');
           const formData = new FormData(form);
+          const submitButton = form.querySelector('.tm-btn-submit');
+          const originalButtonText = submitButton ? submitButton.textContent : '';
+          const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          let fallbackUsed = false;
+
+          if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+          }
+
+          const fallbackToNativeSubmit = (message) => {
+            if (fallbackUsed) {
+              return;
+            }
+
+            fallbackUsed = true;
+            $status.removeClass('is-error is-success').text(message || 'Trying the direct browser submit...');
+            window.setTimeout(() => {
+              if (typeof form.submit === 'function') {
+                form.submit();
+              }
+            }, 250);
+          };
+
+          const fetchOptions = {
+            method: 'POST',
+            body: formData,
+          };
+
+          if (controller) {
+            fetchOptions.signal = controller.signal;
+          }
+
+          const timeoutId = controller ? window.setTimeout(() => controller.abort(), 20000) : null;
 
           try {
-            const response = await fetch(form.action, {
-              method: 'POST',
-              body: formData,
-            });
+            const response = await fetch(form.action, fetchOptions);
 
             const result = await response.json().catch(() => ({}));
 
@@ -759,7 +790,22 @@
             form.reset();
             $status.addClass('is-success').text(result.message || 'Callback request sent successfully');
           } catch (error) {
+            if (error && (error.name === 'AbortError' || error.name === 'TypeError')) {
+              fallbackToNativeSubmit('Connection is shaky, retrying with the browser submit...');
+              return;
+            }
+
             $status.addClass('is-error').text(error.message || 'Unable to send callback request');
+          }
+          finally {
+            if (timeoutId) {
+              window.clearTimeout(timeoutId);
+            }
+
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.textContent = originalButtonText;
+            }
           }
         });
 

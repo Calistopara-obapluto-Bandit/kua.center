@@ -19,7 +19,7 @@ window.CALLBACK_FORM_ENDPOINT = '/api/callback';
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = "Next step: press Send to KUAC. The support inbox gets the request, and the sender name will show as Krains UniAid Center.";
+    hint.textContent = "Next step: press Send to KUAC. The support inbox gets the request, and the sender name will show as Krains UniAid Center. If the connection is unstable, the form will retry with a direct browser submit.";
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
