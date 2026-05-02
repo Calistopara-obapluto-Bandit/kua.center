@@ -19,7 +19,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = 'Press Send to KUAC to request a call.';
+    hint.textContent = 'Click Submit Request to request a call.';
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
@@ -29,7 +29,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const submitButton = card.querySelector('.tm-btn-submit');
   if (submitButton) {
-    submitButton.textContent = 'Send to KUAC';
+    submitButton.textContent = 'Submit Request';
   }
 })();
 
