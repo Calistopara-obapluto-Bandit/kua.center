@@ -80,3 +80,39 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
     siteLink.innerHTML = '<i class="fas fa-home"></i>';
   }
 })();
+
+(function rewritePartnerPricing() {
+  const partnerSection = document.querySelector('.tm-partner-section');
+  if (!partnerSection) {
+    return;
+  }
+
+  const cards = partnerSection.querySelectorAll('.tm-partner-card');
+  if (cards[1]) {
+    const unlockCard = cards[1];
+    const price = unlockCard.querySelector('strong');
+    const description = unlockCard.querySelector('p');
+
+    if (price) {
+      price.textContent = '€15.50 per request';
+    }
+
+    if (description) {
+      description.textContent = 'Pay once to open the full request details for a specific support lead.';
+    }
+  }
+
+  if (cards[2]) {
+    const proCard = cards[2];
+    const price = proCard.querySelector('strong');
+    const description = proCard.querySelector('p');
+
+    if (price) {
+      price.textContent = '€55.99 per month';
+    }
+
+    if (description) {
+      description.textContent = 'Monthly access to all new requests, better for long-term partners and teams.';
+    }
+  }
+})();
