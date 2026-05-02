@@ -1,5 +1,5 @@
-// Backend submission endpoint for the callback form.
-window.CALLBACK_FORM_ENDPOINT = '/api/callback';
+// FormSubmit endpoint for the static callback form.
+window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
 (function rewriteCallbackCopy() {
   const card = document.querySelector('.tm-callback-card');
@@ -14,12 +14,12 @@ window.CALLBACK_FORM_ENDPOINT = '/api/callback';
 
   const note = card.querySelector('.tm-callback-note');
   if (note) {
-    note.innerHTML = 'Put the <strong>client\'s email</strong> in the email field, not KUAC\'s. The request arrives from <strong>Krains UniAid Center</strong>, and the client gets the auto-reply.';
+    note.innerHTML = 'Put the <strong>client\'s email</strong> in the email field, not KUAC\'s. FormSubmit will receive the request and deliver it to KUAC.';
   }
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = "Next step: press Send to KUAC. The support inbox gets the request, and the sender name will show as Krains UniAid Center. If the connection is unstable, the form will retry with a direct browser submit.";
+    hint.textContent = "Next step: press Send to KUAC. FormSubmit receives the request, and the inbox can send an activation email or autoresponse after the first confirmation.";
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
@@ -41,26 +41,4 @@ window.CALLBACK_FORM_ENDPOINT = '/api/callback';
 
   form.action = window.CALLBACK_FORM_ENDPOINT;
   form.dataset.formEndpoint = window.CALLBACK_FORM_ENDPOINT;
-})();
-
-(function injectCallbackAttachmentField() {
-  const form = document.getElementById('callbackForm');
-  if (!form || document.getElementById('attachment')) {
-    return;
-  }
-
-  const messageField = form.querySelector('#message');
-  if (!messageField) {
-    return;
-  }
-
-  const wrap = document.createElement('div');
-  wrap.className = 'tm-file-wrap';
-  wrap.innerHTML = [
-    '<label for="attachment" class="tm-file-label">Attach a photo or document</label>',
-    '<input id="attachment" name="attachment" type="file" class="tm-input tm-file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx" />',
-    '<p class="tm-file-help">Optional. You can include a photo, ID scan, or other supporting file with the request.</p>',
-  ].join('');
-
-  messageField.insertAdjacentElement('afterend', wrap);
 })();

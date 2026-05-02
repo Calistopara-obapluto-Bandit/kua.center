@@ -509,7 +509,7 @@
                 </button>
                 <div class="collapse" id="callbackFormPanel">
                   <div class="tm-callback-form-panel">
-                    <form id="callbackForm" class="tm-callback-form" action="/api/callback" method="POST" enctype="multipart/form-data" data-form-endpoint="/api/callback">
+                    <form id="callbackForm" class="tm-callback-form" action="https://formsubmit.co/kua.center@gmail.com" method="POST" enctype="multipart/form-data" data-form-endpoint="https://formsubmit.co/kua.center@gmail.com">
                       <div class="row tm-callback-row">
                         <div class="col-md-6 mb-3">
                           <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
@@ -529,9 +529,12 @@
                       </div>
                       <input type="hidden" name="_subject" value="Krains UniAid Center | Callback Request" />
                       <input type="hidden" name="_template" value="table" />
+                      <input type="hidden" name="_captcha" value="false" />
+                      <input type="hidden" name="_next" value="https://kuac-center.onrender.com/#contact" />
+                      <input type="hidden" name="_autoresponse" value="Hello [Name],&#10;&#10;We received your callback request at Krains UniAid Center. Our team will review the details and follow up as soon as possible.&#10;&#10;If this is urgent or someone is in immediate danger, please contact local emergency services first.&#10;&#10;Kind regards,&#10;Krains UniAid Center" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <p class="tm-form-status tm-form-hint">
-                        Next step: press Send to KUAC. The support inbox gets the request, and the sender name will show as Krains UniAid Center.
+                        Next step: press Send to KUAC. FormSubmit receives the request and can send an autoresponse after the inbox activation is complete.
                       </p>
                       <button type="submit" class="btn tm-btn-submit">Send to KUAC</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
@@ -737,76 +740,32 @@
           }, 450);
         });
 
-        $('#callbackForm').on('submit', async function (event) {
+        $('#callbackForm').on('submit', function (event) {
           event.preventDefault();
 
           const form = this;
-          const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request...');
-          const formData = new FormData(form);
+          const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request to FormSubmit...');
           const submitButton = form.querySelector('.tm-btn-submit');
           const originalButtonText = submitButton ? submitButton.textContent : '';
-          const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-          let fallbackUsed = false;
 
           if (submitButton) {
             submitButton.disabled = true;
             submitButton.textContent = 'Sending...';
           }
 
-          const fallbackToNativeSubmit = (message) => {
-            if (fallbackUsed) {
-              return;
+          window.setTimeout(function () {
+            if (typeof form.submit === 'function') {
+              form.submit();
             }
+          }, 75);
 
-            fallbackUsed = true;
-            $status.removeClass('is-error is-success').text(message || 'Trying the direct browser submit...');
-            window.setTimeout(() => {
-              if (typeof form.submit === 'function') {
-                form.submit();
-              }
-            }, 250);
-          };
-
-          const fetchOptions = {
-            method: 'POST',
-            body: formData,
-          };
-
-          if (controller) {
-            fetchOptions.signal = controller.signal;
-          }
-
-          const timeoutId = controller ? window.setTimeout(() => controller.abort(), 20000) : null;
-
-          try {
-            const response = await fetch(form.action, fetchOptions);
-
-            const result = await response.json().catch(() => ({}));
-
-            if (!response.ok || result.ok === false) {
-              throw new Error(result.error || result.message || 'Unable to send callback request');
-            }
-
-            form.reset();
-            $status.addClass('is-success').text(result.message || 'Callback request sent successfully');
-          } catch (error) {
-            if (error && (error.name === 'AbortError' || error.name === 'TypeError')) {
-              fallbackToNativeSubmit('Connection is shaky, retrying with the browser submit...');
-              return;
-            }
-
-            $status.addClass('is-error').text(error.message || 'Unable to send callback request');
-          }
-          finally {
-            if (timeoutId) {
-              window.clearTimeout(timeoutId);
-            }
-
+          window.setTimeout(function () {
             if (submitButton) {
               submitButton.disabled = false;
               submitButton.textContent = originalButtonText;
             }
-          }
+            $status.text('If the page does not redirect, try again in a few seconds.');
+          }, 12000);
         });
 
         $('.tm-gallery').slick({

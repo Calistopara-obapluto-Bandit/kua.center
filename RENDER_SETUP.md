@@ -1,6 +1,6 @@
 # Render Setup for KUAC
 
-This project is set up for Render's **Web Service** plan so the email can be sent with a branded sender name.
+This project is set up for Render's **Static Site** plan with FormSubmit.
 
 ## Live Site
 
@@ -9,26 +9,13 @@ This project is set up for Render's **Web Service** plan so the email can be sen
 
 ## Service Type
 
-- Type: `Web Service`
-- Runtime: `Node`
-- Build command: `npm install`
-- Start command: `npm start`
+- Type: `Static Site`
+- Build command: `echo "Static site ready"`
+- Publish directory: `.`
 
 ## Required Render Settings
 
-Required runtime environment variables:
-
-- `CALLBACK_TO_EMAIL=kua.center@gmail.com`
-- `SMTP_HOST=smtp.gmail.com`
-- `SMTP_PORT=587`
-- `SMTP_SECURE=false`
-- `SMTP_USER=kua.center@gmail.com`
-- `SMTP_PASS=your-gmail-app-password`
-- `CALLBACK_FROM_NAME=Krains UniAid Center`
-- `CALLBACK_FROM_EMAIL=kua.center@gmail.com`
-
-If SMTP is not configured yet, the backend falls back to FormSubmit so the site still stays alive while you finish setup.
-That fallback also relays uploaded files, although the sender branding will be FormSubmit until SMTP is configured.
+No runtime environment variables are needed for the static site.
 
 ## Callback Flow
 
@@ -36,22 +23,19 @@ That fallback also relays uploaded files, although the sender branding will be F
 - Put the client's email in the email field, not KUAC's.
 - Attach a photo or document if it helps explain the request.
 - Press `Send to KUAC` to submit the callback form.
-- The form posts to `/api/callback` on the same site.
-- The support inbox receives the email from `Krains UniAid Center`.
-- The requester also receives a confirmation email from `Krains UniAid Center` when Gmail SMTP is configured.
-- The reply-to is the client's email address, so replies go to the right person.
+- The form posts directly to FormSubmit.
+- The support inbox receives the email through FormSubmit.
+- The requester can receive an autoresponse from FormSubmit when the inbox activation has been completed.
 
 ## Attachment Notes
 
-- The form uses normal browser form submission and the backend relays the attachment.
-- Keep the total file size under the backend attachment limit you configure.
+- The form uses normal browser form submission and FormSubmit relays the attachment.
+- Keep the total file size within FormSubmit's limits.
 - Good formats for this workflow are `pdf`, `png`, `jpg`, `jpeg`, `webp`, `doc`, and `docx`.
-- The confirmation email is sent only through Gmail SMTP, not through the FormSubmit fallback.
 
 ## First-Time Activation
 
-If you're using Gmail SMTP, create and use an app password instead of your normal Google password.
-Keep `SMTP_USER` and `CALLBACK_FROM_EMAIL` set to the same Gmail address so Gmail accepts the sender as authenticated.
+FormSubmit usually requires a one-time inbox activation before it starts delivering normally.
 
 ## Quick Test
 
@@ -59,4 +43,4 @@ Keep `SMTP_USER` and `CALLBACK_FROM_EMAIL` set to the same Gmail address so Gmai
 2. Fill in the callback form with a test name, the client's email, and phone number.
 3. Click `Send to KUAC`.
 4. Check `kua.center@gmail.com` for the submission email.
-5. Confirm the sender shows as `Krains UniAid Center`.
+5. Confirm the FormSubmit activation email has been handled if needed.
