@@ -38,6 +38,7 @@ That fallback also relays uploaded files, although the sender branding will be F
 - Press `Send to KUAC` to submit the callback form.
 - The form posts to `/api/callback` on the same site.
 - The support inbox receives the email from `Krains UniAid Center`.
+- The requester also receives a confirmation email from `Krains UniAid Center` when Gmail SMTP is configured.
 - The reply-to is the client's email address, so replies go to the right person.
 
 ## Attachment Notes
@@ -45,6 +46,7 @@ That fallback also relays uploaded files, although the sender branding will be F
 - The form uses normal browser form submission and the backend relays the attachment.
 - Keep the total file size under the backend attachment limit you configure.
 - Good formats for this workflow are `pdf`, `png`, `jpg`, `jpeg`, `webp`, `doc`, and `docx`.
+- The confirmation email is sent only through Gmail SMTP, not through the FormSubmit fallback.
 
 ## First-Time Activation
 

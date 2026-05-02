@@ -267,6 +267,39 @@ function normalizeField(value) {
   return String(value || '').trim();
 }
 
+function buildAutoReplyText(submission) {
+  return [
+    `Hello ${submission.name},`,
+    '',
+    'We received your callback request at Krains UniAid Center.',
+    'Our team will review the details and follow up as soon as possible.',
+    '',
+    `Phone: ${submission.phone}`,
+    `Message: ${submission.message || '(none)'}`,
+    '',
+    'If this is urgent or someone is in immediate danger, please contact local emergency services first.',
+    '',
+    'Kind regards,',
+    'Krains UniAid Center',
+  ].join('\n');
+}
+
+async function sendAutoReplyEmail(submission) {
+  if (!mailTransport) {
+    return false;
+  }
+
+  await mailTransport.sendMail({
+    from: `"${CALLBACK_FROM_NAME}" <${CALLBACK_FROM_EMAIL}>`,
+    to: submission.email,
+    replyTo: CALLBACK_TO_EMAIL,
+    subject: `${CALLBACK_FROM_NAME} | We received your request`,
+    text: buildAutoReplyText(submission),
+  });
+
+  return true;
+}
+
 async function sendCallbackEmail(submission) {
   const lines = [
     'New Krains UniAid Center callback request',
@@ -301,13 +334,22 @@ async function sendCallbackEmail(submission) {
       text: lines.join('\n'),
       attachments,
     });
+
+    let autoReplySent = false;
+    try {
+      autoReplySent = await sendAutoReplyEmail(submission);
+    } catch (autoReplyError) {
+      console.warn(`Auto-reply failed: ${autoReplyError.message || autoReplyError}`);
+    }
+
+    return {
+      message: autoReplySent
+        ? 'Callback request sent successfully. A confirmation email was also sent to the requester.'
+        : 'Callback request sent successfully, but the confirmation email could not be sent.',
+    };
   } catch (smtpError) {
     return sendViaFormSubmit(submission, attachments, smtpError);
   }
-
-  return {
-    message: 'Callback request sent successfully',
-  };
 }
 
 async function sendViaFormSubmit(submission, attachments = [], previousError = null) {
