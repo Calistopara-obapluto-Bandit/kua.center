@@ -453,7 +453,7 @@
               <i class="fas fa-unlock-alt tm-support-icon"></i>
               <h3>Unlock Full Request</h3>
               <p>Pay once to open the full request details for a specific support lead. This includes the network fee.</p>
-              <strong>€15,50 per request</strong>
+              <strong>€15.50 per request</strong>
             </div>
           </div>
           <div class="col-lg-4 mb-4">
@@ -461,7 +461,7 @@
               <i class="fas fa-calendar-alt tm-support-icon"></i>
               <h3>Pro Subscription</h3>
               <p>Monthly access to all new requests, better for long-term partners and teams.</p>
-              <strong>€50 / month</strong>
+              <strong>€55.99 / month</strong>
             </div>
           </div>
         </div>
@@ -491,11 +491,11 @@
             
             <div class="col-sm-12 col-md-6">
               <div class="tm-callback-card">
-                <p class="tm-kicker tm-kicker-light">Request a Call-back</p>
-                <h3>Start a callback request</h3>
-                <p class="tm-callback-note">
-                  Put the <strong>client's email</strong> in the email field, not KUAC's. KUAC receives the request at <strong>kua.center@gmail.com</strong>, and the client gets the auto-reply.
-                </p>
+                <p class="tm-kicker tm-kicker-light">Request a callback</p>
+                  <h3>Request a callback</h3>
+                  <p class="tm-callback-note">
+                  Enter your <strong>active email</strong>. KUAC will receive the request, and the auto-reply will go to that address.
+                  </p>
                 <button
                   class="btn tm-btn-primary tm-callback-toggle"
                   type="button"
@@ -504,7 +504,7 @@
                   aria-expanded="false"
                   aria-controls="callbackFormPanel"
                 >
-                  Request a Call-back
+                  Request a callback
                   <i class="fas fa-chevron-down tm-callback-toggle-icon" aria-hidden="true"></i>
                 </button>
                 <div class="collapse" id="callbackFormPanel">
@@ -515,7 +515,7 @@
                           <input id="name" name="name" type="text" placeholder="Full Name" class="tm-input mb-0" required />
                         </div>
                         <div class="col-md-6 mb-3">
-                          <input id="email" name="email" type="email" placeholder="Client Email for Auto-reply, not KUAC's" class="tm-input mb-0" required />
+                          <input id="email" name="email" type="email" placeholder="Your active email for auto-reply" class="tm-input mb-0" required />
                         </div>
                         <div class="col-md-6 mb-3">
                           <input id="phone" name="phone" type="tel" placeholder="Phone Number, e.g. +49 151 23456789" class="tm-input mb-0" required />
@@ -531,10 +531,11 @@
                       <input type="hidden" name="_template" value="table" />
                       <input type="hidden" name="_captcha" value="false" />
                       <input type="hidden" name="_next" value="https://kua-center.onrender.com/#contact" />
-                      <input type="hidden" name="_autoresponse" value="Hello [Name],&#10;&#10;We received your callback request at Krains UniAid Center. Our team will review the details and follow up as soon as possible.&#10;&#10;If this is urgent or someone is in immediate danger, please contact local emergency services first.&#10;&#10;Kind regards,&#10;Krains UniAid Center" />
+                      <input type="hidden" name="_replyto" value="" />
+                      <input type="hidden" name="_autoresponse" value="Hello,&#10;&#10;We received your callback request at Krains UniAid Center. Our team will review the details and follow up as soon as possible.&#10;&#10;If this is urgent or someone is in immediate danger, please contact local emergency services first.&#10;&#10;Kind regards,&#10;Krains UniAid Center" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <p class="tm-form-status tm-form-hint">
-                        Next step: press Send to KUAC, and we’ll take care of the rest.
+                        Next step: press Send to KUAC and we’ll take care of the rest.
                       </p>
                       <button type="submit" class="btn tm-btn-submit">Send to KUAC</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
@@ -603,9 +604,9 @@
             <div class="col-12 mt-4">
               <div class="tm-footer-links">
                 <div class="tm-footer-links-left">
-                  <span class="tm-footer-label">Stay Connected</span>
+                  <span class="tm-footer-label">Connect with KUAC</span>
                   <a href="mailto:kua.center@gmail.com">kua.center@gmail.com</a>
-                  <a href="https://kua-center.onrender.com/" target="_blank" rel="noopener">https://kua-center.onrender.com/</a>
+                  <a href="https://kua-center.onrender.com/" target="_blank" rel="noopener" aria-label="Open KUAC homepage"><i class="fas fa-home"></i></a>
                 </div>
                 <div class="tm-footer-links-right">
                   <a href="#infinite" aria-label="Back to top"><i class="fas fa-arrow-up"></i></a>

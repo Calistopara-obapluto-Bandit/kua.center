@@ -58,7 +58,6 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
     }
   });
 })();
-
 (function rewriteFooterLinks() {
   const footerLeft = document.querySelector('.tm-footer-links-left');
   if (footerLeft) {
