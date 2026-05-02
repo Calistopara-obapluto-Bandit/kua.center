@@ -58,6 +58,37 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
     }
   });
 })();
+
+(function wireCallbackAutoresponse() {
+  const form = document.getElementById('callbackForm');
+  if (!form) {
+    return;
+  }
+
+  form.addEventListener('submit', function () {
+    const autoresponseField = form.querySelector('input[name="_autoresponse"]');
+    const nameField = form.querySelector('input[name="name"]');
+    const displayName = nameField ? nameField.value.trim() : '';
+    const recipientName = displayName || 'there';
+
+    if (autoresponseField) {
+      autoresponseField.value = [
+        `Dear ${recipientName},`,
+        '',
+        'Your request has been successfully submitted and is now being reviewed.',
+        '',
+        'We are currently matching your request with relevant support partners who may be able to assist you.',
+        '',
+        'Please note that submitting a request on our platform is completely free.',
+        '',
+        'You will be contacted if a suitable partner is available.',
+        '',
+        'Kind regards,',
+        'Support Team'
+      ].join('\n');
+    }
+  });
+})();
 (function rewriteFooterLinks() {
   const footerLeft = document.querySelector('.tm-footer-links-left');
   if (footerLeft) {
@@ -97,7 +128,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
     }
 
     if (description) {
-      description.textContent = 'Pay once to open the full request details for a specific support lead.';
+      description.textContent = 'Preview the request first, then pay once to unlock the full details and contact options for that lead.';
     }
   }
 
@@ -111,7 +142,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
     }
 
     if (description) {
-      description.textContent = 'Monthly access to all new requests, better for long-term partners and teams.';
+      description.textContent = 'Monthly access to every new request, ideal for partners who need ongoing visibility and faster follow-up.';
     }
   }
 })();
