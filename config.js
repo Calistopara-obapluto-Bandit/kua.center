@@ -76,7 +76,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
     siteLink.href = 'https://kua-center.onrender.com/';
     siteLink.target = '_blank';
     siteLink.rel = 'noopener';
-    siteLink.setAttribute('aria-label', 'Open KUAC website');
-    siteLink.innerHTML = '<i class="fas fa-external-link-alt"></i>';
+    siteLink.setAttribute('aria-label', 'Open KUAC homepage');
+    siteLink.innerHTML = '<i class="fas fa-home"></i>';
   }
 })();
