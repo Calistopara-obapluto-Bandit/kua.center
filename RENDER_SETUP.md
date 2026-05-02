@@ -4,7 +4,7 @@ This project is set up for Render's **Static Site** plan with FormSubmit.
 
 ## Live Site
 
-- Canonical URL: `https://kuac-center.onrender.com/`
+- Canonical URL: `https://kua-center.onrender.com/`
 - Use this URL for redirects, bookmarks, and any future deployment notes.
 
 ## Service Type
