@@ -62,7 +62,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 (function rewriteFooterLinks() {
   const footerLeft = document.querySelector('.tm-footer-links-left');
   if (footerLeft) {
-    footerLeft.innerHTML = '<span class="tm-footer-label">Stay Connected</span><a href="mailto:kua.center@gmail.com">kua.center@gmail.com</a>';
+    footerLeft.innerHTML = '<span class="tm-footer-label">Connect with KUAC</span><a href="mailto:kua.center@gmail.com">kua.center@gmail.com</a>';
   }
 
   const footerLinks = document.querySelector('.tm-footer-links-right');
