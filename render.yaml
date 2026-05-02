@@ -1,7 +1,9 @@
 services:
-  - type: static
+  - type: web
+    runtime: static
     name: kuac-site
     branch: main
     buildCommand: echo "Static site ready"
     staticPublishPath: .
-    autoDeploy: true
+    autoDeployTrigger: commit
+    plan: free
