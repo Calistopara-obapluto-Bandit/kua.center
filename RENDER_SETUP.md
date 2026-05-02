@@ -20,7 +20,7 @@ No runtime environment variables are needed for the static site.
 ## Callback Flow
 
 - Fill in the client's name, phone, and note.
-- Put the client's email in the email field, not KUAC's.
+- Insert your active email in the email field.
 - Attach a photo or document if it helps explain the request.
 - Press `Send to KUAC` to submit the callback form.
 - The form posts directly to FormSubmit.
@@ -40,7 +40,7 @@ FormSubmit usually requires a one-time inbox activation before it starts deliver
 ## Quick Test
 
 1. Open the live site.
-2. Fill in the callback form with a test name, the client's email, and phone number.
+2. Fill in the callback form with a test name, your active email, and phone number.
 3. Click `Send to KUAC`.
 4. Check `kua.center@gmail.com` for the submission email.
 5. Confirm the FormSubmit activation email has been handled if needed.
