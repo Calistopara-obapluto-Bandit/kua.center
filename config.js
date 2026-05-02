@@ -115,7 +115,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
         '',
         'Your request has been received and is now under review by our team.',
         '',
-        'We are currently matching your request with relevant support partners who may be able to assist you.',
+        'We are matching your request with relevant support partners who may be able to assist you.',
         '',
         'Submitting a request on KUAC is completely free.',
         '',
