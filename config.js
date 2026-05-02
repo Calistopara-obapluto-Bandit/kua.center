@@ -14,12 +14,12 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const note = card.querySelector('.tm-callback-note');
   if (note) {
-    note.innerHTML = 'Enter your <strong>active email</strong>. KUAC will receive the request, and the auto-reply will go to that address.';
+    note.innerHTML = 'Enter your <strong>active email</strong>. Send your request to KUAC.';
   }
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = "Next step: press Send to KUAC and we’ll take care of the rest.";
+    hint.textContent = 'Press Send to KUAC to request a call.';
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
