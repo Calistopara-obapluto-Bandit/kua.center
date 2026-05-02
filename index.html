@@ -531,10 +531,10 @@
                       <input type="hidden" name="_template" value="box" />
                       <input type="hidden" name="_next" value="https://kua-center.onrender.com/?callback=sent#contact" />
                       <input type="hidden" name="_replyto" value="" />
-                      <input type="hidden" name="_autoresponse" value="Dear there,&#10;&#10;Thank you for reaching out to KUAC.&#10;&#10;Your request has been received and is now under review by our team.&#10;&#10;We are matching your request with relevant support partners who may be able to assist you.&#10;&#10;Submitting a request on KUAC is completely free.&#10;&#10;If a suitable partner is available, you will be contacted.&#10;&#10;Warm regards,&#10;KUAC Support Team" />
+                      <input type="hidden" name="_autoresponse" value="Dear there,&#10;&#10;Thank you for reaching out to KUAC. Your request has been received successfully.&#10;&#10;Your request is now in our review queue.&#10;&#10;Next steps:&#10;We are reviewing the details you shared.&#10;We are matching your request with relevant support partners.&#10;If a suitable partner is available, you will be contacted.&#10;&#10;Submitting a request on KUAC is completely free.&#10;&#10;If you need to add anything, please reply to this email.&#10;&#10;Warm regards,&#10;KUAC Support Team" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <p class="tm-form-status tm-form-hint">
-                        Click Submit Request to send your request to KUAC.
+                        Click Submit Request to send your request to KUAC. You will receive a confirmation email.
                       </p>
                       <button type="submit" class="btn tm-btn-submit">Submit Request</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
@@ -743,7 +743,7 @@
           event.preventDefault();
 
           const form = this;
-          const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your callback request to FormSubmit...');
+          const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your request securely...');
           const submitButton = form.querySelector('.tm-btn-submit');
           const originalButtonText = submitButton ? submitButton.textContent : '';
 
