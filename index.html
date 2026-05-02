@@ -530,7 +530,7 @@
                       <input type="hidden" name="_subject" value="Krains UniAid Center | Callback Request" />
                       <input type="hidden" name="_template" value="table" />
                       <input type="hidden" name="_captcha" value="false" />
-                      <input type="hidden" name="_next" value="https://kua-center.onrender.com/#contact" />
+                      <input type="hidden" name="_next" value="https://kua-center.onrender.com/?callback=sent#contact" />
                       <input type="hidden" name="_replyto" value="" />
                       <input type="hidden" name="_autoresponse" value="Hello,&#10;&#10;We received your callback request at Krains UniAid Center. Our team will review the details and follow up as soon as possible.&#10;&#10;If this is urgent or someone is in immediate danger, please contact local emergency services first.&#10;&#10;Kind regards,&#10;Krains UniAid Center" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
@@ -768,6 +768,25 @@
             $status.text('If the page does not redirect, try again in a few seconds.');
           }, 12000);
         });
+
+        (function showCallbackSuccessMessage() {
+          const params = new URLSearchParams(window.location.search);
+          if (params.get('callback') !== 'sent') {
+            return;
+          }
+
+          const status = document.getElementById('callbackFormStatus');
+          if (status) {
+            status.classList.remove('is-error');
+            status.classList.add('is-success');
+            status.textContent = 'Thank you. Your request has been sent, and our team will review it shortly.';
+          }
+
+          if (window.history && typeof window.history.replaceState === 'function') {
+            const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
+          }
+        })();
 
         $('.tm-gallery').slick({
           dots: true,
