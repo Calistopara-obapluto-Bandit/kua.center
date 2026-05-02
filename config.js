@@ -19,7 +19,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = 'Click Submit Request to send your request securely. A confirmation email will follow shortly.';
+    hint.textContent = 'Click Submit Request to send your request to KUAC.';
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
@@ -75,7 +75,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const subjectField = form.querySelector('input[name="_subject"]');
   if (subjectField) {
-    subjectField.value = 'KUAC | Callback Request';
+    subjectField.value = 'KUAC | New Support Request';
   }
 })();
 
@@ -111,20 +111,17 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
       autoresponseField.value = [
         `Dear ${recipientName},`,
         '',
-        'Thank you for contacting KUAC. Your request has been successfully submitted and is now being reviewed by our team.',
+        'Thank you for reaching out to KUAC.',
+        '',
+        'Your request has been received and is now under review by our team.',
         '',
         'We are currently matching your request with relevant support partners who may be able to assist you.',
         '',
-        'What happens next:',
-        '- We review the details you shared.',
-        '- We look for a suitable support partner.',
-        '- If a partner is available, you will be contacted directly.',
-        '',
         'Submitting a request on KUAC is completely free.',
         '',
-        'If you need to add anything, simply reply to this email.',
+        'If a suitable partner is available, you will be contacted.',
         '',
-        'Kind regards,',
+        'Warm regards,',
         'KUAC Support Team'
       ].join('\n');
     }
