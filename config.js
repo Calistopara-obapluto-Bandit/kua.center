@@ -75,7 +75,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const subjectField = form.querySelector('input[name="_subject"]');
   if (subjectField) {
-    subjectField.value = 'KUAC | Support Request Received';
+    subjectField.value = 'KUAC | Callback Request';
   }
 })();
 
