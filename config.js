@@ -9,12 +9,12 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const title = card.querySelector('h3');
   if (title) {
-    title.textContent = 'Start a callback request';
+    title.textContent = 'Request a callback';
   }
 
   const note = card.querySelector('.tm-callback-note');
   if (note) {
-    note.innerHTML = 'Insert your <strong>active email</strong> in the email field. KUAC will receive the request, and the auto-reply will go to that address.';
+    note.innerHTML = 'Enter your <strong>active email</strong>. KUAC will receive the request, and the auto-reply will go to that address.';
   }
 
   const hint = card.querySelector('.tm-form-hint');
