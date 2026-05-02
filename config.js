@@ -14,17 +14,17 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const note = card.querySelector('.tm-callback-note');
   if (note) {
-    note.innerHTML = 'Insert your <strong>active email</strong> in the email field, not KUAC\'s. Your request will be sent to KUAC, and the auto-reply will go to that address.';
+    note.innerHTML = 'Insert your <strong>active email</strong> in the email field. KUAC will receive the request, and the auto-reply will go to that address.';
   }
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = "Next step: press Send to KUAC, and we’ll take care of the rest.";
+    hint.textContent = "Next step: press Send to KUAC and we’ll take care of the rest.";
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
   if (toggle) {
-    toggle.innerHTML = 'Start a callback request <i class="fas fa-chevron-down tm-callback-toggle-icon" aria-hidden="true"></i>';
+    toggle.innerHTML = 'Request a callback <i class="fas fa-chevron-down tm-callback-toggle-icon" aria-hidden="true"></i>';
   }
 
   const submitButton = card.querySelector('.tm-btn-submit');
