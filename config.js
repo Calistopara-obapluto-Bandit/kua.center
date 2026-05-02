@@ -19,7 +19,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = "Next step: press Send to KUAC. FormSubmit receives the request, and the inbox can send an activation email or autoresponse after the first confirmation.";
+    hint.textContent = "Next step: press Send to KUAC, and we’ll take care of the rest.";
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
