@@ -76,14 +76,19 @@ blockquote {
   position: fixed;
   width: 100%;
   z-index: 1000;
-  background-color: transparent;
-  transition: all 0.3s ease;
+  padding: 14px 0;
+  background: linear-gradient(180deg, rgba(8, 26, 38, 0.5), rgba(8, 26, 38, 0.12));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
 }
 
 .tm-navbar.scroll {
-  background-color: rgba(250, 252, 251, 0.98);
+  padding: 10px 0;
+  background-color: rgba(250, 252, 251, 0.95);
   border-bottom: 1px solid #dde8e2;
-  box-shadow: 0 6px 18px rgba(18, 65, 73, 0.06);
+  box-shadow: 0 14px 30px rgba(18, 65, 73, 0.1);
+  backdrop-filter: blur(18px);
 }
 
 .navbar-brand {
@@ -91,6 +96,9 @@ blockquote {
   font-size: 1.4rem;
   font-weight: 900;
   letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 
 .tm-brand {
@@ -110,7 +118,7 @@ blockquote {
   max-height: 42px;
   max-width: 140px;
   height: auto;
-  filter: none;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22));
 }
 
 .navbar-brand:hover,
@@ -135,6 +143,9 @@ blockquote {
 .tm-nav-link {
   color: white;
   font-weight: 700;
+  border-radius: 999px;
+  padding: 10px 18px !important;
+  letter-spacing: 0.01em;
 }
 
 .tm-navbar.scroll .tm-nav-link {
@@ -145,7 +156,8 @@ blockquote {
 .tm-navbar.scroll .tm-nav-link.current,
 .tm-nav-link:hover {
   color: #FFF;
-  background-color: #155e67;
+  background: linear-gradient(135deg, #155e67, #1c7b86);
+  box-shadow: 0 10px 22px rgba(21, 94, 103, 0.22);
 }
 
 .navbar-toggler {
@@ -178,6 +190,32 @@ blockquote {
   height: 100vh;
   min-height: 375px;
   position: relative;
+  overflow: hidden;
+}
+
+#infinite::before,
+#infinite::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#infinite::before {
+  width: 320px;
+  height: 320px;
+  top: -120px;
+  right: -80px;
+  background: radial-gradient(circle, rgba(141, 186, 174, 0.22) 0%, rgba(141, 186, 174, 0) 72%);
+}
+
+#infinite::after {
+  width: 420px;
+  height: 420px;
+  left: -220px;
+  bottom: -210px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 72%);
 }
 
 @media (min-height: 600px) and (min-width: 1920px) {
@@ -192,12 +230,22 @@ blockquote {
   display: flex;
   flex-flow: column;
   justify-content: center;
-  padding: 120px 0 88px;
+  padding: 128px 0 88px;
+  position: relative;
+  z-index: 1;
 }
 
 .tm-hero-text-container-inner {
   margin-top: 0;
-  padding-top: 0;
+  padding: 38px 42px 36px;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(180deg, rgba(8, 26, 38, 0.56), rgba(8, 26, 38, 0.26));
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(12px);
 }
 
 .tm-hero-actions {
@@ -230,6 +278,33 @@ blockquote {
 
 .tm-hero-btn.tm-btn-primary {
   box-shadow: 0 14px 28px rgba(24, 77, 99, 0.22);
+}
+
+.tm-hero-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.tm-hero-badges span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+.tm-hero-badges i {
+  color: #cceee7;
 }
 
 .tm-intro-next {
@@ -285,6 +360,22 @@ blockquote {
   line-height: 1.08;
   color: #102833;
   margin-bottom: 0.9rem;
+  position: relative;
+}
+
+.tm-section-title::after {
+  content: "";
+  display: block;
+  width: 72px;
+  height: 4px;
+  margin-top: 16px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #155e67 0%, rgba(21, 94, 103, 0.12) 100%);
+}
+
+.text-center .tm-section-title::after {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tm-intro-text {
@@ -311,6 +402,7 @@ blockquote {
   border-radius: 16px;
   box-shadow: 0 18px 35px rgba(16, 40, 51, 0.08);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
 }
 
 .tm-trust-card:hover {
@@ -454,10 +546,22 @@ blockquote {
   border-radius: 20px;
   padding: 36px;
   box-shadow: 0 22px 50px rgba(16, 40, 51, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
 }
 
 .tm-about-panel-alt {
   background: linear-gradient(180deg, #f8fbf8 0%, #eef5f1 100%);
+}
+
+.tm-about-panel:hover,
+.tm-support-card:hover,
+.tm-contact-card:hover,
+.tm-callback-card:hover,
+.tm-partner-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 58px rgba(16, 40, 51, 0.14);
+  border-color: rgba(21, 94, 103, 0.22);
 }
 
 .tm-service-list {
@@ -523,6 +627,8 @@ blockquote {
   border: 1px solid rgba(255, 255, 255, 0.24);
   box-shadow: 0 26px 52px rgba(0, 0, 0, 0.16);
   text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
 }
 
 .tm-support-card h3 {
@@ -558,6 +664,7 @@ blockquote {
 .tm-partner-card {
   position: relative;
   text-align: center;
+  overflow: hidden;
 }
 
 .tm-partner-card strong {
@@ -841,11 +948,13 @@ figure.effect-honey:hover h2 i {
 .tm-contact-card {
   padding: 34px 30px 30px;
   border-radius: 26px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 28px 54px rgba(0, 0, 0, 0.14);
   height: 100%;
   backdrop-filter: blur(10px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
 }
 
 .tm-contact-card h3 {
@@ -918,16 +1027,27 @@ figure.effect-honey:hover h2 i {
   border: 1px solid #bcc9c2;
   background: rgba(255, 255, 255, 0.96);
   color: #0f1b24;
+  box-shadow: inset 0 1px 2px rgba(15, 27, 36, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.tm-input:focus {
+  outline: none;
+  border-color: rgba(21, 94, 103, 0.58);
+  box-shadow: 0 0 0 4px rgba(21, 94, 103, 0.12);
+  transform: translateY(-1px);
 }
 
 .tm-callback-card {
   height: 100%;
   padding: 34px 30px 30px;
   border-radius: 26px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.06));
+  background: linear-gradient(180deg, rgba(9, 28, 39, 0.86), rgba(10, 31, 43, 0.78));
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 28px 54px rgba(0, 0, 0, 0.14);
   backdrop-filter: blur(10px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
 }
 
 .tm-callback-toggle {
@@ -966,8 +1086,9 @@ figure.effect-honey:hover h2 i {
   margin-top: 22px;
   padding: 22px 20px 20px;
   border-radius: 22px;
-  background: rgba(8, 26, 38, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 26, 38, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .tm-callback-form-panel::before {
@@ -1149,7 +1270,7 @@ figure.effect-honey:hover h2 i {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   padding: 20px 22px;
@@ -1163,7 +1284,7 @@ figure.effect-honey:hover h2 i {
   gap: 18px;
   padding: 18px 22px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -1297,6 +1418,25 @@ p {
   .tm-hero-btn {
     min-width: 150px;
     width: 100%;
+  }
+
+  .tm-hero-text-container-inner {
+    padding: 30px 20px 28px;
+    border-radius: 24px;
+  }
+
+  .tm-hero-badges {
+    gap: 8px;
+  }
+
+  .tm-hero-badges span {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tm-section-title::after {
+    width: 58px;
+    margin-top: 12px;
   }
 
   .tm-about-panel,

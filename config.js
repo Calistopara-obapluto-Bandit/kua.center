@@ -19,7 +19,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = 'Click Submit Request to send your request to KUAC. You will receive a confirmation email.';
+    hint.textContent = 'Click Submit Request to send your request securely. A confirmation email will follow shortly.';
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
@@ -75,7 +75,7 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const subjectField = form.querySelector('input[name="_subject"]');
   if (subjectField) {
-    subjectField.value = 'KUAC | New Support Request';
+    subjectField.value = 'KUAC | Support Request Received';
   }
 })();
 
@@ -111,20 +111,20 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
       autoresponseField.value = [
         `Dear ${recipientName},`,
         '',
-        'Thank you for reaching out to KUAC. Your request has been received successfully.',
+        'Thank you for contacting KUAC. Your request has been successfully submitted and is now being reviewed by our team.',
         '',
-        'Your request is now in our review queue.',
+        'We are currently matching your request with relevant support partners who may be able to assist you.',
         '',
-        'Next steps:',
-        'We are reviewing the details you shared.',
-        'We are matching your request with relevant support partners.',
-        'If a suitable partner is available, you will be contacted.',
+        'What happens next:',
+        '- We review the details you shared.',
+        '- We look for a suitable support partner.',
+        '- If a partner is available, you will be contacted directly.',
         '',
         'Submitting a request on KUAC is completely free.',
         '',
-        'If you need to add anything, please reply to this email.',
+        'If you need to add anything, simply reply to this email.',
         '',
-        'Warm regards,',
+        'Kind regards,',
         'KUAC Support Team'
       ].join('\n');
     }
