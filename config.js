@@ -14,12 +14,12 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   const note = card.querySelector('.tm-callback-note');
   if (note) {
-    note.innerHTML = 'Enter your <strong>active email</strong>. Send your request to KUAC.';
+    note.innerHTML = 'Enter your <strong>active email</strong>. We will send the confirmation and follow-up to that address.';
   }
 
   const hint = card.querySelector('.tm-form-hint');
   if (hint) {
-    hint.textContent = 'Click Submit Request to request a call.';
+    hint.textContent = 'Click Submit Request to send your request securely. A confirmation email will follow shortly.';
   }
 
   const toggle = card.querySelector('.tm-callback-toggle');
@@ -41,6 +41,42 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
 
   form.action = window.CALLBACK_FORM_ENDPOINT;
   form.dataset.formEndpoint = window.CALLBACK_FORM_ENDPOINT;
+})();
+
+(function wireCallbackTemplate() {
+  const form = document.getElementById('callbackForm');
+  if (!form) {
+    return;
+  }
+
+  const templateField = form.querySelector('input[name="_template"]');
+  if (templateField) {
+    templateField.value = 'box';
+  }
+})();
+
+(function wireCallbackCaptcha() {
+  const form = document.getElementById('callbackForm');
+  if (!form) {
+    return;
+  }
+
+  const captchaField = form.querySelector('input[name="_captcha"]');
+  if (captchaField) {
+    captchaField.remove();
+  }
+})();
+
+(function wireCallbackSubject() {
+  const form = document.getElementById('callbackForm');
+  if (!form) {
+    return;
+  }
+
+  const subjectField = form.querySelector('input[name="_subject"]');
+  if (subjectField) {
+    subjectField.value = 'KUAC | Support Request Received';
+  }
 })();
 
 (function wireCallbackReplyTo() {
@@ -69,80 +105,28 @@ window.CALLBACK_FORM_ENDPOINT = 'https://formsubmit.co/kua.center@gmail.com';
     const autoresponseField = form.querySelector('input[name="_autoresponse"]');
     const nameField = form.querySelector('input[name="name"]');
     const displayName = nameField ? nameField.value.trim() : '';
-    const recipientName = displayName || 'there';
+    const recipientName = displayName || 'KUAC client';
 
     if (autoresponseField) {
       autoresponseField.value = [
         `Dear ${recipientName},`,
         '',
-        'Your request has been successfully submitted and is now being reviewed.',
+        'Thank you for contacting KUAC. Your request has been successfully submitted and is now being reviewed by our team.',
         '',
         'We are currently matching your request with relevant support partners who may be able to assist you.',
         '',
-        'Please note that submitting a request on our platform is completely free.',
+        'What happens next:',
+        '- We review the details you shared.',
+        '- We look for a suitable support partner.',
+        '- If a partner is available, you will be contacted directly.',
         '',
-        'You will be contacted if a suitable partner is available.',
+        'Submitting a request on KUAC is completely free.',
+        '',
+        'If you need to add anything, simply reply to this email.',
         '',
         'Kind regards,',
-        'Support Team'
+        'KUAC Support Team'
       ].join('\n');
     }
   });
-})();
-(function rewriteFooterLinks() {
-  const footerLeft = document.querySelector('.tm-footer-links-left');
-  if (footerLeft) {
-    footerLeft.innerHTML = '<span class="tm-footer-label">Connect with KUAC</span><a href="mailto:kua.center@gmail.com">kua.center@gmail.com</a>';
-  }
-
-  const footerLinks = document.querySelector('.tm-footer-links-right');
-  if (!footerLinks) {
-    return;
-  }
-
-  const links = footerLinks.querySelectorAll('a');
-  if (links.length > 1) {
-    const siteLink = links[1];
-    siteLink.href = 'https://kua-center.onrender.com/';
-    siteLink.target = '_blank';
-    siteLink.rel = 'noopener';
-    siteLink.setAttribute('aria-label', 'Open KUAC homepage');
-    siteLink.innerHTML = '<i class="fas fa-home"></i>';
-  }
-})();
-
-(function rewritePartnerPricing() {
-  const partnerSection = document.querySelector('.tm-partner-section');
-  if (!partnerSection) {
-    return;
-  }
-
-  const cards = partnerSection.querySelectorAll('.tm-partner-card');
-  if (cards[1]) {
-    const unlockCard = cards[1];
-    const price = unlockCard.querySelector('strong');
-    const description = unlockCard.querySelector('p');
-
-    if (price) {
-      price.textContent = '€15.50 per request';
-    }
-
-    if (description) {
-      description.textContent = 'Preview the request first, then pay once to unlock the full details and contact options for that lead.';
-    }
-  }
-
-  if (cards[2]) {
-    const proCard = cards[2];
-    const price = proCard.querySelector('strong');
-    const description = proCard.querySelector('p');
-
-    if (price) {
-      price.textContent = '€55.99 per month';
-    }
-
-    if (description) {
-      description.textContent = 'Monthly access to every new request, ideal for partners who need ongoing visibility and faster follow-up.';
-    }
-  }
 })();
