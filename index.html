@@ -350,7 +350,7 @@
     
     <section id="gallery" class="tm-section-pad-top">
       <div class="container tm-container-gallery">
-        <div class="row">
+        <div class="row align-items-start">
           <div class="text-center col-12">
               <h2 class="tm-text-primary tm-section-title mb-4">Support in Action</h2>
               <p class="mx-auto tm-section-desc">
@@ -482,7 +482,7 @@
     
       <div class="container tm-container-contact">
         
-        <div class="row">
+        <div class="row tm-contact-row">
             
             <div class="text-center col-12">
                 <h2 class="tm-section-title mb-4">Contact KUAC</h2>
@@ -496,11 +496,34 @@
             
             <div class="col-sm-12 col-md-6">
               <div class="tm-callback-card">
-                <p class="tm-kicker tm-kicker-light">Request a callback</p>
-                  <h3>Request a callback</h3>
+                <p class="tm-kicker tm-kicker-light">Callback request</p>
+                  <h3>Request support by callback</h3>
                   <p class="tm-callback-note">
-                  Enter your <strong>active email</strong>. We will send the confirmation and follow-up to that address.
+                  Use an email you check regularly. We’ll send the confirmation and follow-up there.
                   </p>
+                <div class="tm-request-steps" aria-label="Callback request steps">
+                  <div class="tm-request-step">
+                    <span>1</span>
+                    <div>
+                      <strong>Send the request</strong>
+                      <small>Tell KUAC who needs help and where the reply should go.</small>
+                    </div>
+                  </div>
+                  <div class="tm-request-step">
+                    <span>2</span>
+                    <div>
+                      <strong>We review it</strong>
+                      <small>KUAC checks the details and matches the right support partner.</small>
+                    </div>
+                  </div>
+                  <div class="tm-request-step">
+                    <span>3</span>
+                    <div>
+                      <strong>Follow-up happens</strong>
+                      <small>You get a confirmation first, then a direct follow-up if a partner is available.</small>
+                    </div>
+                  </div>
+                </div>
                 <button
                   class="btn tm-btn-primary tm-callback-toggle"
                   type="button"
@@ -534,12 +557,12 @@
                       </div>
                       <input type="hidden" name="_subject" value="KUAC | Support Request Received" />
                       <input type="hidden" name="_template" value="box" />
-                      <input type="hidden" name="_next" value="https://kua-center.onrender.com/?callback=sent#contact" />
+                      <input type="hidden" name="_next" value="" />
                       <input type="hidden" name="_replyto" value="" />
                       <input type="hidden" name="_autoresponse" value="Dear KUAC client,&#10;&#10;Thank you for contacting KUAC. Your request has been successfully submitted and is now being reviewed by our team.&#10;&#10;We are currently matching your request with relevant support partners who may be able to assist you.&#10;&#10;What happens next:&#10;- We review the details you shared.&#10;- We look for a suitable support partner.&#10;- If a partner is available, you will be contacted directly.&#10;&#10;Submitting a request on KUAC is completely free.&#10;&#10;If you need to add anything, simply reply to this email.&#10;&#10;Kind regards,&#10;KUAC Support Team" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <p class="tm-form-status tm-form-hint">
-                        Click Submit Request to send your request securely. A confirmation email will follow shortly.
+                        Submit the form to send your request securely. You’ll receive a confirmation email shortly.
                       </p>
                       <button type="submit" class="btn tm-btn-submit">Submit Request</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
@@ -554,7 +577,7 @@
                 <p class="tm-kicker tm-kicker-light">Direct Contacts</p>
                 <h3>Reach KUAC the way that suits you best</h3>
                 <p class="tm-contact-note">
-                  Use the callback form for direct support requests, or choose one of the contact channels below for partnership and network questions.
+                  Use the callback form for support requests, or choose a direct contact below for partnership and network questions.
                 </p>
                 <div class="tm-contact-list">
                   <div class="contact-item">
@@ -613,8 +636,34 @@
                 </div>
                 <div class="tm-footer-links-right">
                   <a href="#infinite" aria-label="Back to top"><i class="fas fa-arrow-up"></i></a>
-                  <a href="https://kua-center.onrender.com/" target="_blank" rel="noopener" aria-label="Open KUAC homepage"><i class="fas fa-home"></i></a>
+                  <a href="/" aria-label="Open KUAC homepage"><i class="fas fa-home"></i></a>
                   <a href="#contact" aria-label="Contact KUAC"><i class="fas fa-hands-helping"></i></a>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mt-4">
+              <div class="tm-faq-heading">
+                <p class="tm-kicker tm-kicker-light">FAQ</p>
+                <h3>How it works</h3>
+                <p class="tm-faq-intro">
+                  A simple process for requesting support and getting a response.
+                </p>
+              </div>
+              <div class="tm-faq-grid">
+                <div class="tm-faq-card">
+                  <p class="tm-kicker tm-kicker-light">Step 1</p>
+                  <h3>How do I start?</h3>
+                  <p>Open the callback form, share your details, and submit your request.</p>
+                </div>
+                <div class="tm-faq-card">
+                  <p class="tm-kicker tm-kicker-light">Step 2</p>
+                  <h3>What happens after I submit?</h3>
+                  <p>You get a confirmation email, and KUAC reviews your request.</p>
+                </div>
+                <div class="tm-faq-card">
+                  <p class="tm-kicker tm-kicker-light">Step 3</p>
+                  <h3>What comes next?</h3>
+                  <p>If a support partner is available, KUAC follows up with the next step.</p>
                 </div>
               </div>
             </div>
@@ -782,7 +831,7 @@
           if (status) {
             status.classList.remove('is-error');
             status.classList.add('is-success');
-            status.textContent = 'Thank you. Your request is in and we\'ll be in touch shortly.';
+            status.innerHTML = '<strong>Thank you.</strong> Your request is in and we\'ll be in touch shortly.';
           }
 
           if (window.history && typeof window.history.replaceState === 'function') {
