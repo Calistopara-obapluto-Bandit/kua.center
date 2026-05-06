@@ -300,6 +300,43 @@
         </div>
       </div>
     </section>
+
+    <section id="operations" class="tm-section-pad-top tm-operations-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center mb-5">
+            <p class="tm-kicker">How we operate</p>
+            <h2 class="tm-section-title mb-3">Simple steps, clear support, human follow-up</h2>
+            <p class="mx-auto tm-section-desc tm-operations-desc">
+              KUAC keeps the process calm and practical so people know what happens next and where to turn for help.
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <div class="tm-operations-card">
+              <span class="tm-operations-step">1</span>
+              <h3>We listen first</h3>
+              <p>We start with your situation, your location, and the kind of help you need most right now.</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="tm-operations-card">
+              <span class="tm-operations-step">2</span>
+              <h3>We review the request</h3>
+              <p>We check the details, look for the right support path, and keep the next step as simple as possible.</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="tm-operations-card">
+              <span class="tm-operations-step">3</span>
+              <h3>We connect and follow up</h3>
+              <p>If there is a suitable partner or referral, we help connect you and continue the conversation by email.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     
     <section id="testimonials" class="tm-section-pad-top tm-parallax-2">      
       <div class="container tm-testimonials-content">
@@ -831,7 +868,7 @@
           if (status) {
             status.classList.remove('is-error');
             status.classList.add('is-success');
-            status.innerHTML = '<strong>Request received.</strong> KUAC will review it and reply by email.';
+            status.innerHTML = '<strong>Thanks, we got it.</strong> KUAC will review your request and reply by email shortly.';
           }
 
           if (window.history && typeof window.history.replaceState === 'function') {

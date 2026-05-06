@@ -642,6 +642,59 @@ blockquote {
   padding: 12px 22px;
 }
 
+.tm-operations-section {
+  background: linear-gradient(180deg, #f7fbf8 0%, #eef4f0 100%);
+}
+
+.tm-operations-desc {
+  color: #516874;
+  max-width: 760px;
+}
+
+.tm-operations-card {
+  height: 100%;
+  padding: 28px 24px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbf9 100%);
+  border: 1px solid #d7e1db;
+  box-shadow: 0 22px 48px rgba(16, 40, 51, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.tm-operations-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(21, 94, 103, 0.2);
+  box-shadow: 0 28px 58px rgba(16, 40, 51, 0.12);
+}
+
+.tm-operations-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  background: rgba(21, 94, 103, 0.1);
+  color: #155e67;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.tm-operations-card h3 {
+  margin-bottom: 12px;
+  color: #102833;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.tm-operations-card p {
+  margin-bottom: 0;
+  color: #516874;
+  line-height: 1.75;
+  font-size: 0.98rem;
+}
+
 .tm-partner-section {
   background: linear-gradient(180deg, #f5faf7 0%, #edf4f0 100%);
 }
@@ -1254,12 +1307,17 @@ figure.effect-honey:hover h2 i {
 
 .tm-form-status.is-success {
   color: #bfeadf;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(191, 234, 223, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .tm-form-status.is-success strong {
   display: block;
-  font-size: 1.02rem;
-  margin-bottom: 3px;
+  font-size: 1.04rem;
+  margin-bottom: 4px;
 }
 
 .tm-form-status.is-error {
@@ -1773,7 +1831,8 @@ p {
   .tm-support-card,
   .tm-partner-card,
   .tm-contact-card,
-  .tm-callback-card {
+  .tm-callback-card,
+  .tm-operations-card {
     padding: 20px 18px;
   }
 
@@ -1822,6 +1881,34 @@ p {
 
   .tm-faq-card p {
     font-size: 0.88rem;
+  }
+
+  .tm-operations-section .tm-section-title {
+    font-size: 1.72rem;
+  }
+
+  .tm-operations-desc {
+    font-size: 0.94rem;
+    line-height: 1.6;
+  }
+
+  .tm-operations-card {
+    padding: 22px 18px;
+  }
+
+  .tm-operations-step {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 14px;
+  }
+
+  .tm-operations-card h3 {
+    font-size: 1rem;
+  }
+
+  .tm-operations-card p {
+    font-size: 0.94rem;
+    line-height: 1.65;
   }
 
   .tm-request-step {
@@ -1880,6 +1967,7 @@ p {
   .tm-about-panel,
   .tm-support-card,
   .tm-partner-card,
+  .tm-operations-card,
   .tm-contact-card {
     padding: 18px 16px;
   }
