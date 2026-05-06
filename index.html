@@ -561,6 +561,15 @@
                     </div>
                   </div>
                 </div>
+                <div class="tm-expectation-panel" aria-label="What to expect">
+                  <p class="tm-expectation-label">What to expect</p>
+                  <ul class="tm-expectation-list">
+                    <li>A confirmation email after you submit the form.</li>
+                    <li>A review of your request by KUAC.</li>
+                    <li>A follow-up if a suitable support partner is available.</li>
+                    <li>Clear next-step guidance if another route is better for your situation.</li>
+                  </ul>
+                </div>
                 <button
                   class="btn tm-expectation-toggle"
                   type="button"
@@ -615,7 +624,7 @@
                       </div>
                       <input type="hidden" name="_subject" value="KUAC | Support Request Received" />
                       <input type="hidden" name="_template" value="box" />
-                      <input type="hidden" name="_next" value="" />
+                      <input type="hidden" name="_next" value="https://kua-center.onrender.com/?callback=sent#contact" />
                       <input type="hidden" name="_replyto" value="" />
                       <input type="hidden" name="_autoresponse" value="Dear KUAC client,&#10;&#10;Thank you for contacting KUAC. Your request has been successfully submitted and is now being reviewed by our team.&#10;&#10;We are currently matching your request with relevant support partners who may be able to assist you.&#10;&#10;What happens next:&#10;- We review the details you shared.&#10;- We look for a suitable support partner.&#10;- If a partner is available, you will be contacted directly.&#10;&#10;Submitting a request on KUAC is completely free.&#10;&#10;If you need to add anything, simply reply to this email.&#10;&#10;Kind regards,&#10;KUAC Support Team" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
@@ -851,31 +860,57 @@
           }, 450);
         });
 
-        $('#callbackForm').on('submit', function (event) {
-          event.preventDefault();
-
+        $('#callbackForm').on('submit', function () {
           const form = this;
           const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your request securely...');
           const submitButton = form.querySelector('.tm-btn-submit');
           const originalButtonText = submitButton ? submitButton.textContent : '';
+          const replyToField = form.querySelector('input[name="_replyto"]');
+          const emailField = form.querySelector('input[name="email"]');
+          const autoresponseField = form.querySelector('input[name="_autoresponse"]');
+          const nameField = form.querySelector('input[name="name"]');
+          const displayName = nameField ? nameField.value.trim() : '';
+          const recipientName = displayName || 'KUAC client';
+
+          if (replyToField && emailField) {
+            replyToField.value = emailField.value.trim();
+          }
+
+          if (autoresponseField) {
+            autoresponseField.value = [
+              `Dear ${recipientName},`,
+              '',
+              'Thank you for contacting KUAC. Your request has been successfully submitted and is now being reviewed by our team.',
+              '',
+              'We are currently matching your request with relevant support partners who may be able to assist you.',
+              '',
+              'What happens next:',
+              '- We review the details you shared.',
+              '- We look for a suitable support partner.',
+              '- If a partner is available, you will be contacted directly.',
+              '',
+              'Submitting a request on KUAC is completely free.',
+              '',
+              'If you need to add anything, simply reply to this email.',
+              '',
+              'Kind regards,',
+              'KUAC Support Team',
+            ].join('\n');
+          }
 
           if (submitButton) {
             submitButton.disabled = true;
             submitButton.textContent = 'Sending...';
+            submitButton.setAttribute('aria-busy', 'true');
           }
-
-          window.setTimeout(function () {
-            if (typeof form.submit === 'function') {
-              form.submit();
-            }
-          }, 75);
 
           window.setTimeout(function () {
             if (submitButton) {
               submitButton.disabled = false;
               submitButton.textContent = originalButtonText;
+              submitButton.removeAttribute('aria-busy');
             }
-            $status.text('If the page does not redirect, try again in a few seconds.');
+            $status.text('If the page does not redirect, your connection may have been interrupted. Please try again.');
           }, 12000);
         });
 
