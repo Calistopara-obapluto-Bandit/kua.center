@@ -1,6 +1,6 @@
 body {
 	font-family: "Libre Franklin", sans-serif;
-	font-size: 1.06rem;
+	font-size: 1.08rem;
   color: #1f2d36;
   margin: 0;
   padding: 0;
@@ -375,7 +375,7 @@ blockquote {
 
 .tm-section-desc {
   color: #546574;
-  font-size: 0.9rem;
+  font-size: 0.98rem;
 }
 
 .tm-trust-section {
@@ -413,7 +413,7 @@ blockquote {
 }
 
 .tm-trust-card p {
-  font-size: 0.98rem;
+  font-size: 1rem;
   margin-bottom: 0;
 }
 
@@ -483,15 +483,15 @@ blockquote {
 .tm-section-desc {
   max-width: 650px;
   width: 100%;
-  font-size: 0.9rem;
-  line-height: 1.85;
+  font-size: 0.98rem;
+  line-height: 1.8;
   color: #546574;
 }
 
 .tm-kicker {
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 800;
   color: #155e67;
   margin-bottom: 10px;
@@ -512,7 +512,8 @@ blockquote {
   max-width: 760px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.55;
+  line-height: 1.62;
+  font-size: 1.08rem;
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.45);
 }
 
@@ -520,7 +521,7 @@ blockquote {
   max-width: 760px;
   margin: 24px auto 0;
   line-height: 1.8;
-  font-size: 1.02rem;
+  font-size: 1.06rem;
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
 }
@@ -564,7 +565,8 @@ blockquote {
   padding-left: 30px;
   margin-bottom: 16px;
   color: #405161;
-  line-height: 1.7;
+  line-height: 1.75;
+  font-size: 1rem;
 }
 
 .tm-service-list li::before {
@@ -591,7 +593,7 @@ blockquote {
 
 .tm-mini-stat span {
   display: block;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   color: #5b6c78;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -603,7 +605,7 @@ blockquote {
 
 .tm-support-desc {
   color: rgba(255, 255, 255, 0.84);
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.8;
   max-width: 780px;
 }
@@ -630,7 +632,7 @@ blockquote {
 
 .tm-support-card p {
   color: #4c5e6b;
-  font-size: 0.96rem;
+  font-size: 0.99rem;
   line-height: 1.75;
 }
 
