@@ -1769,6 +1769,61 @@ p {
     line-height: 1.75;
   }
 
+  .tm-about-panel,
+  .tm-support-card,
+  .tm-partner-card,
+  .tm-contact-card,
+  .tm-callback-card {
+    padding: 20px 18px;
+  }
+
+  .tm-section-title {
+    font-size: 1.78rem;
+    line-height: 1.12;
+  }
+
+  .tm-service-list li {
+    margin-bottom: 14px;
+    font-size: 0.97rem;
+  }
+
+  .tm-mini-stats {
+    gap: 12px;
+  }
+
+  .tm-mini-stat strong {
+    font-size: 1.28rem;
+  }
+
+  .tm-faq-heading {
+    margin-bottom: 12px;
+  }
+
+  .tm-faq-heading h3 {
+    font-size: 1.1rem;
+  }
+
+  .tm-faq-intro {
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .tm-faq-grid {
+    gap: 12px;
+  }
+
+  .tm-faq-card {
+    padding: 14px 14px 13px;
+  }
+
+  .tm-faq-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .tm-faq-card p {
+    font-size: 0.88rem;
+  }
+
   .tm-request-step {
     padding: 12px 14px;
   }
@@ -1805,7 +1860,7 @@ p {
   }
 
   .tm-callback-card {
-    padding: 24px 18px;
+    padding: 22px 16px;
   }
 
   .tm-callback-row {
@@ -1820,6 +1875,32 @@ p {
 
   .tm-callback-form-panel {
     padding: 18px 14px 16px;
+  }
+
+  .tm-about-panel,
+  .tm-support-card,
+  .tm-partner-card,
+  .tm-contact-card {
+    padding: 18px 16px;
+  }
+
+  .tm-section-title {
+    font-size: 1.62rem;
+  }
+
+  .tm-hero-title {
+    font-size: 2rem;
+  }
+
+  .tm-hero-subtitle,
+  .tm-hero-note {
+    max-width: 100%;
+    font-size: 0.98rem;
+  }
+
+  .tm-service-list li {
+    padding-left: 26px;
+    line-height: 1.65;
   }
 
   .tm-file-input {
