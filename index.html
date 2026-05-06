@@ -561,14 +561,26 @@
                     </div>
                   </div>
                 </div>
-                <div class="tm-expectation-panel" aria-label="What to expect">
-                  <p class="tm-expectation-label">What to expect</p>
-                  <ul class="tm-expectation-list">
-                    <li>A confirmation email after you submit the form.</li>
-                    <li>A review of your request by KUAC.</li>
-                    <li>A follow-up if a suitable support partner is available.</li>
-                    <li>Clear next-step guidance if another route is better for your situation.</li>
-                  </ul>
+                <button
+                  class="btn tm-expectation-toggle"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#expectationPanel"
+                  aria-expanded="false"
+                  aria-controls="expectationPanel"
+                >
+                  What to expect
+                  <i class="fas fa-chevron-down tm-expectation-toggle-icon" aria-hidden="true"></i>
+                </button>
+                <div class="collapse" id="expectationPanel">
+                  <div class="tm-expectation-panel" aria-label="What to expect">
+                    <ul class="tm-expectation-list">
+                      <li>A confirmation email after you submit the form.</li>
+                      <li>A review of your request by KUAC.</li>
+                      <li>A follow-up if a suitable support partner is available.</li>
+                      <li>Clear next-step guidance if another route is better for your situation.</li>
+                    </ul>
+                  </div>
                 </div>
                 <button
                   class="btn tm-btn-primary tm-callback-toggle"
