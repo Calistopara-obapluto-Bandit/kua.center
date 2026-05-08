@@ -21,6 +21,17 @@ Set this environment variable for the private KUAC agent dashboard:
 
 The public site remains static, but the dashboard login page exchanges that code for a server session cookie. The session is enforced server-side, so the dashboard is not unlocked by browser storage alone.
 
+## Reset Admin Access
+
+To rotate the private dashboard password:
+
+1. Choose a new strong value for `AGENT_DASHBOARD_PASSWORD`.
+2. Update the environment variable in Render for the KUAC web service.
+3. Redeploy the service so the server picks up the new code.
+4. If you also run locally, update your local `.env` file to match.
+
+The repo should not contain the real dashboard password. Only the active environment should hold it.
+
 ## Support Chat
 
 - The support chat is drafted as a separate static site in `support-chat/index.html`.
