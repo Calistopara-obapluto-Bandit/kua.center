@@ -15,7 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="fontawesome-5.5/css/all.min.css" />
-    <script src="js/kuac-backend.js"></script>
+    <script src="config.js"></script>
     <style>
       :root {
         --bg: #07131d;
@@ -163,14 +163,14 @@
       <span class="eyebrow"><i class="far fa-lock" aria-hidden="true"></i> Private ops only</span>
       <h1>KUAC agent login</h1>
       <p>
-        This portal is for KUAC staff only. Enter the private access code to create a secure
-        server session before opening the case dashboard.
+        This portal is for KUAC staff only. Enter the private access code to open the static
+        admin dashboard.
       </p>
       <div class="session-note">
-        <strong><i class="far fa-shield-check" aria-hidden="true"></i> Server session required</strong>
+        <strong><i class="far fa-shield-check" aria-hidden="true"></i> Browser session required</strong>
         <span>
-          The dashboard is not unlocked by browser storage. The code is exchanged for a server-side
-          session cookie, and the session expires automatically after a fixed window.
+          The code is checked in the browser and stored on this device for a limited time. This is
+          a static-site gate, not a server session.
         </span>
       </div>
       <form class="form" id="loginForm">
@@ -190,7 +190,12 @@
     </section>
 
     <script>
-      const backend = window.KUAC_BACKEND || null;
+      const config = window.KUAC_CONFIG || {};
+      const STATIC_DASHBOARD_CODE = String(config.dashboardAccessCode || 'KUAC-OPS-2026').trim();
+      const STATIC_SESSION_KEY = 'kuac-static-admin-session';
+      const STATIC_SESSION_EXPIRES_KEY = 'kuac-static-admin-session-expires';
+      const STATIC_SESSION_TTL_MS = 1000 * 60 * 60 * 8;
+
       const loginForm = document.getElementById('loginForm');
       const loginCode = document.getElementById('loginCode');
       const loginStatus = document.getElementById('loginStatus');
@@ -200,17 +205,24 @@
         loginStatus.textContent = text;
       }
 
-      async function unlockWithBackend(code) {
-        if (!backend || !backend.available) {
+      function saveStaticSession() {
+        const expiresAt = Date.now() + STATIC_SESSION_TTL_MS;
+        localStorage.setItem(STATIC_SESSION_KEY, 'true');
+        localStorage.setItem(STATIC_SESSION_EXPIRES_KEY, String(expiresAt));
+        return expiresAt;
+      }
+
+      function hasStaticSession() {
+        const active = localStorage.getItem(STATIC_SESSION_KEY) === 'true';
+        const expiresAt = Number(localStorage.getItem(STATIC_SESSION_EXPIRES_KEY) || 0);
+
+        if (!active || !expiresAt || Date.now() > expiresAt) {
+          localStorage.removeItem(STATIC_SESSION_KEY);
+          localStorage.removeItem(STATIC_SESSION_EXPIRES_KEY);
           return false;
         }
 
-        const result = await backend.request('/api/admin/login', {
-          method: 'POST',
-          body: JSON.stringify({ code }),
-        });
-
-        return Boolean(result && result.authenticated);
+        return true;
       }
 
       loginForm.addEventListener('submit', async (event) => {
@@ -222,26 +234,19 @@
           return;
         }
 
-        if (!backend || !backend.available) {
-          setStatus('The private dashboard needs the KUAC server session to unlock.', 'error');
+        if (code !== STATIC_DASHBOARD_CODE) {
+          setStatus('That access code is not valid for KUAC operations.', 'error');
           return;
         }
 
-        setStatus('Checking the KUAC staff session...');
-
-        try {
-          const success = await unlockWithBackend(code);
-          if (success) {
-            setStatus('Dashboard unlocked.', 'success');
-            window.location.href = 'agent-dashboard.html';
-            return;
-          }
-
-          setStatus('That access code is not valid for KUAC operations.', 'error');
-        } catch (error) {
-          setStatus('The dashboard session could not be verified.', 'error');
-        }
+        saveStaticSession();
+        setStatus('Dashboard unlocked.', 'success');
+        window.location.href = 'agent-dashboard.html';
       });
+
+      if (hasStaticSession()) {
+        window.location.replace('agent-dashboard.html');
+      }
     </script>
   </body>
 </html>

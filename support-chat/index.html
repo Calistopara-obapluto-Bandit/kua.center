@@ -997,8 +997,8 @@
           </div>
           <div class="gate-actions">
             <div class="gate-action-stack">
-              <div class="gate-note" id="gateNote">Upload the proof and enter the case reference. KUAC will receive the verification email, and the assigned agent will add the access code after review.</div>
-              <div class="gate-note">Accepted files: images or PDF. The proof email is sent to KUAC automatically through the configured form endpoint.</div>
+              <div class="gate-note" id="gateNote">Upload the proof and enter the case reference. KUAC will review the request and the assigned associate will add the access code after verification.</div>
+              <div class="gate-note">Accepted files: images or PDF. The proof submission is sent through the configured form endpoint.</div>
             </div>
             <button type="submit">Send proof & verify</button>
           </div>
@@ -1060,13 +1060,13 @@
         <div class="access-steps">
           <div class="access-step">
             <small>Step 1</small>
-            <strong>Payment confirmed</strong>
-            <span>The client pays for access before the chat opens.</span>
+            <strong>Request verified</strong>
+            <span>The case is reviewed before the chat opens.</span>
           </div>
           <div class="access-step">
             <small>Step 2</small>
-            <strong>Agent assigned manually</strong>
-            <span>KUAC assigns a real agent to that client. No auto-matching.</span>
+            <strong>Associate assigned manually</strong>
+            <span>KUAC assigns a real associate to that client. No auto-matching.</span>
           </div>
           <div class="access-step">
             <small>Step 3</small>
@@ -1083,7 +1083,7 @@
           <div class="room-list" id="roomList"></div>
           <div class="sidebar-note">
             This is a static chat surface. The access model is manual and client-specific, so it
-            can be connected to a real backend later without changing the layout.
+            can be used as a static client room without changing the layout.
           </div>
         </aside>
 
@@ -1617,7 +1617,7 @@
         const submitButton = accessForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         gateNote.classList.add('is-success');
-        gateNote.textContent = 'Saving verification, then sending the proof to KUAC...';
+          gateNote.textContent = 'Saving verification, then sending the proof to KUAC...';
 
         try {
           if (backend && backend.available) {
@@ -1635,13 +1635,13 @@
               proofSize: proof.size || 0,
               note: `Submitted from ${window.location.pathname || 'support-chat'}`,
             });
-            gateNote.textContent = 'Verification saved to the KUAC backend and sent through the proof email flow.';
+            gateNote.textContent = 'Verification saved locally and sent through the proof email flow.';
           } else {
-            gateNote.textContent = 'Backend not available here, so the page is using static browser storage and the proof email flow only.';
+            gateNote.textContent = 'This static page is using browser storage and the proof email flow only.';
           }
         } catch (error) {
           gateNote.classList.add('is-error');
-          gateNote.textContent = 'The backend save could not complete, but the static proof email can still be sent.';
+          gateNote.textContent = 'The local save could not complete, but the static proof email can still be sent.';
         } finally {
           try {
             accessForm.submit();

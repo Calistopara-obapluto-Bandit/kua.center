@@ -15,7 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="fontawesome-5.5/css/all.min.css" />
-    <script src="js/kuac-backend.js"></script>
+    <script src="config.js"></script>
     <style>
       :root {
         --bg: #07131d;
@@ -70,50 +70,6 @@
         display: grid;
         place-items: center;
         padding: 22px;
-      }
-
-      .gate-card {
-        width: min(520px, 100%);
-        padding: 24px;
-      }
-
-      .gate-card h1 {
-        margin-top: 12px;
-        font-size: clamp(1.8rem, 3vw, 2.5rem);
-        line-height: 1.05;
-        letter-spacing: -0.04em;
-      }
-
-      .gate-card p {
-        margin-top: 10px;
-        color: var(--muted);
-        line-height: 1.7;
-      }
-
-      .gate-login {
-        display: grid;
-        gap: 10px;
-        margin-top: 18px;
-      }
-
-      .gate-login label {
-        color: var(--muted);
-        font-size: 0.84rem;
-        letter-spacing: 0.03em;
-      }
-
-      .gate-login input {
-        width: 100%;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        background: var(--panel-2);
-        color: var(--text);
-        border-radius: 14px;
-        padding: 12px 13px;
-      }
-
-      .gate-login input:focus {
-        outline: 2px solid rgba(100, 208, 215, 0.48);
-        outline-offset: 2px;
       }
 
       .topbar {
@@ -477,12 +433,12 @@
           <h1>Internal case desk for verified KUAC support requests.</h1>
           <p>
             Use this private dashboard to review support submissions, assign the associate, and
-            issue the case access code for a private follow-up room. It stays static-site friendly
-            while also syncing with the free KUAC backend when the site is online.
+            issue the case access code for a private follow-up room. It is a browser-side static
+            gate, so it works on a plain static host.
           </p>
         </div>
         <div class="actions">
-          <span class="session-chip" id="sessionChip"><i class="far fa-shield-check" aria-hidden="true"></i> Session pending</span>
+          <span class="session-chip" id="sessionChip"><i class="far fa-shield-check" aria-hidden="true"></i> Static session pending</span>
           <a class="pill-link" href="support-chat/index.html"><i class="far fa-comments" aria-hidden="true"></i> Open case chat</a>
           <button class="pill-link" id="logoutButton" type="button"><i class="far fa-sign-out" aria-hidden="true"></i> Sign out</button>
           <a class="pill-link" href="index.html"><i class="far fa-arrow-left" aria-hidden="true"></i> Back to KUAC</a>
@@ -585,10 +541,14 @@
         </section>
       </div>
     <script>
+      const config = window.KUAC_CONFIG || {};
+      const STATIC_DASHBOARD_CODE = String(config.dashboardAccessCode || 'KUAC-OPS-2026').trim();
+      const STATIC_SESSION_KEY = 'kuac-static-admin-session';
+      const STATIC_SESSION_EXPIRES_KEY = 'kuac-static-admin-session-expires';
+      const STATIC_SESSION_TTL_MS = 1000 * 60 * 60 * 8;
       const ACCESS_STATE_KEY = 'kuac-private-chat-access';
       const DRAFT_STATE_KEY = 'kuac-private-chat-draft';
       const AGENT_CREDENTIALS_KEY = 'kuac-agent-issued-credentials';
-      const backend = window.KUAC_BACKEND || null;
       const logoutButton = document.getElementById('logoutButton');
       const sessionChip = document.getElementById('sessionChip');
 
@@ -730,51 +690,6 @@
         });
       }
 
-      async function refreshRemoteState() {
-        if (!backend || !backend.available) {
-          return;
-        }
-
-        try {
-          const state = await backend.fetchState();
-          remoteSubmissions = Object.values(state && state.submissions ? state.submissions : {}).sort((a, b) => {
-            const left = new Date(b.submittedAt || 0).getTime();
-            const right = new Date(a.submittedAt || 0).getTime();
-            return left - right;
-          });
-
-          const issuedEntries = Object.values(state && state.issued ? state.issued : {}).reduce((acc, entry) => {
-            acc[credentialKey(entry.email, entry.caseCode)] = entry;
-            return acc;
-          }, {});
-
-          registry = Object.assign({}, registry, issuedEntries);
-          localStorage.setItem(AGENT_CREDENTIALS_KEY, JSON.stringify(registry));
-
-          if (remoteSubmissions.length) {
-            const latest = remoteSubmissions[0];
-            accessState = Object.assign({
-              unlocked: true,
-              email: latest.email,
-              caseCode: latest.caseCode,
-              agent: latest.agent,
-              paymentId: latest.paymentId,
-              proofName: latest.proofName,
-            }, accessState || {});
-            draftState = Object.assign({}, draftState, {
-              email: latest.email,
-              caseCode: latest.caseCode,
-              agent: latest.agent,
-              displayName: latest.clientName,
-              role: latest.role,
-            });
-            saveStateSnapshot();
-          }
-        } catch (error) {
-          // If the backend is unavailable, keep using local browser storage.
-        }
-      }
-
       function escapeHtml(value) {
         return String(value)
           .replaceAll('&', '&amp;')
@@ -793,46 +708,48 @@
         sessionChip.innerHTML = text;
       }
 
-      async function verifyDashboardSession() {
-        if (!backend || !backend.available) {
-          setSessionChip('<i class="far fa-unlock" aria-hidden="true"></i> Static fallback');
-          return true;
-        }
+      function saveStaticSession() {
+        const expiresAt = Date.now() + STATIC_SESSION_TTL_MS;
+        localStorage.setItem(STATIC_SESSION_KEY, 'true');
+        localStorage.setItem(STATIC_SESSION_EXPIRES_KEY, String(expiresAt));
+        return expiresAt;
+      }
 
-        try {
-          const session = await backend.request('/api/admin/session', { method: 'GET' });
-          if (!session || !session.authenticated) {
-            setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Session required');
-            window.location.replace('agent-login.html');
-            return false;
-          }
-          if (session.expiresAt) {
-            const expiresAt = new Date(session.expiresAt);
-            const expiresLabel = Number.isNaN(expiresAt.getTime())
-              ? 'Session active'
-              : `Session active until ${expiresAt.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}`;
-            setSessionChip(`<i class="far fa-shield-check" aria-hidden="true"></i> ${escapeHtml(expiresLabel)}`);
-          } else {
-            setSessionChip('<i class="far fa-shield-check" aria-hidden="true"></i> Session active');
-          }
-          return true;
-        } catch (error) {
-          setSessionChip('<i class="far fa-exclamation-triangle" aria-hidden="true"></i> Session unavailable');
+      function clearStaticSession() {
+        localStorage.removeItem(STATIC_SESSION_KEY);
+        localStorage.removeItem(STATIC_SESSION_EXPIRES_KEY);
+      }
+
+      function getStaticSessionExpiry() {
+        const expiresAt = Number(localStorage.getItem(STATIC_SESSION_EXPIRES_KEY) || 0);
+        if (!expiresAt || Date.now() > expiresAt) {
+          clearStaticSession();
+          return 0;
+        }
+        return expiresAt;
+      }
+
+      function verifyDashboardSession() {
+        const hasSession = localStorage.getItem(STATIC_SESSION_KEY) === 'true';
+        const expiresAt = getStaticSessionExpiry();
+
+        if (!hasSession || !expiresAt) {
+          setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Static session required');
           window.location.replace('agent-login.html');
           return false;
         }
+
+        const expiresLabel = `Static session active until ${new Date(expiresAt).toLocaleString([], {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+        })}`;
+        setSessionChip(`<i class="far fa-shield-check" aria-hidden="true"></i> ${escapeHtml(expiresLabel)}`);
+        return true;
       }
 
       if (logoutButton) {
-        logoutButton.addEventListener('click', async () => {
-          try {
-            if (backend && backend.available) {
-              await backend.request('/api/admin/logout', { method: 'POST' });
-            }
-          } catch (error) {
-            // ignore logout failures and continue to the login page
-          }
-
+        logoutButton.addEventListener('click', () => {
+          clearStaticSession();
           window.location.href = 'agent-login.html';
         });
       }
@@ -885,18 +802,6 @@
         metricClient.textContent = email;
         metricAgent.textContent = agent;
         metricCode.textContent = access;
-        if (backend && backend.available) {
-          backend.postIssuedCode({
-            email,
-            caseCode: code,
-            agent,
-            clientName: client,
-            code: access,
-            note: agentNote.value.trim(),
-          }).catch(() => {
-            // ignore backend write failures; local storage still keeps the manual code
-          });
-        }
         renderRegistry();
         syncFromClientState();
       });
@@ -911,24 +816,10 @@
         }
       });
 
-      verifyDashboardSession().then((authorized) => {
-        if (!authorized) {
-          return;
-        }
-
-        refreshRemoteState().then(() => {
-          syncFromClientState();
-          renderRegistry();
-        });
-        if (backend && backend.available) {
-          window.setInterval(() => {
-            refreshRemoteState().then(() => {
-              syncFromClientState();
-              renderRegistry();
-            });
-          }, 12000);
-        }
-      });
+      if (verifyDashboardSession()) {
+        syncFromClientState();
+        renderRegistry();
+      }
     </script>
   </body>
 </html>

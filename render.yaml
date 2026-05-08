@@ -1,9 +1,9 @@
 services:
   - type: web
-    runtime: node
+    runtime: static
     name: kua-center
     branch: main
-    buildCommand: echo "Static site and API ready"
-    startCommand: node server.js
+    buildCommand: echo "Static site ready"
+    staticPublishPath: .
     autoDeployTrigger: commit
     plan: free

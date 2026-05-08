@@ -16,41 +16,33 @@ This project is set up for Render's **Static Site** plan with FormSubmit.
 
 ## Required Render Settings
 
-Set this environment variable for the private KUAC agent dashboard:
-- `AGENT_DASHBOARD_PASSWORD`
-
-The public site remains static, but the dashboard login page exchanges that code for a server session cookie. The session is enforced server-side, so the dashboard is not unlocked by browser storage alone.
-Make sure the value is entered exactly, without extra spaces before or after the password.
+No runtime environment variables are required for the static site.
+The private dashboard gate is configured in `config.js` through `dashboardAccessCode`.
 
 ## Copy-Paste Setup Note
 
 Use this quick note when setting up or updating Render:
 
 ```text
-Service type: Web Service
-Runtime: Node
+Service type: Static Site
 Branch: main
-Env var: AGENT_DASHBOARD_PASSWORD=<your-secret-password>
-Deploy after saving the env var.
+Static publish path: .
 Open /agent-login.html to access the private admin dashboard.
 ```
 
 ## Reset Admin Access
 
-To rotate the private dashboard password:
+To rotate the private dashboard code:
 
-1. Choose a new strong value for `AGENT_DASHBOARD_PASSWORD`.
-2. Update the environment variable in Render for the KUAC web service.
-3. Redeploy the service so the server picks up the new code.
-4. If you also run locally, update your local `.env` file to match.
-
-The repo should not contain the real dashboard password. Only the active environment should hold it.
+1. Update `dashboardAccessCode` in `config.js`.
+2. Redeploy the static site.
+3. Share the new code with the KUAC staff who need dashboard access.
 
 ## Support Chat
 
 - The support chat is drafted as a separate static site in `support-chat/index.html`.
 - It stays separate from the private admin dashboard.
-- Client-side pages can still work as static previews, while the private admin session lives on the server.
+- Client-side pages can still work as static previews, and the dashboard gate is handled locally in the browser.
 
 ## Callback Flow
 
