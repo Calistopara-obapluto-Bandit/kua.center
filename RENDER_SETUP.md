@@ -22,6 +22,19 @@ Set this environment variable for the private KUAC agent dashboard:
 The public site remains static, but the dashboard login page exchanges that code for a server session cookie. The session is enforced server-side, so the dashboard is not unlocked by browser storage alone.
 Make sure the value is entered exactly, without extra spaces before or after the password.
 
+## Copy-Paste Setup Note
+
+Use this quick note when setting up or updating Render:
+
+```text
+Service type: Web Service
+Runtime: Node
+Branch: main
+Env var: AGENT_DASHBOARD_PASSWORD=<your-secret-password>
+Deploy after saving the env var.
+Open /agent-login.html to access the private admin dashboard.
+```
+
 ## Reset Admin Access
 
 To rotate the private dashboard password:
