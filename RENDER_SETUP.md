@@ -20,6 +20,7 @@ Set this environment variable for the private KUAC agent dashboard:
 - `AGENT_DASHBOARD_PASSWORD`
 
 The public site remains static, but the dashboard login page exchanges that code for a server session cookie. The session is enforced server-side, so the dashboard is not unlocked by browser storage alone.
+Make sure the value is entered exactly, without extra spaces before or after the password.
 
 ## Reset Admin Access
 
