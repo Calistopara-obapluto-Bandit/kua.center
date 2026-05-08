@@ -996,7 +996,6 @@ figure.effect-honey:hover h2 i {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 28px 54px rgba(0, 0, 0, 0.14);
-  height: 100%;
   backdrop-filter: blur(10px);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   overflow: hidden;
@@ -1085,7 +1084,6 @@ figure.effect-honey:hover h2 i {
 }
 
 .tm-callback-card {
-  height: 100%;
   padding: 34px 30px 30px;
   border-radius: 26px;
   background: linear-gradient(180deg, rgba(9, 28, 39, 0.86), rgba(10, 31, 43, 0.78));
@@ -1094,10 +1092,20 @@ figure.effect-honey:hover h2 i {
   backdrop-filter: blur(10px);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   overflow: hidden;
+  align-self: flex-start;
 }
 
 .tm-contact-row {
   align-items: flex-start;
+}
+
+.tm-contact-row > [class*="col-"] {
+  align-self: flex-start;
+}
+
+.tm-contact-row > [class*="col-"] > .tm-callback-card,
+.tm-contact-row > [class*="col-"] > .tm-contact-card {
+  height: auto;
 }
 
 .tm-callback-toggle {
@@ -2024,6 +2032,7 @@ p {
   .tm-contact-card {
     text-align: left;
   }
+
 }
 
 @media (max-width: 480px) {

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="KUAC private admin login for the agent dashboard."
+    />
+    <title>KUAC Agent Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="fontawesome-5.5/css/all.min.css" />
+    <script src="js/kuac-backend.js"></script>
+    <style>
+      :root {
+        --bg: #07131d;
+        --bg-2: #0d2030;
+        --panel: rgba(12, 28, 41, 0.92);
+        --panel-2: rgba(17, 36, 52, 0.96);
+        --line: rgba(189, 232, 227, 0.12);
+        --text: #eef9f7;
+        --muted: rgba(238, 249, 247, 0.72);
+        --muted-2: rgba(238, 249, 247, 0.54);
+        --accent: #64d0d7;
+        --accent-2: #1d7f8a;
+        --danger: #ffb5b5;
+        --shadow: 0 28px 64px rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at top left, rgba(100, 208, 215, 0.14), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(15, 92, 115, 0.16), transparent 34%),
+          linear-gradient(180deg, var(--bg), var(--bg-2));
+        color: var(--text);
+        font-family: "Space Grotesk", sans-serif;
+      }
+      body {
+        display: grid;
+        place-items: center;
+        padding: 22px;
+      }
+      .panel {
+        width: min(520px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        padding: 24px;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(100, 208, 215, 0.12);
+        border: 1px solid rgba(100, 208, 215, 0.22);
+        color: #d9fbfd;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 12px 0 0;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+      }
+      p {
+        margin: 10px 0 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .form {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+      label {
+        color: var(--muted);
+        font-size: 0.84rem;
+        letter-spacing: 0.03em;
+      }
+      input {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--panel-2);
+        color: var(--text);
+        border-radius: 14px;
+        padding: 12px 13px;
+      }
+      input:focus {
+        outline: 2px solid rgba(100, 208, 215, 0.48);
+        outline-offset: 2px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .status { color: var(--muted); font-size: 0.9rem; }
+      .status.is-error { color: var(--danger); }
+      .status.is-success { color: #d9fbfd; }
+      .button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+      }
+      .links {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+      .link {
+        text-decoration: none;
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .session-note {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+        padding: 14px 15px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .session-note strong {
+        display: block;
+        font-size: 0.96rem;
+      }
+      .session-note span {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.55;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="panel">
+      <span class="eyebrow"><i class="far fa-lock" aria-hidden="true"></i> Private ops only</span>
+      <h1>KUAC agent login</h1>
+      <p>
+        This portal is for KUAC staff only. Enter the private access code to create a secure
+        server session before opening the case dashboard.
+      </p>
+      <div class="session-note">
+        <strong><i class="far fa-shield-check" aria-hidden="true"></i> Server session required</strong>
+        <span>
+          The dashboard is not unlocked by browser storage. The code is exchanged for a server-side
+          session cookie, and the session expires automatically after a fixed window.
+        </span>
+      </div>
+      <form class="form" id="loginForm">
+        <div>
+          <label for="loginCode">Access code</label>
+          <input id="loginCode" type="password" autocomplete="off" placeholder="Enter staff code" required />
+        </div>
+        <div class="row">
+          <div class="status" id="loginStatus">Enter the KUAC staff access code to continue.</div>
+          <button class="button" type="submit">Unlock dashboard</button>
+        </div>
+      </form>
+      <div class="links">
+        <a class="link" href="index.html">Back to KUAC</a>
+        <a class="link" href="support-chat/index.html">Open case chat</a>
+      </div>
+    </section>
+
+    <script>
+      const backend = window.KUAC_BACKEND || null;
+      const loginForm = document.getElementById('loginForm');
+      const loginCode = document.getElementById('loginCode');
+      const loginStatus = document.getElementById('loginStatus');
+
+      function setStatus(text, kind) {
+        loginStatus.className = `status${kind ? ` is-${kind}` : ''}`;
+        loginStatus.textContent = text;
+      }
+
+      async function unlockWithBackend(code) {
+        if (!backend || !backend.available) {
+          return false;
+        }
+
+        const result = await backend.request('/api/admin/login', {
+          method: 'POST',
+          body: JSON.stringify({ code }),
+        });
+
+        return Boolean(result && result.authenticated);
+      }
+
+      loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const code = loginCode.value.trim();
+        if (!code) {
+          setStatus('Enter the staff access code before continuing.', 'error');
+          return;
+        }
+
+        if (!backend || !backend.available) {
+          setStatus('The private dashboard needs the KUAC server session to unlock.', 'error');
+          return;
+        }
+
+        setStatus('Checking the KUAC staff session...');
+
+        try {
+          const success = await unlockWithBackend(code);
+          if (success) {
+            setStatus('Dashboard unlocked.', 'success');
+            window.location.href = 'agent-dashboard.html';
+            return;
+          }
+
+          setStatus('That access code is not valid for KUAC operations.', 'error');
+        } catch (error) {
+          setStatus('The dashboard session could not be verified.', 'error');
+        }
+      });
+    </script>
+  </body>
+</html>

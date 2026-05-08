@@ -16,6 +16,459 @@
     <link rel="stylesheet" href="slick/slick-theme.css">
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      .tm-chat-launcher {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        z-index: 1100;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        border-radius: 999px;
+        text-decoration: none;
+        color: #fff;
+        background: linear-gradient(135deg, #0f6d84, #083343);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+        transition: transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .tm-chat-launcher:hover,
+      .tm-chat-launcher:focus {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 48px rgba(0, 0, 0, 0.34);
+        text-decoration: none;
+        color: #fff;
+      }
+
+      .tm-chat-launcher i {
+        font-size: 1.15rem;
+      }
+
+      .tm-chat-launcher-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+      }
+
+      .tm-chat-launcher-text strong {
+        font-size: 0.95rem;
+      }
+
+      .tm-chat-launcher-text small {
+        opacity: 0.82;
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+      }
+
+      @media (max-width: 640px) {
+        .tm-chat-launcher {
+          left: 14px;
+          bottom: 14px;
+          padding: 13px 15px;
+        }
+
+        .tm-chat-launcher-text {
+          display: none;
+        }
+
+        .tm-chat-drawer {
+          left: 14px;
+          right: 14px;
+          width: auto;
+          height: min(76vh, 680px);
+        }
+      }
+
+      .tm-chat-drawer-shell {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        z-index: 1099;
+        width: min(440px, calc(100vw - 40px));
+        height: min(700px, calc(100vh - 40px));
+      }
+
+      .tm-chat-drawer {
+        position: absolute;
+        inset: auto auto 0 0;
+        width: min(440px, calc(100vw - 40px));
+        height: min(700px, calc(100vh - 40px));
+        border-radius: 24px;
+        background: rgba(6, 20, 31, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: 0 28px 64px rgba(0, 0, 0, 0.38);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(16px) scale(0.96);
+        opacity: 0;
+        visibility: hidden;
+        transition: transform 180ms ease, opacity 180ms ease, visibility 180ms ease;
+        pointer-events: none;
+      }
+
+      .tm-chat-drawer-shell.is-open .tm-chat-drawer {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .tm-chat-drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+        background: linear-gradient(135deg, rgba(15, 109, 132, 0.92), rgba(8, 51, 67, 0.96));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .tm-chat-drawer-title {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .tm-chat-drawer-title strong {
+        font-size: 0.98rem;
+      }
+
+      .tm-chat-drawer-title small {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 0.74rem;
+        letter-spacing: 0.03em;
+      }
+
+      .tm-chat-drawer-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .tm-chat-drawer-link,
+      .tm-chat-drawer-close {
+        border: 0;
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        border-radius: 999px;
+        padding: 8px 11px;
+        font: inherit;
+        font-size: 0.82rem;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .tm-chat-drawer-close {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .tm-chat-drawer-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        background:
+          radial-gradient(circle at top right, rgba(100, 208, 215, 0.08), transparent 24%),
+          linear-gradient(180deg, rgba(6, 20, 31, 0.98), rgba(4, 18, 27, 0.98));
+      }
+
+      .tm-mini-casebar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tm-mini-casecopy {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .tm-mini-casecopy small {
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        font-weight: 800;
+      }
+
+      .tm-mini-casecopy strong {
+        font-size: 1rem;
+      }
+
+      .tm-mini-casecopy span {
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.45;
+      }
+
+      .tm-mini-status {
+        flex: 0 0 auto;
+        border: 1px solid rgba(100, 208, 215, 0.24);
+        background: rgba(100, 208, 215, 0.1);
+        color: #dffcfb;
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+
+      .tm-mini-switcher {
+        display: flex;
+        gap: 8px;
+        padding: 12px 16px 0;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .tm-mini-room {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 9px 12px;
+        cursor: pointer;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+      }
+
+      .tm-mini-room:hover,
+      .tm-mini-room:focus {
+        transform: translateY(-1px);
+        border-color: rgba(100, 208, 215, 0.34);
+        background: rgba(100, 208, 215, 0.08);
+        outline: none;
+      }
+
+      .tm-mini-room.active {
+        background: rgba(100, 208, 215, 0.16);
+        border-color: rgba(100, 208, 215, 0.4);
+      }
+
+      .tm-mini-thread {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;
+        display: grid;
+        gap: 10px;
+        padding: 14px 16px;
+      }
+
+      .tm-mini-system {
+        padding: 12px 13px;
+        border-radius: 16px;
+        border: 1px solid rgba(100, 208, 215, 0.18);
+        background: rgba(100, 208, 215, 0.08);
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+
+      .tm-mini-message {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        max-width: 92%;
+      }
+
+      .tm-mini-message.user {
+        margin-left: auto;
+        flex-direction: row-reverse;
+      }
+
+      .tm-mini-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        background: linear-gradient(135deg, rgba(100, 208, 215, 0.95), rgba(15, 92, 115, 0.95));
+        color: white;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .tm-mini-message.partner .tm-mini-avatar {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.12));
+      }
+
+      .tm-mini-bubble {
+        min-width: 0;
+        padding: 12px 13px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .tm-mini-message.user .tm-mini-bubble {
+        background: linear-gradient(135deg, rgba(100, 208, 215, 0.22), rgba(15, 92, 115, 0.28));
+        border-top-right-radius: 6px;
+      }
+
+      .tm-mini-message.partner .tm-mini-bubble {
+        background: rgba(255, 255, 255, 0.08);
+        border-top-left-radius: 6px;
+      }
+
+      .tm-mini-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 7px;
+        color: var(--muted);
+        font-size: 0.74rem;
+      }
+
+      .tm-mini-meta strong {
+        color: var(--text);
+        font-size: 0.8rem;
+      }
+
+      .tm-mini-bubble p {
+        margin: 0;
+        line-height: 1.55;
+        font-size: 0.92rem;
+      }
+
+      .tm-mini-typing {
+        padding: 0 16px 10px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .tm-mini-typing span {
+        color: var(--text);
+      }
+
+      .tm-mini-composer {
+        border-top: 1px solid var(--line);
+        padding: 12px 16px 14px;
+        display: grid;
+        gap: 10px;
+        background: rgba(4, 18, 27, 0.72);
+      }
+
+      .tm-mini-replies {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tm-mini-replies button {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
+
+      .tm-mini-replies button:hover,
+      .tm-mini-replies button:focus {
+        border-color: rgba(100, 208, 215, 0.34);
+        background: rgba(100, 208, 215, 0.08);
+      }
+
+      .tm-mini-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .tm-mini-fields input,
+      .tm-mini-composer textarea {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(16, 44, 58, 0.96);
+        color: var(--text);
+        border-radius: 14px;
+        padding: 12px 13px;
+      }
+
+      .tm-mini-composer textarea {
+        min-height: 86px;
+        resize: vertical;
+      }
+
+      .tm-mini-fields input::placeholder,
+      .tm-mini-composer textarea::placeholder {
+        color: var(--muted-2);
+      }
+
+      .tm-mini-fields input:focus,
+      .tm-mini-composer textarea:focus,
+      .tm-mini-actions button:focus {
+        outline: 2px solid rgba(100, 208, 215, 0.48);
+        outline-offset: 2px;
+      }
+
+      .tm-mini-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .tm-mini-note {
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.45;
+      }
+
+      .tm-mini-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .tm-mini-buttons button {
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .tm-mini-buttons .ghost {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border: 1px solid var(--line);
+      }
+
+      .tm-mini-buttons .primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #fff;
+      }
+
+      .tm-chat-drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1098;
+        background: rgba(2, 10, 16, 0.38);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 180ms ease, visibility 180ms ease;
+      }
+
+      .tm-chat-drawer-backdrop.is-visible {
+        opacity: 1;
+        visibility: visible;
+      }
+    </style>
   </head>
   <body>    
     <section id="infinite" class="text-white tm-font-big tm-parallax">
@@ -491,10 +944,10 @@
             </div>
           </div>
             <div class="col-lg-4 mb-4">
-              <div class="tm-support-card tm-partner-card tm-partner-card-featured">
+            <div class="tm-support-card tm-partner-card tm-partner-card-featured">
                 <i class="fas fa-unlock-alt tm-support-icon"></i>
                 <h3>Unlock Full Request</h3>
-              <p>Preview the request first, then pay once to unlock the full details and contact options for that lead. This includes the network fee.</p>
+              <p>Preview the request first, then unlock the follow-up area for a verified support case and continue with the assigned associate.</p>
                 <strong>€15.50 per request</strong>
               </div>
             </div>
@@ -514,7 +967,7 @@
         </div>
       </div>
     </section>
-    
+
     <section id="contact" class="tm-section-pad-top tm-parallax-2">
     
       <div class="container tm-container-contact">
@@ -560,15 +1013,6 @@
                       <small>You get a confirmation first, then a direct follow-up if a partner is available.</small>
                     </div>
                   </div>
-                </div>
-                <div class="tm-expectation-panel" aria-label="What to expect">
-                  <p class="tm-expectation-label">What to expect</p>
-                  <ul class="tm-expectation-list">
-                    <li>A confirmation email after you submit the form.</li>
-                    <li>A review of your request by KUAC.</li>
-                    <li>A follow-up if a suitable support partner is available.</li>
-                    <li>Clear next-step guidance if another route is better for your situation.</li>
-                  </ul>
                 </div>
                 <button
                   class="btn tm-expectation-toggle"
@@ -971,5 +1415,13 @@
         });
       });
     </script>
+    <div class="tm-chat-drawer-backdrop" id="chatBackdrop" hidden></div>
+    <a class="tm-chat-launcher" id="chatLauncher" href="support-chat.html" aria-label="Open private support chat">
+        <i class="far fa-comment-dots" aria-hidden="true"></i>
+        <span class="tm-chat-launcher-text">
+          <strong>Private Chat</strong>
+          <small>Verified case and assigned associate</small>
+        </span>
+      </a>
   </body>
 </html>

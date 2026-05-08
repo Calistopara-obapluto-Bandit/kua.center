@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="KUAC private client and associate support chat tied to an unlocked request."
+    />
+    <title>KUAC Assigned Support Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../fontawesome-5.5/css/all.min.css" />
+    <script src="../config.js"></script>
+    <script src="../js/kuac-backend.js"></script>
+    <style>
+      :root {
+        --bg: #04121b;
+        --bg-2: #082331;
+        --panel: rgba(10, 29, 41, 0.92);
+        --panel-2: rgba(14, 38, 54, 0.96);
+        --line: rgba(188, 233, 228, 0.12);
+        --line-strong: rgba(118, 219, 229, 0.24);
+        --text: #eef9f7;
+        --muted: rgba(238, 249, 247, 0.72);
+        --muted-2: rgba(238, 249, 247, 0.56);
+        --accent: #64d0d7;
+        --accent-2: #1d7f8a;
+        --accent-3: #0f5c73;
+        --bubble-user: linear-gradient(135deg, rgba(100, 208, 215, 0.24), rgba(15, 92, 115, 0.28));
+        --bubble-partner: rgba(255, 255, 255, 0.08);
+        --bubble-system: rgba(255, 255, 255, 0.05);
+        --shadow: 0 28px 64px rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at top left, rgba(100, 208, 215, 0.14), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(15, 92, 115, 0.16), transparent 34%),
+          linear-gradient(180deg, var(--bg), var(--bg-2));
+        color: var(--text);
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      .shell {
+        min-height: 100vh;
+        padding: 22px;
+        position: relative;
+      }
+
+      .shell::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(120deg, rgba(255, 255, 255, 0.03), transparent 28%),
+          radial-gradient(circle at 85% 14%, rgba(100, 208, 215, 0.06), transparent 18%);
+        opacity: 0.9;
+      }
+
+      .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .brand .eyebrow {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: clamp(1.35rem, 2vw, 1.8rem);
+        letter-spacing: -0.02em;
+      }
+
+      .brand p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+        max-width: 64ch;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .status-pill {
+        border: 1px solid rgba(100, 208, 215, 0.24);
+        background: rgba(100, 208, 215, 0.1);
+        color: #d9fbfd;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 0.86rem;
+        white-space: nowrap;
+      }
+
+      .backlink {
+        text-decoration: none;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 10px 14px;
+        border-radius: 999px;
+        transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+      }
+
+      .backlink:hover,
+      .backlink:focus {
+        transform: translateY(-1px);
+        border-color: rgba(100, 208, 215, 0.34);
+        background: rgba(255, 255, 255, 0.08);
+        text-decoration: none;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.5fr 0.9fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .hero-copy {
+        padding: 20px;
+        background:
+          linear-gradient(135deg, rgba(100, 208, 215, 0.18), rgba(7, 23, 34, 0.92)),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+      }
+
+      .hero-copy .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .hero-copy h2 {
+        margin: 10px 0 10px;
+        font-size: clamp(1.5rem, 3vw, 2.35rem);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+
+      .hero-copy p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 68ch;
+      }
+
+      .hero-pills {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+
+      .hero-pills span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        font-size: 0.82rem;
+      }
+
+      .hero-summary {
+        padding: 20px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .access-strip {
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(100, 208, 215, 0.24);
+        border-radius: 22px;
+        background:
+          linear-gradient(135deg, rgba(100, 208, 215, 0.16), rgba(7, 23, 34, 0.94)),
+          rgba(255, 255, 255, 0.02);
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+        gap: 14px;
+        align-items: center;
+      }
+
+      .access-strip h2 {
+        margin: 8px 0 10px;
+        font-size: clamp(1.35rem, 2.4vw, 2rem);
+        letter-spacing: -0.02em;
+      }
+
+      .access-strip p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .access-steps {
+        display: grid;
+        gap: 10px;
+      }
+
+      .access-step {
+        padding: 14px 15px;
+        border-radius: 16px;
+        background: var(--panel-2);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .access-step small {
+        display: block;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        margin-bottom: 6px;
+        font-weight: 800;
+      }
+
+      .access-step strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .access-step span {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .access-gate {
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(100, 208, 215, 0.24);
+        border-radius: 22px;
+        background:
+          linear-gradient(135deg, rgba(100, 208, 215, 0.14), rgba(7, 23, 34, 0.95)),
+          rgba(255, 255, 255, 0.02);
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .gate-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(100, 208, 215, 0.12);
+        border: 1px solid rgba(100, 208, 215, 0.22);
+        color: #d9fbfd;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .gate-points {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .gate-point {
+        padding: 13px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .gate-point strong {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.92rem;
+      }
+
+      .gate-point span {
+        display: block;
+        color: var(--muted);
+        line-height: 1.45;
+        font-size: 0.86rem;
+      }
+
+      .access-gate h2 {
+        margin: 8px 0 10px;
+        font-size: clamp(1.35rem, 2.4vw, 2rem);
+        letter-spacing: -0.02em;
+      }
+
+      .access-gate p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .gate-form {
+        display: grid;
+        gap: 10px;
+        padding: 4px;
+        border-radius: 20px;
+        background: rgba(6, 20, 29, 0.34);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .gate-form-head {
+        display: grid;
+        gap: 6px;
+        padding: 2px 2px 4px;
+      }
+
+      .gate-form-head small {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.68rem;
+        font-weight: 800;
+      }
+
+      .gate-form-head strong {
+        font-size: 1rem;
+      }
+
+      .gate-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .gate-grid .full {
+        grid-column: 1 / -1;
+      }
+
+      .gate-field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .gate-field label {
+        color: var(--muted);
+        font-size: 0.84rem;
+        letter-spacing: 0.03em;
+      }
+
+      .gate-field input {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--panel-2);
+        color: var(--text);
+        border-radius: 14px;
+        padding: 12px 13px;
+      }
+
+      .gate-field input::placeholder {
+        color: var(--muted-2);
+      }
+
+      .gate-field input:focus {
+        outline: 2px solid rgba(100, 208, 215, 0.48);
+        outline-offset: 2px;
+      }
+
+      .gate-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .gate-actions button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+      }
+
+      .gate-action-stack {
+        display: grid;
+        gap: 8px;
+        align-items: start;
+      }
+
+      .gate-note {
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.55;
+      }
+
+      .gate-note.is-error {
+        color: #ffd2d2;
+      }
+
+      .gate-note.is-success {
+        color: #d9fbfd;
+      }
+
+      .private-stage.is-locked {
+        filter: blur(6px);
+        opacity: 0.42;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .private-stage {
+        transition: filter 180ms ease, opacity 180ms ease;
+      }
+
+      .summary-card {
+        padding: 16px;
+        border-radius: 18px;
+        background:
+          linear-gradient(180deg, rgba(100, 208, 215, 0.08), transparent 56%),
+          var(--panel-2);
+        border: 1px solid rgba(100, 208, 215, 0.18);
+      }
+
+      .summary-card small {
+        display: block;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.7rem;
+        margin-bottom: 6px;
+      }
+
+      .summary-card strong {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 4px;
+      }
+
+      .summary-card span {
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 0.92rem;
+      }
+
+      .summary-card.full {
+        grid-column: 1 / -1;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 290px minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .sidebar {
+        padding: 18px;
+      }
+
+      .sidebar h3,
+      .chat-top h3 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .sidebar p,
+      .chat-top p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .room-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .room {
+        width: 100%;
+        text-align: left;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        border-radius: 18px;
+        padding: 14px;
+        cursor: pointer;
+        transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+      }
+
+      .room:hover,
+      .room:focus {
+        transform: translateY(-1px);
+        border-color: rgba(100, 208, 215, 0.34);
+        outline: none;
+      }
+
+      .room.active {
+        background: rgba(100, 208, 215, 0.14);
+        border-color: rgba(100, 208, 215, 0.38);
+      }
+
+      .room strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .room span {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .sidebar-note {
+        margin-top: 14px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+
+      .chat {
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 760px;
+      }
+
+      .chat-top {
+        padding: 18px 18px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(135deg, rgba(100, 208, 215, 0.08), transparent 42%),
+          rgba(255, 255, 255, 0.02);
+      }
+
+      .chat-kicker {
+        margin: 0 0 6px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .chat-top h2 {
+        margin: 0 0 8px;
+        font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+      }
+
+      .chat-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .meta-chip {
+        padding: 8px 11px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .chat-body {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .conversation {
+        flex: 1 1 auto;
+        padding: 18px;
+        display: grid;
+        gap: 12px;
+        align-content: start;
+        overflow: auto;
+        background:
+          radial-gradient(circle at top right, rgba(100, 208, 215, 0.06), transparent 24%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent 22%);
+      }
+
+      .system-strip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(100, 208, 215, 0.18);
+        background: rgba(100, 208, 215, 0.08);
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .system-strip strong {
+        color: var(--text);
+      }
+
+      .message {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        max-width: 88%;
+      }
+
+      .message.user {
+        margin-left: auto;
+        flex-direction: row-reverse;
+      }
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        color: #fff;
+        background: linear-gradient(135deg, rgba(100, 208, 215, 0.95), rgba(15, 92, 115, 0.95));
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+      }
+
+      .message.partner .avatar {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.1));
+      }
+
+      .bubble {
+        min-width: 0;
+        padding: 14px 15px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      .message.user .bubble {
+        background: var(--bubble-user);
+        border-top-right-radius: 8px;
+      }
+
+      .message.partner .bubble {
+        background: var(--bubble-partner);
+        border-top-left-radius: 8px;
+      }
+
+      .message.system .bubble {
+        background: var(--bubble-system);
+      }
+
+      .bubble .meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .bubble .meta strong {
+        color: var(--text);
+        font-size: 0.85rem;
+      }
+
+      .bubble p {
+        margin: 0;
+        line-height: 1.7;
+        color: var(--text);
+      }
+
+      .typing {
+        padding: 0 18px 14px;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .typing span {
+        color: var(--text);
+      }
+
+      .composer {
+        border-top: 1px solid var(--line);
+        padding: 16px 18px 18px;
+        background: rgba(4, 18, 27, 0.62);
+        display: grid;
+        gap: 12px;
+      }
+
+      .quick-replies {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .quick-replies button {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 9px 12px;
+        cursor: pointer;
+        transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+      }
+
+      .quick-replies button:hover,
+      .quick-replies button:focus {
+        transform: translateY(-1px);
+        border-color: rgba(100, 208, 215, 0.34);
+        background: rgba(100, 208, 215, 0.08);
+        outline: none;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--panel-2);
+        color: var(--text);
+        border-radius: 16px;
+        padding: 14px 16px;
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--muted-2);
+      }
+
+      input:focus,
+      textarea:focus,
+      button:focus {
+        outline: 2px solid rgba(100, 208, 215, 0.48);
+        outline-offset: 2px;
+      }
+
+      .composer-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .helper-copy {
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .btn {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+      }
+
+      .btn-ghost {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border: 1px solid var(--line);
+      }
+
+      .drawer-note {
+        margin-top: 14px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+      }
+
+      @media (max-width: 1060px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .gate-points {
+          grid-template-columns: 1fr;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .chat {
+          min-height: 680px;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .shell {
+          padding: 16px;
+        }
+
+        .app-header {
+          flex-direction: column;
+        }
+
+        .header-actions {
+          width: 100%;
+          justify-content: flex-start;
+        }
+
+        .access-gate {
+          grid-template-columns: 1fr;
+        }
+
+        .gate-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .gate-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .gate-actions button {
+          width: 100%;
+        }
+
+        .chat-top {
+          flex-direction: column;
+        }
+
+        .chat-meta {
+          justify-content: flex-start;
+        }
+
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+
+        .message {
+          max-width: 100%;
+        }
+
+        .composer-actions {
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="app-header">
+        <div class="brand">
+          <span class="eyebrow">KUAC Support Chat</span>
+          <h1>Private chat for a verified support case and its assigned associate</h1>
+          <p>
+            A compact, static messaging workspace for the verified case flow. It keeps the
+            conversation focused, readable, and easy to follow inside the bottom-left drawer or as
+            a standalone page.
+          </p>
+        </div>
+        <div class="header-actions">
+          <div class="status-pill">Assigned associate online</div>
+          <a class="backlink" href="../index.html">Back to KUAC</a>
+        </div>
+      </header>
+
+      <section class="access-gate panel" id="accessGate">
+        <div>
+          <span class="gate-badge"><i class="far fa-lock-alt" aria-hidden="true"></i> Private access</span>
+          <h2>Enter the private section for your assigned agent.</h2>
+          <p>
+            This page is for verified support cases that have been assigned manually by KUAC.
+            Enter the case details you were given to unlock the private chat and keep the case with
+            the associate assigned to you.
+          </p>
+          <div class="gate-points" aria-label="Verification steps">
+            <div class="gate-point">
+              <strong>1. Case reference</strong>
+              <span>Enter the reference linked to your support request.</span>
+            </div>
+            <div class="gate-point">
+              <strong>2. Proof upload</strong>
+              <span>Attach the case document or screenshot so KUAC can review it.</span>
+            </div>
+            <div class="gate-point">
+              <strong>3. Access code issued</strong>
+              <span>The assigned agent adds the private code after review.</span>
+            </div>
+          </div>
+        </div>
+        <form class="gate-form" id="accessForm" method="POST" enctype="multipart/form-data" target="verificationSink">
+          <div class="gate-form-head">
+            <small>Verification packet</small>
+            <strong>Send the case proof to KUAC and unlock the room</strong>
+          </div>
+          <input type="hidden" name="_subject" id="verificationSubject" value="KUAC | Payment Proof Received" />
+          <input type="hidden" name="_next" id="verificationNext" value="support-chat.html?verified=sent" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_template" value="box" />
+          <div class="gate-grid">
+            <div class="gate-field full">
+              <label for="clientEmail">Client email</label>
+              <input id="clientEmail" name="email" type="email" placeholder="client@example.com" autocomplete="email" required />
+            </div>
+            <div class="gate-field">
+              <label for="paymentId">Case reference</label>
+              <input id="paymentId" name="payment_id" type="text" placeholder="CASE-123456" autocomplete="off" required />
+            </div>
+            <div class="gate-field full">
+              <label for="paymentProof">Upload proof</label>
+              <input id="paymentProof" name="proof" type="file" accept="image/*,.pdf" required />
+            </div>
+            <div class="gate-field">
+              <label for="caseCode">Case code</label>
+              <input id="caseCode" name="case_code" type="text" placeholder="KUAC-INT-01" required />
+            </div>
+            <div class="gate-field full">
+              <label for="assignedAgent">Assigned agent</label>
+              <input id="assignedAgent" name="assigned_agent" type="text" placeholder="KUAC Associate" />
+            </div>
+          </div>
+          <div class="gate-actions">
+            <div class="gate-action-stack">
+              <div class="gate-note" id="gateNote">Upload the proof and enter the case reference. KUAC will receive the verification email, and the assigned agent will add the access code after review.</div>
+              <div class="gate-note">Accepted files: images or PDF. The proof email is sent to KUAC automatically through the configured form endpoint.</div>
+            </div>
+            <button type="submit">Send proof & verify</button>
+          </div>
+        </form>
+        <iframe name="verificationSink" id="verificationSink" title="Verification sink" hidden></iframe>
+        <div class="summary-card full" id="credentialCard" hidden style="margin-top: 12px;">
+          <small>Assigned access</small>
+          <strong id="issuedUsername">username</strong>
+          <span id="issuedPassword">Access code pending agent review</span>
+          <span id="issuedProof">proof</span>
+        </div>
+      </section>
+
+      <div class="private-stage is-locked" id="privateStage">
+      <section class="hero">
+        <div class="panel hero-copy">
+          <span class="eyebrow">Chat workspace</span>
+          <h2>Private client chat for verified support cases and manually assigned associates.</h2>
+          <p>
+            This section is for clients whose support request has been verified and who have been
+            manually assigned an associate by KUAC. It is not automatic matching. The goal is a
+            private place for personal needs, requirements, and support through the process.
+          </p>
+          <div class="hero-pills">
+            <span><i class="far fa-comments" aria-hidden="true"></i> Verified case access</span>
+            <span><i class="far fa-user-circle" aria-hidden="true"></i> Manually assigned associate</span>
+            <span><i class="far fa-folder-open" aria-hidden="true"></i> Private support section</span>
+          </div>
+        </div>
+        <aside class="panel hero-summary">
+          <div class="summary-card">
+            <small>Access model</small>
+            <strong id="heroCaseTitle">Intake Case</strong>
+            <span id="heroCaseText">Private support for verified cases that were assigned an associate.</span>
+          </div>
+          <div class="summary-card">
+            <small>Assignment</small>
+            <strong id="heroStatus">Manual agent matching</strong>
+            <span>Agents are assigned by KUAC staff, not by automation.</span>
+          </div>
+          <div class="summary-card">
+            <small>Private section</small>
+            <strong id="heroCaseCode">KUAC-INT-01</strong>
+            <span>Use the assigned case code to enter the private chat area.</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="access-strip">
+        <div>
+          <p class="chat-kicker">Verified section</p>
+          <h2>Client chat space for personal needs and requirements.</h2>
+          <p>
+            Once a request is verified, KUAC places the client into a private section with the
+            specific associate assigned to their case. This keeps the conversation personal,
+            direct, and tied to the support process.
+          </p>
+        </div>
+        <div class="access-steps">
+          <div class="access-step">
+            <small>Step 1</small>
+            <strong>Payment confirmed</strong>
+            <span>The client pays for access before the chat opens.</span>
+          </div>
+          <div class="access-step">
+            <small>Step 2</small>
+            <strong>Agent assigned manually</strong>
+            <span>KUAC assigns a real agent to that client. No auto-matching.</span>
+          </div>
+          <div class="access-step">
+            <small>Step 3</small>
+            <strong>Private conversation starts</strong>
+            <span>The client and assigned agent can discuss requirements and next steps.</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="layout">
+        <aside class="panel sidebar">
+          <h3>Private cases</h3>
+          <p>Choose a client thread that already has a manually assigned agent.</p>
+          <div class="room-list" id="roomList"></div>
+          <div class="sidebar-note">
+            This is a static chat surface. The access model is manual and client-specific, so it
+            can be connected to a real backend later without changing the layout.
+          </div>
+        </aside>
+
+        <main class="panel chat">
+          <div class="chat-top">
+            <div>
+              <p class="chat-kicker">Private thread</p>
+              <h2 id="roomTitle">Room</h2>
+              <p id="roomSubtitle"></p>
+            </div>
+            <div class="chat-meta">
+              <span class="status-pill" id="roomStatus">Assigned associate online</span>
+              <span class="meta-chip" id="roomMetaChip">Paid client only</span>
+            </div>
+          </div>
+
+          <div class="chat-body">
+            <div class="conversation" id="thread" aria-live="polite"></div>
+            <div class="typing" id="typingState"><span>KUAC Associate</span> is ready to respond.</div>
+
+            <form class="composer" id="composer">
+              <div class="quick-replies" aria-label="Quick replies">
+                <button type="button" data-text="I am safe and ready to continue.">Safe and ready</button>
+                <button type="button" data-text="Please confirm the next step for the request.">Confirm next step</button>
+                <button type="button" data-text="I need help with arrival, shelter, or documents.">Arrival help</button>
+              </div>
+
+              <div class="field-row">
+                <input id="displayName" name="client_name" type="text" placeholder="Client name" value="KUAC Client" />
+                <input id="role" name="assigned_role" type="text" placeholder="Associate name" value="KUAC Associate" />
+              </div>
+
+              <textarea id="messageInput" placeholder="Write a message to the room"></textarea>
+              <div class="composer-actions">
+                <div class="helper-copy">
+                  Press Enter or use Send message to keep the conversation moving.
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <button type="button" class="btn btn-ghost" id="resetRoom">Reset room</button>
+                  <button type="submit" class="btn btn-primary">Send message</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
+      </div>
+    </div>
+
+    <script>
+      const rooms = [
+        {
+          id: 'intake',
+          title: 'Intake Case',
+          subtitle: 'First contact for a client and their assigned associate.',
+          code: 'KUAC-INT-01',
+          status: 'Response in progress',
+          meta: 'Client intake',
+          seed: [
+            {
+              type: 'partner',
+              sender: 'KUAC Associate',
+              role: 'Support lead',
+              text: 'Welcome. Share the issue, location, and urgency so we can route it correctly.',
+              time: '09:00',
+            },
+            {
+              type: 'user',
+              sender: 'Client',
+              role: 'Requester',
+              text: 'I need help with a route and follow-up for today.',
+              time: '09:04',
+            },
+            {
+              type: 'system',
+              sender: 'System',
+              role: 'Private channel',
+              text: 'This room stays between the client and the assigned associate unless the case is escalated.',
+              time: '09:06',
+            },
+          ],
+        },
+        {
+          id: 'arrival',
+          title: 'Arrival Support',
+          subtitle: 'Transport, shelter, and first-step help after arrival.',
+          code: 'KUAC-ARR-07',
+          status: 'Coordination active',
+          meta: 'Arrival support',
+          seed: [
+            {
+              type: 'partner',
+              sender: 'KUAC Associate',
+              role: 'Support lead',
+              text: 'Please note the arrival city and any immediate needs like shelter, food, or documents.',
+              time: '10:12',
+            },
+            {
+              type: 'user',
+              sender: 'Client',
+              role: 'Requester',
+              text: 'The arrival point is Warsaw. We need shelter and local directions.',
+              time: '10:16',
+            },
+          ],
+        },
+        {
+          id: 'partner',
+          title: 'Assigned Follow-up',
+          subtitle: 'For the client and the associate handling the case.',
+          code: 'KUAC-FUP-12',
+          status: 'Follow-up open',
+          meta: 'Direct follow-up',
+          seed: [
+            {
+              type: 'partner',
+              sender: 'KUAC Associate',
+              role: 'Support lead',
+              text: 'This room is for direct follow-up. Keep the thread concise and action-focused.',
+              time: '11:30',
+            },
+            {
+              type: 'user',
+              sender: 'Client',
+              role: 'Requester',
+              text: 'Understood. I will send the remaining details here.',
+              time: '11:34',
+            },
+          ],
+        },
+        {
+          id: 'urgent',
+          title: 'Urgent Support',
+          subtitle: 'Use when a client needs faster routing.',
+          code: 'KUAC-URG-03',
+          status: 'Escalation ready',
+          meta: 'Urgent channel',
+          seed: [
+            {
+              type: 'partner',
+              sender: 'KUAC Associate',
+              role: 'Support lead',
+              text: 'If there is immediate danger, use local emergency services first and then post the referral details here.',
+              time: '12:05',
+            },
+          ],
+        },
+      ];
+
+      const roomList = document.getElementById('roomList');
+      const thread = document.getElementById('thread');
+      const roomTitle = document.getElementById('roomTitle');
+      const roomSubtitle = document.getElementById('roomSubtitle');
+      const roomStatus = document.getElementById('roomStatus');
+      const roomMetaChip = document.getElementById('roomMetaChip');
+      const heroCaseTitle = document.getElementById('heroCaseTitle');
+      const heroCaseText = document.getElementById('heroCaseText');
+      const heroStatus = document.getElementById('heroStatus');
+      const heroCaseCode = document.getElementById('heroCaseCode');
+      const privateStage = document.getElementById('privateStage');
+      const accessForm = document.getElementById('accessForm');
+      const gateNote = document.getElementById('gateNote');
+      const credentialCard = document.getElementById('credentialCard');
+      const issuedUsername = document.getElementById('issuedUsername');
+      const issuedPassword = document.getElementById('issuedPassword');
+      const issuedProof = document.getElementById('issuedProof');
+      const verificationSubject = document.getElementById('verificationSubject');
+      const clientEmail = document.getElementById('clientEmail');
+      const caseCode = document.getElementById('caseCode');
+      const paymentId = document.getElementById('paymentId');
+      const paymentProof = document.getElementById('paymentProof');
+      const assignedAgent = document.getElementById('assignedAgent');
+      const composer = document.getElementById('composer');
+      const displayName = document.getElementById('displayName');
+      const role = document.getElementById('role');
+      const messageInput = document.getElementById('messageInput');
+      const resetRoom = document.getElementById('resetRoom');
+      const typingState = document.getElementById('typingState');
+
+      const ACCESS_STATE_KEY = 'kuac-private-chat-access';
+      const DRAFT_STATE_KEY = 'kuac-private-chat-draft';
+      const AGENT_CREDENTIALS_KEY = 'kuac-agent-issued-credentials';
+      const backend = window.KUAC_BACKEND || null;
+      let activeRoomId = localStorage.getItem('kuac-chat-room') || rooms[0].id;
+      let privateAccess = loadPrivateAccess();
+      let privateDraft = loadPrivateDraft();
+      let agentCredentials = loadAgentCredentials();
+
+      clientEmail.value = privateDraft.email || '';
+      caseCode.value = privateDraft.caseCode || rooms.find((room) => room.id === activeRoomId)?.code || rooms[0].code;
+      paymentId.value = privateDraft.paymentId || privateDraft.paymentRef || '';
+      assignedAgent.value = privateDraft.agent || 'KUAC Associate';
+      displayName.value = privateDraft.displayName || displayName.value;
+      role.value = privateDraft.role || role.value;
+      const verifyConfig = window.KUAC_CONFIG || {};
+      accessForm.action = verifyConfig.formEndpoint || accessForm.action;
+      verificationSubject.value = verifyConfig.paymentProofSubject || verificationSubject.value;
+      document.getElementById('verificationNext').value = getSupportChatNextUrl();
+
+      function getSupportChatNextUrl() {
+        const fallbackOrigin = (verifyConfig.liveSiteUrl || '').replace(/\/$/, '');
+        const fallbackUrl = fallbackOrigin
+          ? `${fallbackOrigin}/support-chat.html?verified=sent#accessGate`
+          : 'support-chat.html?verified=sent#accessGate';
+
+        try {
+          const currentUrl = new URL(window.location.href);
+          if (currentUrl.protocol === 'http:' || currentUrl.protocol === 'https:') {
+            return `${currentUrl.origin}/support-chat.html?verified=sent#accessGate`;
+          }
+        } catch (error) {
+          // fall through to the configured static fallback
+        }
+
+        return fallbackUrl;
+      }
+
+      function savePrivateDraft(patch) {
+        privateDraft = Object.assign({}, privateDraft, patch);
+        localStorage.setItem(DRAFT_STATE_KEY, JSON.stringify(privateDraft));
+      }
+
+      function storageKey(roomId) {
+        return `kuac-chat-${roomId}`;
+      }
+
+      function loadPrivateDraft() {
+        try {
+          const stored = localStorage.getItem(DRAFT_STATE_KEY);
+          if (stored) {
+            return JSON.parse(stored);
+          }
+        } catch (error) {
+          // ignore malformed state
+        }
+        return {};
+      }
+
+      function loadPrivateAccess() {
+        try {
+          const stored = localStorage.getItem(ACCESS_STATE_KEY);
+          if (stored) {
+            return JSON.parse(stored);
+          }
+        } catch (error) {
+          // ignore malformed state
+        }
+        return null;
+      }
+
+      function savePrivateAccess(state) {
+        privateAccess = state;
+        localStorage.setItem(ACCESS_STATE_KEY, JSON.stringify(state));
+      }
+
+      function loadAgentCredentials() {
+        try {
+          const stored = localStorage.getItem(AGENT_CREDENTIALS_KEY);
+          if (stored) {
+            return JSON.parse(stored);
+          }
+        } catch (error) {
+          // ignore malformed state
+        }
+        return {};
+      }
+
+      function saveAgentCredentials(state) {
+        agentCredentials = state;
+        localStorage.setItem(AGENT_CREDENTIALS_KEY, JSON.stringify(state));
+      }
+
+      function agentCredentialKey(email, caseCode) {
+        return `${String(email || '').trim().toLowerCase()}::${String(caseCode || '').trim().toUpperCase()}`;
+      }
+
+      function getAgentCredential(email, caseCode) {
+        agentCredentials = loadAgentCredentials();
+        return agentCredentials[agentCredentialKey(email, caseCode)] || null;
+      }
+
+      function mergeRemoteSubmission(remoteSubmission, remoteIssued) {
+        if (!remoteSubmission) {
+          return;
+        }
+
+        const key = agentCredentialKey(remoteSubmission.email, remoteSubmission.caseCode);
+        if (remoteIssued) {
+          const nextRegistry = Object.assign({}, loadAgentCredentials(), {
+            [key]: remoteIssued,
+          });
+          saveAgentCredentials(nextRegistry);
+        }
+
+        savePrivateAccess({
+          unlocked: true,
+          email: remoteSubmission.email,
+          caseCode: remoteSubmission.caseCode,
+          agent: remoteSubmission.agent || 'KUAC Associate',
+          username: privateAccess && privateAccess.username ? privateAccess.username : demoUsername(remoteSubmission.email, remoteSubmission.caseCode),
+          accessCode: remoteIssued && remoteIssued.code ? remoteIssued.code : (privateAccess && privateAccess.accessCode) || '',
+          paymentId: remoteSubmission.paymentId || '',
+          proofName: remoteSubmission.proofName || '',
+          verifiedAt: remoteSubmission.submittedAt || new Date().toISOString(),
+          backendSyncedAt: new Date().toISOString(),
+        });
+
+        savePrivateDraft({
+          email: remoteSubmission.email,
+          caseCode: remoteSubmission.caseCode,
+          paymentId: remoteSubmission.paymentId || '',
+          proofName: remoteSubmission.proofName || '',
+          agent: remoteSubmission.agent || 'KUAC Associate',
+          displayName: remoteSubmission.clientName || displayName.value.trim(),
+          role: remoteSubmission.role || role.value.trim(),
+        });
+      }
+
+      async function refreshRemoteCaseState() {
+        if (!backend || !backend.available) {
+          return;
+        }
+
+        const email = clientEmail.value.trim() || (privateAccess && privateAccess.email) || '';
+        const code = caseCode.value.trim() || (privateAccess && privateAccess.caseCode) || '';
+
+        if (!email || !code) {
+          return;
+        }
+
+        try {
+          const result = await backend.fetchSubmission(email, code);
+          if (result && result.submission) {
+            mergeRemoteSubmission(result.submission, result.issued || null);
+            updatePrivateStage();
+            renderRooms();
+            renderActiveRoom();
+          }
+        } catch (error) {
+          // Ignore backend sync failures; the static fallback still works.
+        }
+      }
+
+      function updatePrivateStage() {
+        const unlocked = Boolean(privateAccess && privateAccess.unlocked);
+        const issued = unlocked ? getAgentCredential(privateAccess.email, privateAccess.caseCode) : null;
+        const accessCode = (issued && issued.code) || (privateAccess && privateAccess.accessCode) || '';
+        privateStage.classList.toggle('is-locked', !unlocked);
+
+        if (unlocked) {
+          gateNote.classList.remove('is-error');
+          gateNote.classList.add('is-success');
+          gateNote.textContent = `Access granted for ${privateAccess.email}. Assigned agent: ${privateAccess.agent}.`;
+          accessForm.querySelector('button[type="submit"]').textContent = 'Proof received';
+          clientEmail.value = privateAccess.email || '';
+          caseCode.value = privateAccess.caseCode || caseCode.value;
+          paymentId.value = privateAccess.paymentId || privateAccess.paymentRef || paymentId.value;
+          assignedAgent.value = privateAccess.agent || assignedAgent.value;
+          credentialCard.hidden = false;
+          issuedUsername.textContent = privateAccess.username || demoUsername(privateAccess.email, privateAccess.caseCode);
+          issuedPassword.textContent = accessCode ? `Access code: ${accessCode}` : 'Access code pending agent review';
+          issuedProof.textContent = privateAccess.proofName ? `Proof: ${privateAccess.proofName}` : 'Proof uploaded';
+        } else {
+          gateNote.classList.remove('is-error', 'is-success');
+          gateNote.textContent = 'Enter the case reference, upload the proof, then KUAC can review the submission and the assigned associate can issue the access code.';
+          accessForm.querySelector('button[type="submit"]').textContent = 'Send proof & verify';
+          credentialCard.hidden = true;
+        }
+      }
+
+      window.addEventListener('storage', (event) => {
+        if (event.key === AGENT_CREDENTIALS_KEY) {
+          updatePrivateStage();
+        }
+      });
+
+      [clientEmail, caseCode, paymentId, assignedAgent, displayName, role].forEach((field) => {
+        field.addEventListener('input', () => {
+          savePrivateDraft({
+            email: clientEmail.value.trim(),
+            caseCode: caseCode.value.trim(),
+            paymentId: paymentId.value,
+            agent: assignedAgent.value.trim(),
+            displayName: displayName.value.trim(),
+            role: role.value.trim(),
+          });
+        });
+      });
+
+      paymentProof.addEventListener('change', () => {
+        savePrivateDraft({
+          proofName: paymentProof.files && paymentProof.files[0] ? paymentProof.files[0].name : '',
+        });
+      });
+
+      function defaultMessages(room) {
+        return room.seed.slice();
+      }
+
+      function loadMessages(roomId) {
+        try {
+          const stored = localStorage.getItem(storageKey(roomId));
+          if (stored) {
+            return JSON.parse(stored);
+          }
+        } catch (error) {
+          // fall back to seed messages
+        }
+
+        const room = rooms.find((item) => item.id === roomId);
+        return room ? defaultMessages(room) : [];
+      }
+
+      function saveMessages(roomId, messages) {
+        localStorage.setItem(storageKey(roomId), JSON.stringify(messages));
+      }
+
+      function scrollThreadToBottom() {
+        window.requestAnimationFrame(() => {
+          thread.scrollTop = thread.scrollHeight;
+        });
+      }
+
+      function renderRooms() {
+        roomList.innerHTML = '';
+
+        rooms.forEach((room) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = `room${room.id === activeRoomId ? ' active' : ''}`;
+          button.innerHTML = `<strong>${room.title}</strong><span>${room.subtitle}</span>`;
+          button.addEventListener('click', () => {
+            activeRoomId = room.id;
+            localStorage.setItem('kuac-chat-room', activeRoomId);
+            if (!privateAccess || !privateAccess.unlocked) {
+              caseCode.value = room.code;
+            }
+            renderRooms();
+            renderActiveRoom();
+          });
+          roomList.appendChild(button);
+        });
+      }
+
+      function renderActiveRoom() {
+        const room = rooms.find((item) => item.id === activeRoomId) || rooms[0];
+        const messages = loadMessages(room.id);
+
+        roomTitle.textContent = room.title;
+        roomSubtitle.textContent = room.subtitle;
+        roomStatus.textContent = room.status;
+        roomMetaChip.textContent = privateAccess && privateAccess.unlocked
+          ? `Assigned: ${privateAccess.agent || 'KUAC Associate'}`
+          : 'Paid client only';
+        heroCaseTitle.textContent = room.title;
+        heroCaseText.textContent = room.subtitle;
+        heroStatus.textContent = room.status;
+        heroCaseCode.textContent = room.code;
+        typingState.innerHTML = `<span>KUAC Associate</span> is ready to respond in ${room.title.toLowerCase()}.`;
+        if (!privateAccess || !privateAccess.unlocked) {
+          caseCode.value = room.code;
+        }
+
+        thread.innerHTML = '';
+        thread.appendChild(buildSystemStrip(room));
+        messages.forEach(renderMessage);
+        scrollThreadToBottom();
+      }
+
+      function buildSystemStrip(room) {
+        const strip = document.createElement('div');
+        strip.className = 'system-strip';
+        strip.innerHTML = `
+          <div>
+            <strong>Private channel:</strong> This room is linked to ${escapeHtml(room.code)} and kept between the client and assigned associate.
+          </div>
+          <span>${escapeHtml(room.status)}</span>
+        `;
+        return strip;
+      }
+
+      accessForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const enteredCode = caseCode.value.trim().toUpperCase();
+        const enteredPaymentId = paymentId.value.trim();
+        const email = clientEmail.value.trim();
+        const agent = assignedAgent.value.trim() || 'KUAC Associate';
+        const proof = paymentProof.files && paymentProof.files[0];
+        const room = rooms.find((item) => item.code.toUpperCase() === enteredCode);
+
+        gateNote.classList.remove('is-error', 'is-success');
+
+        if (!email || !enteredCode || !enteredPaymentId || !proof) {
+          gateNote.classList.add('is-error');
+          gateNote.textContent = 'Please enter the email, case reference, and upload proof before submitting.';
+          return;
+        }
+
+        if (!room) {
+          gateNote.classList.add('is-error');
+          gateNote.textContent = 'That case code does not match a private room yet.';
+          return;
+        }
+
+        const username = demoUsername(email, room.code);
+
+        activeRoomId = room.id;
+        localStorage.setItem('kuac-chat-room', activeRoomId);
+        savePrivateAccess({
+          unlocked: true,
+          email,
+          caseCode: room.code,
+          agent,
+          username,
+          paymentId: enteredPaymentId,
+          proofName: proof.name,
+          verifiedAt: new Date().toISOString(),
+        });
+        savePrivateDraft({
+          email,
+          caseCode: room.code,
+          paymentId: enteredPaymentId,
+          proofName: proof.name,
+          agent,
+          username,
+          displayName: displayName.value.trim(),
+          role: role.value.trim(),
+        });
+
+        const submitButton = accessForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        gateNote.classList.add('is-success');
+        gateNote.textContent = 'Saving verification, then sending the proof to KUAC...';
+
+        try {
+          if (backend && backend.available) {
+            const proofDataUrl = await backend.fileToDataUrl(proof);
+            await backend.postSubmission({
+              email,
+              caseCode: room.code,
+              paymentId: enteredPaymentId,
+              agent,
+              clientName: displayName.value.trim() || 'Client',
+              role: role.value.trim() || 'Requester',
+              proofName: proof.name,
+              proofDataUrl,
+              proofType: proof.type || '',
+              proofSize: proof.size || 0,
+              note: `Submitted from ${window.location.pathname || 'support-chat'}`,
+            });
+            gateNote.textContent = 'Verification saved to the KUAC backend and sent through the proof email flow.';
+          } else {
+            gateNote.textContent = 'Backend not available here, so the page is using static browser storage and the proof email flow only.';
+          }
+        } catch (error) {
+          gateNote.classList.add('is-error');
+          gateNote.textContent = 'The backend save could not complete, but the static proof email can still be sent.';
+        } finally {
+          try {
+            accessForm.submit();
+          } catch (error) {
+            // ignore submission fallback errors
+          }
+          credentialCard.hidden = false;
+          issuedUsername.textContent = username;
+          issuedPassword.textContent = 'Access code pending agent review';
+          issuedProof.textContent = `Proof: ${proof.name}`;
+          renderRooms();
+          renderActiveRoom();
+          updatePrivateStage();
+          window.setTimeout(() => {
+            submitButton.disabled = false;
+          }, 1200);
+        }
+      });
+
+      function slugify(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '.')
+          .replace(/^\.+|\.+$/g, '');
+      }
+      function demoUsername(email, roomCode) {
+        const local = String(email || '')
+          .split('@')[0]
+          .trim();
+        const base = slugify(local || roomCode || 'client');
+        return `client.${base || 'kuac'}`;
+      }
+
+      function initials(name) {
+        const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+        if (!parts.length) {
+          return 'KU';
+        }
+        return parts.slice(0, 2).map((part) => part[0]).join('').toUpperCase();
+      }
+
+      function renderMessage(message) {
+        const wrapper = document.createElement('article');
+        wrapper.className = `message ${message.type === 'user' ? 'user' : message.type === 'system' ? 'system' : 'partner'}`;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar';
+        avatar.textContent = message.type === 'system' ? 'SYS' : initials(message.sender);
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.innerHTML = `
+          <div class="meta">
+            <strong>${escapeHtml(message.sender)}</strong>
+            <span>${escapeHtml(message.role)} - ${escapeHtml(message.time)}</span>
+          </div>
+          <p>${escapeHtml(message.text)}</p>
+        `;
+
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubble);
+        thread.appendChild(wrapper);
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
+
+      composer.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const text = messageInput.value.trim();
+        if (!text) {
+          return;
+        }
+
+        const room = rooms.find((item) => item.id === activeRoomId) || rooms[0];
+        const messages = loadMessages(room.id);
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        messages.push({
+          type: 'user',
+          sender: displayName.value.trim() || 'KUAC Client',
+          role: role.value.trim() || 'Assigned associate',
+          text,
+          time,
+        });
+
+        saveMessages(room.id, messages);
+        renderActiveRoom();
+        messageInput.value = '';
+        messageInput.focus();
+      });
+
+      document.querySelectorAll('.quick-replies button').forEach((button) => {
+        button.addEventListener('click', () => {
+          messageInput.value = button.dataset.text || '';
+          messageInput.focus();
+        });
+      });
+
+      resetRoom.addEventListener('click', () => {
+        localStorage.removeItem(storageKey(activeRoomId));
+        renderActiveRoom();
+      });
+
+      if (privateAccess && privateAccess.unlocked) {
+        const unlockedRoom = rooms.find((room) => room.code === privateAccess.caseCode);
+        if (unlockedRoom) {
+          activeRoomId = unlockedRoom.id;
+        }
+      }
+
+      updatePrivateStage();
+      renderRooms();
+      renderActiveRoom();
+      refreshRemoteCaseState();
+      if (backend && backend.available) {
+        window.setInterval(refreshRemoteCaseState, 12000);
+      }
+    </script>
+  </body>
+</html>

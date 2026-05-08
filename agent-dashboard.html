@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="KUAC internal support desk for reviewing requests, assigning associates, and issuing case access codes."
+    />
+    <title>KUAC Agent Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="fontawesome-5.5/css/all.min.css" />
+    <script src="js/kuac-backend.js"></script>
+    <style>
+      :root {
+        --bg: #07131d;
+        --bg-2: #0d2030;
+        --panel: rgba(12, 28, 41, 0.92);
+        --panel-2: rgba(17, 36, 52, 0.96);
+        --line: rgba(189, 232, 227, 0.12);
+        --line-strong: rgba(100, 208, 215, 0.24);
+        --text: #eef9f7;
+        --muted: rgba(238, 249, 247, 0.72);
+        --muted-2: rgba(238, 249, 247, 0.54);
+        --accent: #64d0d7;
+        --accent-2: #1d7f8a;
+        --accent-3: #0f5c73;
+        --danger: #ffb5b5;
+        --shadow: 0 28px 64px rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at top left, rgba(100, 208, 215, 0.14), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(15, 92, 115, 0.16), transparent 34%),
+          linear-gradient(180deg, var(--bg), var(--bg-2));
+        color: var(--text);
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      .shell {
+        min-height: 100vh;
+        padding: 22px;
+      }
+
+      .dashboard-gate {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 22px;
+      }
+
+      .gate-card {
+        width: min(520px, 100%);
+        padding: 24px;
+      }
+
+      .gate-card h1 {
+        margin-top: 12px;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+      }
+
+      .gate-card p {
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .gate-login {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .gate-login label {
+        color: var(--muted);
+        font-size: 0.84rem;
+        letter-spacing: 0.03em;
+      }
+
+      .gate-login input {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--panel-2);
+        color: var(--text);
+        border-radius: 14px;
+        padding: 12px 13px;
+      }
+
+      .gate-login input:focus {
+        outline: 2px solid rgba(100, 208, 215, 0.48);
+        outline-offset: 2px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .brand {
+        max-width: 72ch;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(100, 208, 215, 0.12);
+        border: 1px solid rgba(100, 208, 215, 0.22);
+        color: #d9fbfd;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      .brand h1 {
+        margin-top: 12px;
+        font-size: clamp(1.8rem, 3vw, 2.8rem);
+        line-height: 1.02;
+        letter-spacing: -0.04em;
+      }
+
+      .brand p {
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 72ch;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .session-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(100, 208, 215, 0.24);
+        background: rgba(100, 208, 215, 0.1);
+        color: #d9fbfd;
+        font-size: 0.86rem;
+        white-space: nowrap;
+      }
+
+      .pill-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      button.pill-link {
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        appearance: none;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .panel-head {
+        padding: 18px 18px 0;
+      }
+
+      .panel-head small {
+        display: block;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        margin-bottom: 6px;
+        font-weight: 800;
+      }
+
+      .panel-head h2 {
+        font-size: 1.2rem;
+        letter-spacing: -0.02em;
+      }
+
+      .panel-body {
+        padding: 18px;
+      }
+
+      .stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .notice {
+        padding: 14px 15px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .notice strong {
+        color: var(--text);
+      }
+
+      .client-card,
+      .case-card {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background:
+          linear-gradient(180deg, rgba(100, 208, 215, 0.08), transparent 58%),
+          var(--panel-2);
+      }
+
+      .client-card small,
+      .case-card small {
+        display: block;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        margin-bottom: 6px;
+        font-weight: 800;
+      }
+
+      .client-card strong,
+      .case-card strong {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 4px;
+      }
+
+      .client-card span,
+      .case-card span {
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 0.92rem;
+      }
+
+      .form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .field label {
+        color: var(--muted);
+        font-size: 0.84rem;
+        letter-spacing: 0.03em;
+      }
+
+      .field input,
+      .field textarea {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--panel-2);
+        color: var(--text);
+        border-radius: 14px;
+        padding: 12px 13px;
+      }
+
+      .field input::placeholder,
+      .field textarea::placeholder {
+        color: var(--muted-2);
+      }
+
+      .field input:focus,
+      .field textarea:focus {
+        outline: 2px solid rgba(100, 208, 215, 0.48);
+        outline-offset: 2px;
+      }
+
+      .actions-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .status {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .status.is-error {
+        color: var(--danger);
+      }
+
+      .status.is-success {
+        color: #d9fbfd;
+      }
+
+      .button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+      }
+
+      .button.secondary {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--line);
+      }
+
+      .table-wrap {
+        overflow: auto;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 640px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.7rem;
+      }
+
+      td {
+        color: var(--text);
+      }
+
+      .code {
+        font-variant-numeric: tabular-nums;
+        font-weight: 700;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .empty-state {
+        padding: 18px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .subtle-grid {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-top: 14px;
+      }
+
+      .metric {
+        padding: 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .metric small {
+        display: block;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        margin-bottom: 6px;
+        font-weight: 800;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 1rem;
+      }
+
+      @media (max-width: 960px) {
+        .grid,
+        .subtle-grid,
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+        }
+
+        .actions {
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="eyebrow"><i class="far fa-user-shield" aria-hidden="true"></i> Private support desk</span>
+          <h1>Internal case desk for verified KUAC support requests.</h1>
+          <p>
+            Use this private dashboard to review support submissions, assign the associate, and
+            issue the case access code for a private follow-up room. It stays static-site friendly
+            while also syncing with the free KUAC backend when the site is online.
+          </p>
+        </div>
+        <div class="actions">
+          <span class="session-chip" id="sessionChip"><i class="far fa-shield-check" aria-hidden="true"></i> Session pending</span>
+          <a class="pill-link" href="support-chat/index.html"><i class="far fa-comments" aria-hidden="true"></i> Open case chat</a>
+          <button class="pill-link" id="logoutButton" type="button"><i class="far fa-sign-out" aria-hidden="true"></i> Sign out</button>
+          <a class="pill-link" href="index.html"><i class="far fa-arrow-left" aria-hidden="true"></i> Back to KUAC</a>
+        </div>
+      </header>
+
+      <div class="grid">
+        <section class="panel">
+          <div class="panel-head">
+            <small>Case assignment</small>
+            <h2>Assign a code to a support request</h2>
+          </div>
+          <div class="panel-body">
+            <form class="form" id="agentForm">
+              <div class="field-row">
+                <div class="field">
+                  <label for="clientEmail">Requester email</label>
+                  <input id="clientEmail" type="email" placeholder="client@example.com" required />
+                </div>
+                <div class="field">
+                  <label for="caseCode">Case code</label>
+                  <input id="caseCode" type="text" placeholder="KUAC-INT-01" required />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="agentName">Assigned associate</label>
+                  <input id="agentName" type="text" placeholder="KUAC Associate" required />
+                </div>
+                <div class="field">
+                  <label for="clientName">Requester name</label>
+                  <input id="clientName" type="text" placeholder="Requester name" />
+                </div>
+              </div>
+              <div class="field full">
+                <label for="accessCode">Case access code</label>
+                <input id="accessCode" type="text" placeholder="KUAC-ACCESS-2048" required />
+              </div>
+              <div class="field full">
+                <label for="agentNote">Internal note</label>
+                <textarea id="agentNote" rows="4" placeholder="Short note about the request, routing, or follow-up."></textarea>
+              </div>
+              <div class="actions-row">
+                <div class="status" id="agentStatus">Load a verified support request, then issue the code manually.</div>
+                <button class="button" type="submit">Issue case code</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <small>Request queue</small>
+            <h2>What the desk sees right now</h2>
+          </div>
+          <div class="panel-body">
+            <div class="stack" id="currentCaseList"></div>
+            <div class="subtle-grid">
+              <div class="metric">
+                <small>Verified requester</small>
+                <strong id="metricClient">None loaded</strong>
+              </div>
+              <div class="metric">
+                <small>Assigned associate</small>
+                <strong id="metricAgent">Waiting</strong>
+              </div>
+              <div class="metric">
+                <small>Case code</small>
+                <strong id="metricCode">Pending</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" style="grid-column: 1 / -1;">
+          <div class="panel-head">
+            <small>Issued codes</small>
+            <h2>Private follow-up registry</h2>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Requester</th>
+                    <th>Case</th>
+                    <th>Associate</th>
+                    <th>Case code</th>
+                    <th>Updated</th>
+                  </tr>
+                </thead>
+                <tbody id="registryBody"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="emptyState" hidden>
+              No case codes have been issued yet. Use the form above after reviewing a verified
+              support request.
+            </div>
+          </div>
+        </section>
+      </div>
+    <script>
+      const ACCESS_STATE_KEY = 'kuac-private-chat-access';
+      const DRAFT_STATE_KEY = 'kuac-private-chat-draft';
+      const AGENT_CREDENTIALS_KEY = 'kuac-agent-issued-credentials';
+      const backend = window.KUAC_BACKEND || null;
+      const logoutButton = document.getElementById('logoutButton');
+      const sessionChip = document.getElementById('sessionChip');
+
+      const clientEmail = document.getElementById('clientEmail');
+      const caseCode = document.getElementById('caseCode');
+      const agentName = document.getElementById('agentName');
+      const clientName = document.getElementById('clientName');
+      const accessCode = document.getElementById('accessCode');
+      const agentNote = document.getElementById('agentNote');
+      const agentStatus = document.getElementById('agentStatus');
+      const currentCaseList = document.getElementById('currentCaseList');
+      const registryBody = document.getElementById('registryBody');
+      const emptyState = document.getElementById('emptyState');
+      const metricClient = document.getElementById('metricClient');
+      const metricAgent = document.getElementById('metricAgent');
+      const metricCode = document.getElementById('metricCode');
+
+      let accessState = loadJson(ACCESS_STATE_KEY, null);
+      let draftState = loadJson(DRAFT_STATE_KEY, {});
+      let registry = loadJson(AGENT_CREDENTIALS_KEY, {});
+      let remoteSubmissions = [];
+
+      function loadJson(key, fallback) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function saveRegistry(nextRegistry) {
+        registry = nextRegistry;
+        localStorage.setItem(AGENT_CREDENTIALS_KEY, JSON.stringify(nextRegistry));
+      }
+
+      function saveStateSnapshot() {
+        localStorage.setItem(ACCESS_STATE_KEY, JSON.stringify(accessState || null));
+        localStorage.setItem(DRAFT_STATE_KEY, JSON.stringify(draftState || {}));
+      }
+
+      function credentialKey(email, code) {
+        return `${String(email || '').trim().toLowerCase()}::${String(code || '').trim().toUpperCase()}`;
+      }
+
+      function fmtTime(value) {
+        if (!value) {
+          return 'Just now';
+        }
+        const date = new Date(value);
+        return Number.isNaN(date.getTime())
+          ? String(value)
+          : date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+      }
+
+      function syncFromClientState() {
+        if (!accessState || !accessState.unlocked) {
+          if (remoteSubmissions.length) {
+            const latest = remoteSubmissions[0];
+            currentCaseList.innerHTML = remoteSubmissions.slice(0, 3).map((submission) => `
+              <div class="client-card">
+                <small>Verified request</small>
+                <strong>${escapeHtml(submission.email || 'Unknown requester')}</strong>
+                <span>Case ${escapeHtml(submission.caseCode || 'Unassigned')} is waiting for a manually issued case code.</span>
+              </div>
+            `).join('');
+            metricClient.textContent = latest.email || 'Unknown';
+            metricAgent.textContent = latest.agent || 'KUAC Associate';
+            metricCode.textContent = issuedCodeLabel(latest.email, latest.caseCode);
+          } else {
+            currentCaseList.innerHTML = `
+              <div class="notice">
+                <strong>No active request found.</strong>
+                Open the public support page first, or issue a code manually below.
+              </div>
+            `;
+            metricClient.textContent = 'None loaded';
+            metricAgent.textContent = 'Waiting';
+            metricCode.textContent = 'Pending';
+          }
+          return;
+        }
+
+        clientEmail.value = accessState.email || clientEmail.value;
+        caseCode.value = accessState.caseCode || caseCode.value;
+        agentName.value = accessState.agent || agentName.value;
+        clientName.value = draftState.displayName || clientName.value;
+
+        currentCaseList.innerHTML = `
+          <div class="client-card">
+            <small>Verified request</small>
+            <strong>${escapeHtml(accessState.email || 'Unknown requester')}</strong>
+            <span>Case ${escapeHtml(accessState.caseCode || 'Unassigned')} is currently open with ${escapeHtml(accessState.agent || 'KUAC Associate')}.</span>
+          </div>
+          <div class="case-card">
+            <small>Proof</small>
+            <strong>${escapeHtml(accessState.proofName || 'Proof uploaded')}</strong>
+            <span>Case reference: <span class="code">${escapeHtml(accessState.paymentId || 'N/A')}</span></span>
+          </div>
+        `;
+
+        metricClient.textContent = accessState.email || 'Unknown';
+        metricAgent.textContent = accessState.agent || 'KUAC Associate';
+        metricCode.textContent = issuedCodeLabel(accessState.email, accessState.caseCode);
+      }
+
+      function issuedCodeLabel(email, code) {
+        const item = registry[credentialKey(email, code)];
+        return item && item.code ? item.code : 'Pending';
+      }
+
+      function renderRegistry() {
+        const entries = Object.values(registry).sort((a, b) => {
+          const left = new Date(a.updatedAt || 0).getTime();
+          const right = new Date(b.updatedAt || 0).getTime();
+          return right - left;
+        });
+
+        registryBody.innerHTML = '';
+        emptyState.hidden = entries.length > 0;
+
+        if (!entries.length) {
+          return;
+        }
+
+        entries.forEach((entry) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>
+              <strong>${escapeHtml(entry.email || 'Unknown')}</strong>
+              <div class="muted">${escapeHtml(entry.clientName || 'Requester')}</div>
+            </td>
+            <td class="code">${escapeHtml(entry.caseCode || 'N/A')}</td>
+            <td>${escapeHtml(entry.agent || 'KUAC Associate')}</td>
+            <td class="code">${escapeHtml(entry.code || 'Pending')}</td>
+            <td class="muted">${escapeHtml(fmtTime(entry.updatedAt))}</td>
+          `;
+          registryBody.appendChild(row);
+        });
+      }
+
+      async function refreshRemoteState() {
+        if (!backend || !backend.available) {
+          return;
+        }
+
+        try {
+          const state = await backend.fetchState();
+          remoteSubmissions = Object.values(state && state.submissions ? state.submissions : {}).sort((a, b) => {
+            const left = new Date(b.submittedAt || 0).getTime();
+            const right = new Date(a.submittedAt || 0).getTime();
+            return left - right;
+          });
+
+          const issuedEntries = Object.values(state && state.issued ? state.issued : {}).reduce((acc, entry) => {
+            acc[credentialKey(entry.email, entry.caseCode)] = entry;
+            return acc;
+          }, {});
+
+          registry = Object.assign({}, registry, issuedEntries);
+          localStorage.setItem(AGENT_CREDENTIALS_KEY, JSON.stringify(registry));
+
+          if (remoteSubmissions.length) {
+            const latest = remoteSubmissions[0];
+            accessState = Object.assign({
+              unlocked: true,
+              email: latest.email,
+              caseCode: latest.caseCode,
+              agent: latest.agent,
+              paymentId: latest.paymentId,
+              proofName: latest.proofName,
+            }, accessState || {});
+            draftState = Object.assign({}, draftState, {
+              email: latest.email,
+              caseCode: latest.caseCode,
+              agent: latest.agent,
+              displayName: latest.clientName,
+              role: latest.role,
+            });
+            saveStateSnapshot();
+          }
+        } catch (error) {
+          // If the backend is unavailable, keep using local browser storage.
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
+
+      function setSessionChip(text, kind) {
+        if (!sessionChip) {
+          return;
+        }
+
+        sessionChip.className = `session-chip${kind ? ` is-${kind}` : ''}`;
+        sessionChip.innerHTML = text;
+      }
+
+      async function verifyDashboardSession() {
+        if (!backend || !backend.available) {
+          setSessionChip('<i class="far fa-unlock" aria-hidden="true"></i> Static fallback');
+          return true;
+        }
+
+        try {
+          const session = await backend.request('/api/admin/session', { method: 'GET' });
+          if (!session || !session.authenticated) {
+            setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Session required');
+            window.location.replace('agent-login.html');
+            return false;
+          }
+          if (session.expiresAt) {
+            const expiresAt = new Date(session.expiresAt);
+            const expiresLabel = Number.isNaN(expiresAt.getTime())
+              ? 'Session active'
+              : `Session active until ${expiresAt.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}`;
+            setSessionChip(`<i class="far fa-shield-check" aria-hidden="true"></i> ${escapeHtml(expiresLabel)}`);
+          } else {
+            setSessionChip('<i class="far fa-shield-check" aria-hidden="true"></i> Session active');
+          }
+          return true;
+        } catch (error) {
+          setSessionChip('<i class="far fa-exclamation-triangle" aria-hidden="true"></i> Session unavailable');
+          window.location.replace('agent-login.html');
+          return false;
+        }
+      }
+
+      if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+          try {
+            if (backend && backend.available) {
+              await backend.request('/api/admin/logout', { method: 'POST' });
+            }
+          } catch (error) {
+            // ignore logout failures and continue to the login page
+          }
+
+          window.location.href = 'agent-login.html';
+        });
+      }
+
+      document.getElementById('agentForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const email = clientEmail.value.trim();
+        const code = caseCode.value.trim().toUpperCase();
+        const agent = agentName.value.trim() || 'KUAC Associate';
+        const client = clientName.value.trim() || 'Client';
+        const access = accessCode.value.trim();
+
+        if (!email || !code || !access) {
+          agentStatus.className = 'status is-error';
+          agentStatus.textContent = 'Enter the requester email, case code, and access code before issuing.';
+          return;
+        }
+
+        const nextRegistry = Object.assign({}, registry, {
+          [credentialKey(email, code)]: {
+            email,
+            caseCode: code,
+            agent,
+            clientName: client,
+            code: access,
+            note: agentNote.value.trim(),
+            updatedAt: new Date().toISOString(),
+          },
+        });
+
+        saveRegistry(nextRegistry);
+        accessState = Object.assign({}, accessState || {}, {
+          unlocked: true,
+          email,
+          caseCode: code,
+          agent,
+          paymentId: accessState && accessState.paymentId ? accessState.paymentId : '',
+          proofName: accessState && accessState.proofName ? accessState.proofName : '',
+        });
+        draftState = Object.assign({}, draftState, {
+          email,
+          caseCode: code,
+          agent,
+          displayName: client,
+        });
+        saveStateSnapshot();
+        agentStatus.className = 'status is-success';
+        agentStatus.textContent = `Case code issued for ${email} in ${code}.`;
+        metricClient.textContent = email;
+        metricAgent.textContent = agent;
+        metricCode.textContent = access;
+        if (backend && backend.available) {
+          backend.postIssuedCode({
+            email,
+            caseCode: code,
+            agent,
+            clientName: client,
+            code: access,
+            note: agentNote.value.trim(),
+          }).catch(() => {
+            // ignore backend write failures; local storage still keeps the manual code
+          });
+        }
+        renderRegistry();
+        syncFromClientState();
+      });
+
+      window.addEventListener('storage', (event) => {
+        if (event.key === ACCESS_STATE_KEY || event.key === DRAFT_STATE_KEY || event.key === AGENT_CREDENTIALS_KEY) {
+          accessState = loadJson(ACCESS_STATE_KEY, null);
+          draftState = loadJson(DRAFT_STATE_KEY, {});
+          registry = loadJson(AGENT_CREDENTIALS_KEY, {});
+          syncFromClientState();
+          renderRegistry();
+        }
+      });
+
+      verifyDashboardSession().then((authorized) => {
+        if (!authorized) {
+          return;
+        }
+
+        refreshRemoteState().then(() => {
+          syncFromClientState();
+          renderRegistry();
+        });
+        if (backend && backend.available) {
+          window.setInterval(() => {
+            refreshRemoteState().then(() => {
+              syncFromClientState();
+              renderRegistry();
+            });
+          }, 12000);
+        }
+      });
+    </script>
+  </body>
+</html>

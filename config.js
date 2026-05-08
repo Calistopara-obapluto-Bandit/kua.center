@@ -4,6 +4,8 @@ window.KUAC_CONFIG = Object.freeze({
   liveSiteUrl: 'https://kua-center.onrender.com/',
   successQuery: '?callback=sent',
   successHash: '#contact',
+  paymentVerificationEndpoint: '',
+  paymentProofSubject: 'KUAC | Payment Proof Received',
   subject: 'KUAC | Support Request Received',
   template: 'box',
   autoresponse: [

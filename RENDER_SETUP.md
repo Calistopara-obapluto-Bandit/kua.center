@@ -16,8 +16,16 @@ This project is set up for Render's **Static Site** plan with FormSubmit.
 
 ## Required Render Settings
 
-No runtime environment variables are needed for the static site.
-- The site is fully static, so Render only needs to publish the repository root.
+Set this environment variable for the private KUAC agent dashboard:
+- `AGENT_DASHBOARD_PASSWORD`
+
+The public site remains static, but the dashboard login page exchanges that code for a server session cookie. The session is enforced server-side, so the dashboard is not unlocked by browser storage alone.
+
+## Support Chat
+
+- The support chat is drafted as a separate static site in `support-chat/index.html`.
+- It stays separate from the private admin dashboard.
+- Client-side pages can still work as static previews, while the private admin session lives on the server.
 
 ## Callback Flow
 
