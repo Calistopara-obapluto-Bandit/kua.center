@@ -42,7 +42,23 @@ window.KUAC_BACKEND = (function () {
     fileToDataUrl,
     fetchState: () => request('/api/state'),
     fetchSubmission: (email, caseCode) => request(`/api/submission?email=${encodeURIComponent(email)}&caseCode=${encodeURIComponent(caseCode)}`),
-    fetchChatMessages: (caseCode) => request(`/api/chat/messages?caseCode=${encodeURIComponent(caseCode)}`),
+    fetchDashboard: (dashboardId) => request(`/api/dashboard?dashboardId=${encodeURIComponent(dashboardId)}`),
+    fetchChatMessages: (caseCodeOrOptions) => {
+      if (caseCodeOrOptions && typeof caseCodeOrOptions === 'object') {
+        const caseCode = String(caseCodeOrOptions.caseCode || '').trim();
+        const dashboardId = String(caseCodeOrOptions.dashboardId || '').trim();
+        const params = new URLSearchParams();
+        if (caseCode) {
+          params.set('caseCode', caseCode);
+        }
+        if (dashboardId) {
+          params.set('dashboardId', dashboardId);
+        }
+        return request(`/api/chat/messages?${params.toString()}`);
+      }
+
+      return request(`/api/chat/messages?caseCode=${encodeURIComponent(caseCodeOrOptions)}`);
+    },
     postSubmission: (payload) => request('/api/submissions', {
       method: 'POST',
       body: JSON.stringify(payload || {}),

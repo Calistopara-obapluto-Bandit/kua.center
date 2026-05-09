@@ -838,6 +838,7 @@
                 <small>Verified request</small>
                 <strong>${escapeHtml(submission.email || 'Unknown requester')}</strong>
                 <span>Case ${escapeHtml(submission.caseCode || 'Unassigned')} is waiting for a manually issued case code.</span>
+                <span>Dashboard ID: ${escapeHtml(submission.dashboardId || 'Pending')}</span>
               </div>
             `).join('');
             metricClient.textContent = latest.email || 'Unknown';
@@ -867,6 +868,7 @@
             <small>Verified request</small>
             <strong>${escapeHtml(accessState.email || 'Unknown requester')}</strong>
             <span>Case ${escapeHtml(accessState.caseCode || 'Unassigned')} is currently open with ${escapeHtml(accessState.agent || 'KUAC Associate')}.</span>
+            <span>Dashboard ID: ${escapeHtml(accessState.dashboardId || 'Pending')}</span>
           </div>
           <div class="case-card">
             <small>Proof</small>

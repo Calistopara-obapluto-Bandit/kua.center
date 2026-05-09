@@ -185,6 +185,10 @@ function normalizeCaseKey(email, caseCode) {
   return `${String(email || '').trim().toLowerCase()}::${String(caseCode || '').trim().toUpperCase()}`;
 }
 
+function normalizeDashboardId(dashboardId) {
+  return String(dashboardId || '').trim().toUpperCase();
+}
+
 function publicState() {
   return {
     submissions: Object.assign({}, state.submissions || {}),
@@ -204,6 +208,42 @@ function hasKnownCase(caseCode) {
 
   return Object.values(state.submissions || {}).some((submission) => chatKey(submission.caseCode) === key)
     || Object.values(state.issued || {}).some((issued) => chatKey(issued.caseCode) === key);
+}
+
+function findSubmissionByDashboardId(dashboardId) {
+  const key = normalizeDashboardId(dashboardId);
+  if (!key) {
+    return null;
+  }
+
+  return Object.values(state.submissions || {}).find((submission) => normalizeDashboardId(submission.dashboardId) === key) || null;
+}
+
+function findIssuedByDashboardId(dashboardId) {
+  const key = normalizeDashboardId(dashboardId);
+  if (!key) {
+    return null;
+  }
+
+  return Object.values(state.issued || {}).find((issued) => normalizeDashboardId(issued.dashboardId) === key) || null;
+}
+
+function findCaseRecordByDashboardId(dashboardId) {
+  const submission = findSubmissionByDashboardId(dashboardId);
+  const issued = findIssuedByDashboardId(dashboardId);
+  const caseCode = chatKey((submission && submission.caseCode) || (issued && issued.caseCode) || '');
+
+  if (!submission && !issued && !caseCode) {
+    return null;
+  }
+
+  return {
+    dashboardId: normalizeDashboardId(dashboardId),
+    caseCode,
+    submission,
+    issued,
+    messages: caseCode ? getChatThread(caseCode) : [],
+  };
 }
 
 function getChatThread(caseCode) {
@@ -226,7 +266,10 @@ function saveChatThread(caseCode, messages) {
 }
 
 function appendChatMessage(payload) {
-  const caseCode = String(payload.caseCode || '').trim().toUpperCase();
+  const requestedCaseCode = String(payload.caseCode || '').trim().toUpperCase();
+  const dashboardId = normalizeDashboardId(payload.dashboardId);
+  const lookup = dashboardId ? findCaseRecordByDashboardId(dashboardId) : null;
+  const caseCode = requestedCaseCode || (lookup && lookup.caseCode) || '';
   const text = String(payload.text || '').trim();
   const sender = String(payload.sender || 'KUAC Client').trim() || 'KUAC Client';
   const role = String(payload.role || 'Client').trim() || 'Client';
@@ -263,6 +306,7 @@ function appendChatMessage(payload) {
 function upsertSubmission(payload) {
   const email = String(payload.email || '').trim();
   const caseCode = String(payload.caseCode || '').trim().toUpperCase();
+  const dashboardId = String(payload.dashboardId || '').trim();
   const key = normalizeCaseKey(email, caseCode);
 
   if (!email || !caseCode) {
@@ -274,6 +318,7 @@ function upsertSubmission(payload) {
   state.submissions[key] = {
     email,
     caseCode,
+    dashboardId,
     paymentId: String(payload.paymentId || '').trim(),
     agent: String(payload.agent || 'KUAC Associate').trim() || 'KUAC Associate',
     clientName: String(payload.clientName || 'Client').trim() || 'Client',
@@ -297,6 +342,7 @@ function issueAccessCode(payload) {
   const clientName = String(payload.clientName || 'Client').trim() || 'Client';
   const code = String(payload.code || '').trim();
   const note = String(payload.note || '').trim();
+  const dashboardId = String(payload.dashboardId || '').trim();
   const key = normalizeCaseKey(email, caseCode);
 
   if (!email || !caseCode || !code) {
@@ -312,6 +358,7 @@ function issueAccessCode(payload) {
     clientName,
     code,
     note,
+    dashboardId: dashboardId || String(state.submissions[key] && state.submissions[key].dashboardId || '').trim(),
     updatedAt: new Date().toISOString(),
   };
 
@@ -320,6 +367,7 @@ function issueAccessCode(payload) {
     state.submissions[key].issuedAt = state.issued[key].updatedAt;
     state.submissions[key].agent = agent;
     state.submissions[key].clientName = clientName;
+    state.submissions[key].dashboardId = state.submissions[key].dashboardId || state.issued[key].dashboardId;
   }
 
   return state.issued[key];
@@ -471,6 +519,31 @@ function handleApi(req, res, urlObj) {
     return;
   }
 
+  if (req.method === 'GET' && urlObj.pathname === '/api/dashboard') {
+    const dashboardId = urlObj.searchParams.get('dashboardId') || '';
+    const record = findCaseRecordByDashboardId(dashboardId);
+
+    if (!dashboardId.trim()) {
+      sendJson(res, 400, { ok: false, error: 'Dashboard ID is required' });
+      return;
+    }
+
+    if (!record) {
+      sendJson(res, 404, { ok: false, error: 'Unknown dashboard ID' });
+      return;
+    }
+
+    sendJson(res, 200, {
+      ok: true,
+      dashboardId: record.dashboardId,
+      caseCode: record.caseCode,
+      submission: record.submission,
+      issued: record.issued,
+      messages: record.messages,
+    });
+    return;
+  }
+
   if (req.method === 'POST' && urlObj.pathname === '/api/submissions') {
     readJsonBody(req)
       .then(async (payload) => {
@@ -499,20 +572,25 @@ function handleApi(req, res, urlObj) {
 
   if (req.method === 'GET' && urlObj.pathname === '/api/chat/messages') {
     const caseCode = urlObj.searchParams.get('caseCode') || '';
-    if (!caseCode.trim()) {
-      sendJson(res, 400, { ok: false, error: 'Case code is required' });
+    const dashboardId = urlObj.searchParams.get('dashboardId') || '';
+    const record = dashboardId.trim() ? findCaseRecordByDashboardId(dashboardId) : null;
+    const resolvedCaseCode = String(caseCode || (record && record.caseCode) || '').trim().toUpperCase();
+
+    if (!resolvedCaseCode) {
+      sendJson(res, 400, { ok: false, error: 'Case code or dashboard ID is required' });
       return;
     }
 
-    if (!hasKnownCase(caseCode)) {
+    if (!hasKnownCase(resolvedCaseCode)) {
       sendJson(res, 404, { ok: false, error: 'Unknown case code' });
       return;
     }
 
     sendJson(res, 200, {
       ok: true,
-      caseCode: String(caseCode).trim().toUpperCase(),
-      messages: getChatThread(caseCode),
+      caseCode: resolvedCaseCode,
+      dashboardId: record && record.dashboardId ? record.dashboardId : normalizeDashboardId(dashboardId),
+      messages: getChatThread(resolvedCaseCode),
     });
     return;
   }
