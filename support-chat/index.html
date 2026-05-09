@@ -498,6 +498,133 @@
         grid-column: 1 / -1;
       }
 
+      .support-portal {
+        margin-top: 16px;
+        padding: 18px;
+      }
+
+      .support-portal-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+
+      .support-portal-header h2 {
+        margin: 0;
+        font-size: clamp(1.15rem, 2vw, 1.5rem);
+        letter-spacing: -0.03em;
+      }
+
+      .support-portal-header p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .support-portal-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .support-portal-card {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background:
+          linear-gradient(180deg, rgba(100, 208, 215, 0.08), transparent 60%),
+          rgba(255, 255, 255, 0.04);
+      }
+
+      .support-portal-card h3 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+      }
+
+      .support-portal-card small {
+        display: block;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        margin-bottom: 6px;
+        font-weight: 800;
+      }
+
+      .support-status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .status-pill.alt,
+      .meta-chip.alt {
+        background: rgba(100, 208, 215, 0.12);
+        border-color: rgba(100, 208, 215, 0.18);
+      }
+
+      .support-timeline {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .support-timeline li {
+        display: grid;
+        gap: 4px;
+        padding-left: 14px;
+        border-left: 1px solid rgba(100, 208, 215, 0.26);
+      }
+
+      .support-timeline strong {
+        font-size: 0.92rem;
+      }
+
+      .support-timeline span,
+      .support-docs span {
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 0.9rem;
+      }
+
+      .support-quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .support-quick-actions button {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 10px 12px;
+        cursor: pointer;
+      }
+
+      .support-docs {
+        display: grid;
+        gap: 10px;
+      }
+
+      .support-doc {
+        padding: 12px 13px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .support-doc strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
       .layout {
         display: grid;
         grid-template-columns: 290px minmax(0, 1fr);
@@ -852,7 +979,8 @@
       }
 
       @media (max-width: 1060px) {
-        .hero {
+        .hero,
+        .support-portal-grid {
           grid-template-columns: 1fr;
         }
 
@@ -989,6 +1117,10 @@
               <label for="caseCode">Case code</label>
               <input id="caseCode" name="case_code" type="text" placeholder="KUAC-INT-01" required />
             </div>
+            <div class="gate-field">
+              <label for="dashboardId">Dashboard ID</label>
+              <input id="dashboardId" name="dashboard_id" type="text" placeholder="KD-2048-ALPHA" required />
+            </div>
             <div class="gate-field full">
               <label for="assignedAgent">Assigned agent</label>
               <input id="assignedAgent" name="assigned_agent" type="text" placeholder="KUAC Associate" />
@@ -1043,6 +1175,11 @@
             <strong id="heroCaseCode">KUAC-INT-01</strong>
             <span>Use the assigned case code to enter the private client dashboard.</span>
           </div>
+          <div class="summary-card">
+            <small>Dashboard ID</small>
+            <strong id="heroDashboardId">Awaiting ID</strong>
+            <span>Use the dashboard ID KUAC gives you to keep the case linked to your support portal.</span>
+          </div>
         </aside>
       </section>
 
@@ -1055,6 +1192,10 @@
             specific associate assigned to their case. This keeps the conversation personal,
             direct, and tied to the support process.
           </p>
+          <div class="support-status-row">
+            <span class="status-pill alt" id="supportStatusPill">Dashboard waiting for case details</span>
+            <span class="meta-chip alt" id="supportPortalId">Dashboard ID pending</span>
+          </div>
         </div>
         <div class="access-steps">
           <div class="access-step">
@@ -1072,6 +1213,47 @@
             <strong>Private conversation starts</strong>
             <span>The client and assigned agent can discuss requirements and next steps.</span>
           </div>
+        </div>
+      </section>
+
+      <section class="panel support-portal">
+        <div class="support-portal-header">
+          <div>
+            <h2>Support portal</h2>
+            <p>A quick view of your case status, timeline, and useful actions while you stay in the live thread.</p>
+          </div>
+          <span class="status-pill alt" id="supportPortalStatus">Waiting for verification</span>
+        </div>
+        <div class="support-portal-grid">
+          <article class="support-portal-card">
+            <small>Case summary</small>
+            <h3 id="supportSummaryTitle">No case loaded</h3>
+            <span id="supportSummaryText">Enter the dashboard ID and case code to open the portal.</span>
+            <div class="support-status-row">
+              <span class="meta-chip alt" id="supportSummaryCase">Case code pending</span>
+              <span class="meta-chip alt" id="supportSummaryAgent">Associate pending</span>
+            </div>
+          </article>
+          <article class="support-portal-card">
+            <small>Case timeline</small>
+            <h3>Latest steps</h3>
+            <ol class="support-timeline" id="supportTimeline"></ol>
+          </article>
+          <article class="support-portal-card">
+            <small>Quick actions</small>
+            <h3>Send a helpful prompt</h3>
+            <div class="support-quick-actions" id="supportQuickActions">
+              <button type="button" data-text="Please update me on my case status.">Case status</button>
+              <button type="button" data-text="I have the dashboard ID and am ready for the next step.">Next step</button>
+              <button type="button" data-text="I need help with documents, proof, or upload instructions.">Documents help</button>
+              <button type="button" data-text="Please let me know when the associate is available.">Associate availability</button>
+            </div>
+          </article>
+          <article class="support-portal-card">
+            <small>Documents</small>
+            <h3>Proof and case record</h3>
+            <div class="support-docs" id="supportDocs"></div>
+          </article>
         </div>
       </section>
 
@@ -1253,9 +1435,21 @@
       const verificationSubject = document.getElementById('verificationSubject');
       const clientEmail = document.getElementById('clientEmail');
       const caseCode = document.getElementById('caseCode');
+      const dashboardId = document.getElementById('dashboardId');
       const paymentId = document.getElementById('paymentId');
       const paymentProof = document.getElementById('paymentProof');
       const assignedAgent = document.getElementById('assignedAgent');
+      const heroDashboardId = document.getElementById('heroDashboardId');
+      const supportStatusPill = document.getElementById('supportStatusPill');
+      const supportPortalId = document.getElementById('supportPortalId');
+      const supportPortalStatus = document.getElementById('supportPortalStatus');
+      const supportSummaryTitle = document.getElementById('supportSummaryTitle');
+      const supportSummaryText = document.getElementById('supportSummaryText');
+      const supportSummaryCase = document.getElementById('supportSummaryCase');
+      const supportSummaryAgent = document.getElementById('supportSummaryAgent');
+      const supportTimeline = document.getElementById('supportTimeline');
+      const supportDocs = document.getElementById('supportDocs');
+      const supportQuickActions = document.getElementById('supportQuickActions');
       const composer = document.getElementById('composer');
       const displayName = document.getElementById('displayName');
       const role = document.getElementById('role');
@@ -1275,6 +1469,7 @@
 
       clientEmail.value = privateDraft.email || '';
       caseCode.value = privateDraft.caseCode || rooms.find((room) => room.id === activeRoomId)?.code || rooms[0].code;
+      dashboardId.value = privateDraft.dashboardId || '';
       paymentId.value = privateDraft.paymentId || privateDraft.paymentRef || '';
       assignedAgent.value = privateDraft.agent || 'KUAC Associate';
       displayName.value = privateDraft.displayName || displayName.value;
@@ -1383,6 +1578,7 @@
           unlocked: true,
           email: remoteSubmission.email,
           caseCode: remoteSubmission.caseCode,
+          dashboardId: (privateAccess && privateAccess.dashboardId) || privateDraft.dashboardId || dashboardId.value.trim(),
           agent: remoteSubmission.agent || 'KUAC Associate',
           username: privateAccess && privateAccess.username ? privateAccess.username : demoUsername(remoteSubmission.email, remoteSubmission.caseCode),
           accessCode: remoteIssued && remoteIssued.code ? remoteIssued.code : (privateAccess && privateAccess.accessCode) || '',
@@ -1432,15 +1628,17 @@
         const unlocked = Boolean(privateAccess && privateAccess.unlocked);
         const issued = unlocked ? getAgentCredential(privateAccess.email, privateAccess.caseCode) : null;
         const accessCode = (issued && issued.code) || (privateAccess && privateAccess.accessCode) || '';
+        const activeDashboardId = (privateAccess && privateAccess.dashboardId) || dashboardId.value.trim() || privateDraft.dashboardId || '';
         privateStage.classList.toggle('is-locked', !unlocked);
 
         if (unlocked) {
           gateNote.classList.remove('is-error');
           gateNote.classList.add('is-success');
-          gateNote.textContent = `Access granted for ${privateAccess.email}. Assigned agent: ${privateAccess.agent}.`;
+          gateNote.textContent = `Access granted for ${privateAccess.email}. Assigned associate: ${privateAccess.agent}.`;
           accessForm.querySelector('button[type="submit"]').textContent = 'Proof received';
           clientEmail.value = privateAccess.email || '';
           caseCode.value = privateAccess.caseCode || caseCode.value;
+          dashboardId.value = activeDashboardId || dashboardId.value;
           paymentId.value = privateAccess.paymentId || privateAccess.paymentRef || paymentId.value;
           assignedAgent.value = privateAccess.agent || assignedAgent.value;
           credentialCard.hidden = false;
@@ -1449,10 +1647,42 @@
           issuedProof.textContent = privateAccess.proofName ? `Proof: ${privateAccess.proofName}` : 'Proof uploaded';
         } else {
           gateNote.classList.remove('is-error', 'is-success');
-          gateNote.textContent = 'Enter the case reference, upload the proof, then KUAC can review the submission and the assigned associate can issue the access code.';
+          gateNote.textContent = 'Enter the case reference, dashboard ID, and proof, then KUAC can review the submission and the assigned associate can issue the access code.';
           accessForm.querySelector('button[type="submit"]').textContent = 'Send proof & verify';
           credentialCard.hidden = true;
         }
+
+        const supportStatusText = unlocked
+          ? `Portal unlocked for ${privateAccess.email}.`
+          : 'Dashboard waiting for verification';
+        supportPortalStatus.textContent = supportStatusText;
+        supportStatusPill.textContent = unlocked ? 'Dashboard unlocked' : 'Dashboard waiting for case details';
+        supportPortalId.textContent = activeDashboardId ? `Dashboard ID: ${activeDashboardId}` : 'Dashboard ID pending';
+        heroDashboardId.textContent = activeDashboardId || 'Awaiting ID';
+        supportSummaryTitle.textContent = unlocked ? (privateAccess.caseCode || 'Loaded case') : 'No case loaded';
+        supportSummaryText.textContent = unlocked
+          ? `Case ${privateAccess.caseCode || 'N/A'} is active with ${privateAccess.agent || 'KUAC Associate'}.`
+          : 'Enter the dashboard ID, case code, and proof to open your client support portal.';
+        supportSummaryCase.textContent = unlocked ? `Case: ${privateAccess.caseCode || 'N/A'}` : 'Case code pending';
+        supportSummaryAgent.textContent = unlocked ? `Associate: ${privateAccess.agent || 'KUAC Associate'}` : 'Associate pending';
+        supportDocs.innerHTML = unlocked
+          ? `
+            <div class="support-doc">
+              <strong>${escapeHtml(privateAccess.proofName || 'Proof uploaded')}</strong>
+              <span>Case reference: ${escapeHtml(privateAccess.paymentId || 'N/A')}</span>
+            </div>
+            <div class="support-doc">
+              <strong>${escapeHtml(privateAccess.dashboardId || activeDashboardId || 'Dashboard ID pending')}</strong>
+              <span>Client dashboard ID shared by KUAC.</span>
+            </div>
+          `
+          : `
+            <div class="support-doc">
+              <strong>Dashboard ID required</strong>
+              <span>Your KUAC dashboard ID should be entered above to open the portal.</span>
+            </div>
+          `;
+        renderSupportTimeline();
       }
 
       window.addEventListener('storage', (event) => {
@@ -1461,16 +1691,18 @@
         }
       });
 
-      [clientEmail, caseCode, paymentId, assignedAgent, displayName, role].forEach((field) => {
+      [clientEmail, caseCode, dashboardId, paymentId, assignedAgent, displayName, role].forEach((field) => {
         field.addEventListener('input', () => {
           savePrivateDraft({
             email: clientEmail.value.trim(),
             caseCode: caseCode.value.trim(),
+            dashboardId: dashboardId.value.trim(),
             paymentId: paymentId.value,
             agent: assignedAgent.value.trim(),
             displayName: displayName.value.trim(),
             role: role.value.trim(),
           });
+          renderSupportTimeline();
         });
       });
 
@@ -1478,6 +1710,7 @@
         savePrivateDraft({
           proofName: paymentProof.files && paymentProof.files[0] ? paymentProof.files[0].name : '',
         });
+        renderSupportTimeline();
       });
 
       function defaultMessages(room) {
@@ -1551,6 +1784,39 @@
         scrollThreadToBottom();
       }
 
+      function renderSupportTimeline() {
+        const room = currentRoom();
+        const messages = getThreadMessages(room.id);
+        const latestMessage = messages.length ? messages[messages.length - 1] : null;
+        const steps = [
+          {
+            title: 'Dashboard issued',
+            text: dashboardId.value.trim()
+              ? `Dashboard ID ${dashboardId.value.trim()} is attached to this portal.`
+              : 'Waiting for the dashboard ID KUAC will share with you.',
+          },
+          {
+            title: privateAccess && privateAccess.unlocked ? 'Case verified' : 'Waiting for verification',
+            text: privateAccess && privateAccess.unlocked
+              ? `Case ${privateAccess.caseCode || room.code} is active with ${privateAccess.agent || 'KUAC Associate'}.`
+              : 'Enter the case reference and proof so KUAC can unlock the portal.',
+          },
+          {
+            title: latestMessage ? 'Latest support update' : 'Live thread ready',
+            text: latestMessage
+              ? `${latestMessage.sender || 'KUAC Associate'}: ${latestMessage.text || ''}`
+              : 'Once you send a message, the latest reply appears here in the timeline.',
+          },
+        ];
+
+        supportTimeline.innerHTML = steps.map((step) => `
+          <li>
+            <strong>${escapeHtml(step.title)}</strong>
+            <span>${escapeHtml(step.text)}</span>
+          </li>
+        `).join('');
+      }
+
       function buildMessagePayload(text) {
         const sender = displayName.value.trim() || 'KUAC Client';
         const roleValue = role.value.trim() || 'Requester';
@@ -1587,6 +1853,7 @@
         }
 
         renderThread(room, getThreadMessages(room.id));
+        renderSupportTimeline();
       }
 
       function scrollThreadToBottom() {
@@ -1631,11 +1898,13 @@
         heroCaseText.textContent = room.subtitle;
         heroStatus.textContent = room.status;
         heroCaseCode.textContent = room.code;
+        heroDashboardId.textContent = (privateAccess && privateAccess.dashboardId) || dashboardId.value.trim() || privateDraft.dashboardId || 'Awaiting ID';
         typingState.innerHTML = `<span>KUAC Associate</span> is ready to respond in ${room.title.toLowerCase()}.`;
         if (!privateAccess || !privateAccess.unlocked) {
           caseCode.value = room.code;
         }
         renderThread(room, getThreadMessages(room.id).length ? getThreadMessages(room.id) : getLocalMessages(room.id));
+        renderSupportTimeline();
       }
 
       function buildSystemStrip(room) {
@@ -1654,6 +1923,7 @@
         event.preventDefault();
 
         const enteredCode = caseCode.value.trim().toUpperCase();
+        const enteredDashboardId = dashboardId.value.trim();
         const enteredPaymentId = paymentId.value.trim();
         const email = clientEmail.value.trim();
         const agent = assignedAgent.value.trim() || 'KUAC Associate';
@@ -1662,9 +1932,9 @@
 
         gateNote.classList.remove('is-error', 'is-success');
 
-        if (!email || !enteredCode || !enteredPaymentId || !proof) {
+        if (!email || !enteredCode || !enteredDashboardId || !enteredPaymentId || !proof) {
           gateNote.classList.add('is-error');
-          gateNote.textContent = 'Please enter the email, case reference, and upload proof before submitting.';
+          gateNote.textContent = 'Please enter the email, dashboard ID, case reference, and upload proof before submitting.';
           return;
         }
 
@@ -1682,6 +1952,7 @@
           unlocked: true,
           email,
           caseCode: room.code,
+          dashboardId: enteredDashboardId,
           agent,
           username,
           paymentId: enteredPaymentId,
@@ -1691,6 +1962,7 @@
         savePrivateDraft({
           email,
           caseCode: room.code,
+          dashboardId: enteredDashboardId,
           paymentId: enteredPaymentId,
           proofName: proof.name,
           agent,
@@ -1830,6 +2102,13 @@
             // Keep the local copy visible if the server sync fails.
           });
         }
+      });
+
+      supportQuickActions.querySelectorAll('button[data-text]').forEach((button) => {
+        button.addEventListener('click', () => {
+          messageInput.value = button.dataset.text || '';
+          messageInput.focus();
+        });
       });
 
       document.querySelectorAll('.quick-replies button').forEach((button) => {
