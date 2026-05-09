@@ -1,0 +1,18 @@
+version: 2.1
+
+jobs:
+  validate-static:
+    docker:
+      - image: cimg/node:20.11
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Validate static site and server syntax
+          command: npm run ci:validate
+
+workflows:
+  version: 2
+  validate:
+    jobs:
+      - validate-static

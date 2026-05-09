@@ -1,9 +1,9 @@
 services:
   - type: web
-    runtime: static
+    env: node
     name: kua-center
     branch: main
-    buildCommand: echo "Static site ready"
-    staticPublishPath: .
+    buildCommand: npm run ci:validate
+    startCommand: npm start
     autoDeployTrigger: commit
     plan: free

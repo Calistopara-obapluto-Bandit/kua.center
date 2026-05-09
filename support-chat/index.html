@@ -1271,6 +1271,7 @@
       let privateAccess = loadPrivateAccess();
       let privateDraft = loadPrivateDraft();
       let agentCredentials = loadAgentCredentials();
+      let threadMessagesByRoom = {};
 
       clientEmail.value = privateDraft.email || '';
       caseCode.value = privateDraft.caseCode || rooms.find((room) => room.id === activeRoomId)?.code || rooms[0].code;
@@ -1487,18 +1488,105 @@
         try {
           const stored = localStorage.getItem(storageKey(roomId));
           if (stored) {
-            return JSON.parse(stored);
+            return JSON.parse(stored).map(normalizeMessage);
           }
         } catch (error) {
           // fall back to seed messages
         }
 
         const room = rooms.find((item) => item.id === roomId);
-        return room ? defaultMessages(room) : [];
+        return room ? defaultMessages(room).map(normalizeMessage) : [];
       }
 
       function saveMessages(roomId, messages) {
         localStorage.setItem(storageKey(roomId), JSON.stringify(messages));
+      }
+
+      function fmtTime(value) {
+        if (!value) {
+          return 'Just now';
+        }
+
+        const date = new Date(value);
+        return Number.isNaN(date.getTime())
+          ? String(value)
+          : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+
+      function normalizeMessage(message) {
+        const raw = message || {};
+        return {
+          type: raw.type || 'user',
+          sender: raw.sender || 'KUAC Client',
+          role: raw.role || 'Requester',
+          text: raw.text || '',
+          time: raw.time || fmtTime(raw.createdAt || raw.timestamp || ''),
+        };
+      }
+
+      function currentRoom() {
+        return rooms.find((item) => item.id === activeRoomId) || rooms[0];
+      }
+
+      function getLocalMessages(roomId) {
+        return loadMessages(roomId);
+      }
+
+      function getThreadMessages(roomId) {
+        return Array.isArray(threadMessagesByRoom[roomId]) ? threadMessagesByRoom[roomId] : [];
+      }
+
+      function setThreadMessages(roomId, messages, persist = false) {
+        threadMessagesByRoom[roomId] = Array.isArray(messages) ? messages.map(normalizeMessage) : [];
+        if (persist) {
+          saveMessages(roomId, threadMessagesByRoom[roomId]);
+        }
+        return threadMessagesByRoom[roomId];
+      }
+
+      function renderThread(room, messages) {
+        thread.innerHTML = '';
+        thread.appendChild(buildSystemStrip(room));
+        messages.forEach(renderMessage);
+        scrollThreadToBottom();
+      }
+
+      function buildMessagePayload(text) {
+        const sender = displayName.value.trim() || 'KUAC Client';
+        const roleValue = role.value.trim() || 'Requester';
+        const type = /associate|agent/i.test(roleValue) ? 'partner' : 'user';
+
+        return {
+          type,
+          sender,
+          role: roleValue,
+          text,
+          time: fmtTime(new Date().toISOString()),
+        };
+      }
+
+      async function syncThreadFromBackend(room) {
+        if (!backend || !backend.available) {
+          setThreadMessages(room.id, getLocalMessages(room.id));
+          renderThread(room, getThreadMessages(room.id));
+          return;
+        }
+
+        try {
+          const result = await backend.fetchChatMessages(room.code);
+          const messages = Array.isArray(result && result.messages) ? result.messages.map((message) => ({
+            type: message.type || 'user',
+            sender: message.sender || 'KUAC Client',
+            role: message.role || 'Requester',
+            text: message.text || '',
+            time: fmtTime(message.createdAt || message.time || ''),
+          })) : [];
+          setThreadMessages(room.id, messages, true);
+        } catch (error) {
+          setThreadMessages(room.id, getLocalMessages(room.id));
+        }
+
+        renderThread(room, getThreadMessages(room.id));
       }
 
       function scrollThreadToBottom() {
@@ -1521,16 +1609,17 @@
             if (!privateAccess || !privateAccess.unlocked) {
               caseCode.value = room.code;
             }
+            setThreadMessages(room.id, getLocalMessages(room.id));
             renderRooms();
             renderActiveRoom();
+            syncThreadFromBackend(room);
           });
           roomList.appendChild(button);
         });
       }
 
       function renderActiveRoom() {
-        const room = rooms.find((item) => item.id === activeRoomId) || rooms[0];
-        const messages = loadMessages(room.id);
+        const room = currentRoom();
 
         roomTitle.textContent = room.title;
         roomSubtitle.textContent = room.subtitle;
@@ -1546,11 +1635,7 @@
         if (!privateAccess || !privateAccess.unlocked) {
           caseCode.value = room.code;
         }
-
-        thread.innerHTML = '';
-        thread.appendChild(buildSystemStrip(room));
-        messages.forEach(renderMessage);
-        scrollThreadToBottom();
+        renderThread(room, getThreadMessages(room.id).length ? getThreadMessages(room.id) : getLocalMessages(room.id));
       }
 
       function buildSystemStrip(room) {
@@ -1617,7 +1702,7 @@
         const submitButton = accessForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         gateNote.classList.add('is-success');
-          gateNote.textContent = 'Saving verification, then sending the proof to KUAC...';
+        gateNote.textContent = 'Saving verification, then sending the proof to KUAC...';
 
         try {
           if (backend && backend.available) {
@@ -1723,22 +1808,28 @@
           return;
         }
 
-        const room = rooms.find((item) => item.id === activeRoomId) || rooms[0];
-        const messages = loadMessages(room.id);
-        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const room = currentRoom();
+        const payload = buildMessagePayload(text);
+        const nextMessages = getThreadMessages(room.id).concat(payload);
 
-        messages.push({
-          type: 'user',
-          sender: displayName.value.trim() || 'KUAC Client',
-          role: role.value.trim() || 'Assigned associate',
-          text,
-          time,
-        });
-
-        saveMessages(room.id, messages);
-        renderActiveRoom();
+        setThreadMessages(room.id, nextMessages, true);
+        renderThread(room, getThreadMessages(room.id));
         messageInput.value = '';
         messageInput.focus();
+
+        if (backend && backend.available) {
+          backend.postChatMessage({
+            caseCode: room.code,
+            sender: payload.sender,
+            role: payload.role,
+            type: payload.type,
+            text: payload.text,
+          }).then(async () => {
+            await syncThreadFromBackend(room);
+          }).catch(() => {
+            // Keep the local copy visible if the server sync fails.
+          });
+        }
       });
 
       document.querySelectorAll('.quick-replies button').forEach((button) => {
@@ -1750,6 +1841,7 @@
 
       resetRoom.addEventListener('click', () => {
         localStorage.removeItem(storageKey(activeRoomId));
+        setThreadMessages(activeRoomId, getLocalMessages(activeRoomId));
         renderActiveRoom();
       });
 
@@ -1762,10 +1854,15 @@
 
       updatePrivateStage();
       renderRooms();
+      setThreadMessages(activeRoomId, getLocalMessages(activeRoomId));
       renderActiveRoom();
       refreshRemoteCaseState();
+      syncThreadFromBackend(currentRoom());
       if (backend && backend.available) {
         window.setInterval(refreshRemoteCaseState, 12000);
+        window.setInterval(() => {
+          syncThreadFromBackend(currentRoom());
+        }, 8000);
       }
     </script>
   </body>

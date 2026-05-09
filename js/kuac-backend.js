@@ -42,11 +42,16 @@ window.KUAC_BACKEND = (function () {
     fileToDataUrl,
     fetchState: () => request('/api/state'),
     fetchSubmission: (email, caseCode) => request(`/api/submission?email=${encodeURIComponent(email)}&caseCode=${encodeURIComponent(caseCode)}`),
+    fetchChatMessages: (caseCode) => request(`/api/chat/messages?caseCode=${encodeURIComponent(caseCode)}`),
     postSubmission: (payload) => request('/api/submissions', {
       method: 'POST',
       body: JSON.stringify(payload || {}),
     }),
     postIssuedCode: (payload) => request('/api/agent/issue', {
+      method: 'POST',
+      body: JSON.stringify(payload || {}),
+    }),
+    postChatMessage: (payload) => request('/api/chat/messages', {
       method: 'POST',
       body: JSON.stringify(payload || {}),
     }),

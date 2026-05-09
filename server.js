@@ -16,6 +16,7 @@ const DASHBOARD_SESSION_TTL_MS = 1000 * 60 * 60 * 8;
 const DEFAULT_STATE = {
   submissions: {},
   issued: {},
+  chats: {},
   sessions: {},
 };
 
@@ -25,6 +26,7 @@ function cloneState(source) {
   return {
     submissions: Object.assign({}, source.submissions || {}),
     issued: Object.assign({}, source.issued || {}),
+    chats: Object.assign({}, source.chats || {}),
     sessions: Object.assign({}, source.sessions || {}),
   };
 }
@@ -188,6 +190,74 @@ function publicState() {
     submissions: Object.assign({}, state.submissions || {}),
     issued: Object.assign({}, state.issued || {}),
   };
+}
+
+function chatKey(caseCode) {
+  return String(caseCode || '').trim().toUpperCase();
+}
+
+function hasKnownCase(caseCode) {
+  const key = chatKey(caseCode);
+  if (!key) {
+    return false;
+  }
+
+  return Object.values(state.submissions || {}).some((submission) => chatKey(submission.caseCode) === key)
+    || Object.values(state.issued || {}).some((issued) => chatKey(issued.caseCode) === key);
+}
+
+function getChatThread(caseCode) {
+  const key = chatKey(caseCode);
+  if (!key) {
+    return [];
+  }
+
+  return Array.isArray(state.chats[key]) ? state.chats[key] : [];
+}
+
+function saveChatThread(caseCode, messages) {
+  const key = chatKey(caseCode);
+  if (!key) {
+    return [];
+  }
+
+  state.chats[key] = Array.isArray(messages) ? messages : [];
+  return state.chats[key];
+}
+
+function appendChatMessage(payload) {
+  const caseCode = String(payload.caseCode || '').trim().toUpperCase();
+  const text = String(payload.text || '').trim();
+  const sender = String(payload.sender || 'KUAC Client').trim() || 'KUAC Client';
+  const role = String(payload.role || 'Client').trim() || 'Client';
+  const type = String(payload.type || 'user').trim() || 'user';
+
+  if (!caseCode || !text) {
+    const err = new Error('Case code and message text are required');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (!hasKnownCase(caseCode)) {
+    const err = new Error('Unknown case code');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const thread = getChatThread(caseCode);
+  const message = {
+    id: crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(12).toString('hex'),
+    caseCode,
+    sender,
+    role,
+    type,
+    text,
+    createdAt: new Date().toISOString(),
+  };
+
+  thread.push(message);
+  saveChatThread(caseCode, thread);
+  return message;
 }
 
 function upsertSubmission(payload) {
@@ -416,6 +486,39 @@ function handleApi(req, res, urlObj) {
         const issued = issueAccessCode(payload);
         await saveState();
         sendJson(res, 200, { ok: true, issued, state: publicState() });
+      })
+      .catch((error) => {
+        sendJson(res, error.statusCode || 500, { ok: false, error: error.message || 'Server error' });
+      });
+    return;
+  }
+
+  if (req.method === 'GET' && urlObj.pathname === '/api/chat/messages') {
+    const caseCode = urlObj.searchParams.get('caseCode') || '';
+    if (!caseCode.trim()) {
+      sendJson(res, 400, { ok: false, error: 'Case code is required' });
+      return;
+    }
+
+    if (!hasKnownCase(caseCode)) {
+      sendJson(res, 404, { ok: false, error: 'Unknown case code' });
+      return;
+    }
+
+    sendJson(res, 200, {
+      ok: true,
+      caseCode: String(caseCode).trim().toUpperCase(),
+      messages: getChatThread(caseCode),
+    });
+    return;
+  }
+
+  if (req.method === 'POST' && urlObj.pathname === '/api/chat/messages') {
+    readJsonBody(req)
+      .then(async (payload) => {
+        const message = appendChatMessage(payload);
+        await saveState();
+        sendJson(res, 200, { ok: true, message, messages: getChatThread(message.caseCode) });
       })
       .catch((error) => {
         sendJson(res, error.statusCode || 500, { ok: false, error: error.message || 'Server error' });

@@ -1,6 +1,6 @@
 # Render Setup for KUAC
 
-This project is set up for Render's **Static Site** plan with FormSubmit.
+This project is set up for Render's **Node web service** plan with FormSubmit and a server-backed chat thread.
 
 ## Live Site
 
@@ -10,24 +10,26 @@ This project is set up for Render's **Static Site** plan with FormSubmit.
 
 ## Service Type
 
-- Type: `Static Site`
-- Build command: `echo "Static site ready"`
-- Publish directory: `.`
+- Type: `Web Service`
+- Environment: `Node`
+- Build command: `npm run ci:validate`
+- Start command: `npm start`
 
 ## Required Render Settings
 
-No runtime environment variables are required for the static site.
-The private dashboard gate is configured in `config.js` through `dashboardAccessCode`.
+Set `AGENT_DASHBOARD_PASSWORD` in Render if you want the private dashboard login to work against the server-backed session gate.
+The private dashboard gate is configured in `config.js` through `dashboardAccessCode` for the static fallback.
 
 ## Copy-Paste Setup Note
 
 Use this quick note when setting up or updating Render:
 
 ```text
-Service type: Static Site
+Service type: Web Service
 Branch: main
-Static publish path: .
+Start command: npm start
 Open /agent-login.html to access the private admin dashboard.
+The chat thread is server-backed on Render, so the agent and client can see the same messages.
 ```
 
 ## Reset Admin Access
@@ -35,14 +37,14 @@ Open /agent-login.html to access the private admin dashboard.
 To rotate the private dashboard code:
 
 1. Update `dashboardAccessCode` in `config.js`.
-2. Redeploy the static site.
+2. Redeploy the web service.
 3. Share the new code with the KUAC staff who need dashboard access.
 
 ## Support Chat
 
-- The support chat is drafted as a separate static site in `support-chat/index.html`.
-- It stays separate from the private admin dashboard.
-- Client-side pages can still work as static previews, and the dashboard gate is handled locally in the browser.
+- The support chat uses the server-backed `/api/chat/messages` thread when the app is running as a web service.
+- It still falls back to localStorage when opened as a static preview.
+- The agent dashboard links to the same chat room, so the associate and client can communicate in the same thread.
 
 ## Callback Flow
 
