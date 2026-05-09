@@ -41,8 +41,23 @@ window.KUAC_BACKEND = (function () {
     request,
     fileToDataUrl,
     fetchState: () => request('/api/state'),
-    fetchSubmission: (email, caseCode) => request(`/api/submission?email=${encodeURIComponent(email)}&caseCode=${encodeURIComponent(caseCode)}`),
-    fetchDashboard: (dashboardId) => request(`/api/dashboard?dashboardId=${encodeURIComponent(dashboardId)}`),
+    fetchSubmission: (email, caseCode) => request(`/api/support/ticket?email=${encodeURIComponent(email)}&caseCode=${encodeURIComponent(caseCode)}`),
+    fetchDashboard: (dashboardId) => request(`/api/support/ticket?dashboardId=${encodeURIComponent(dashboardId)}`),
+    fetchSupportTicket: (options) => {
+      const params = new URLSearchParams();
+      if (options && typeof options === 'object') {
+        if (options.dashboardId) {
+          params.set('dashboardId', String(options.dashboardId).trim());
+        }
+        if (options.caseCode) {
+          params.set('caseCode', String(options.caseCode).trim());
+        }
+        if (options.email) {
+          params.set('email', String(options.email).trim());
+        }
+      }
+      return request(`/api/support/ticket?${params.toString()}`);
+    },
     fetchChatMessages: (caseCodeOrOptions) => {
       if (caseCodeOrOptions && typeof caseCodeOrOptions === 'object') {
         const caseCode = String(caseCodeOrOptions.caseCode || '').trim();
@@ -54,20 +69,20 @@ window.KUAC_BACKEND = (function () {
         if (dashboardId) {
           params.set('dashboardId', dashboardId);
         }
-        return request(`/api/chat/messages?${params.toString()}`);
+        return request(`/api/support/ticket?${params.toString()}`);
       }
 
-      return request(`/api/chat/messages?caseCode=${encodeURIComponent(caseCodeOrOptions)}`);
+      return request(`/api/support/ticket?caseCode=${encodeURIComponent(caseCodeOrOptions)}`);
     },
-    postSubmission: (payload) => request('/api/submissions', {
+    postSubmission: (payload) => request('/api/support/ticket', {
       method: 'POST',
       body: JSON.stringify(payload || {}),
     }),
-    postIssuedCode: (payload) => request('/api/agent/issue', {
+    postIssuedCode: (payload) => request('/api/support/ticket/status', {
       method: 'POST',
       body: JSON.stringify(payload || {}),
     }),
-    postChatMessage: (payload) => request('/api/chat/messages', {
+    postChatMessage: (payload) => request('/api/support/ticket/messages', {
       method: 'POST',
       body: JSON.stringify(payload || {}),
     }),

@@ -17,6 +17,7 @@ const DEFAULT_STATE = {
   submissions: {},
   issued: {},
   chats: {},
+  tickets: {},
   sessions: {},
 };
 
@@ -27,6 +28,7 @@ function cloneState(source) {
     submissions: Object.assign({}, source.submissions || {}),
     issued: Object.assign({}, source.issued || {}),
     chats: Object.assign({}, source.chats || {}),
+    tickets: Object.assign({}, source.tickets || {}),
     sessions: Object.assign({}, source.sessions || {}),
   };
 }
@@ -193,6 +195,7 @@ function publicState() {
   return {
     submissions: Object.assign({}, state.submissions || {}),
     issued: Object.assign({}, state.issued || {}),
+    tickets: Object.assign({}, state.tickets || {}),
   };
 }
 
@@ -231,19 +234,191 @@ function findIssuedByDashboardId(dashboardId) {
 function findCaseRecordByDashboardId(dashboardId) {
   const submission = findSubmissionByDashboardId(dashboardId);
   const issued = findIssuedByDashboardId(dashboardId);
+  const ticket = findSupportTicketByDashboardId(dashboardId);
   const caseCode = chatKey((submission && submission.caseCode) || (issued && issued.caseCode) || '');
+  const ticketCaseCode = chatKey((ticket && ticket.caseCode) || '');
+  const resolvedCaseCode = caseCode || ticketCaseCode;
 
-  if (!submission && !issued && !caseCode) {
+  if (!submission && !issued && !ticket && !resolvedCaseCode) {
     return null;
   }
 
   return {
     dashboardId: normalizeDashboardId(dashboardId),
-    caseCode,
+    caseCode: resolvedCaseCode,
     submission,
     issued,
-    messages: caseCode ? getChatThread(caseCode) : [],
+    ticket,
+    messages: resolvedCaseCode ? getChatThread(resolvedCaseCode) : [],
   };
+}
+
+function supportTicketKey(dashboardId) {
+  return normalizeDashboardId(dashboardId);
+}
+
+function findSupportTicketByDashboardId(dashboardId) {
+  const key = supportTicketKey(dashboardId);
+  if (!key) {
+    return null;
+  }
+
+  return state.tickets[key] || null;
+}
+
+function findSupportTicketByCaseCode(caseCode) {
+  const key = chatKey(caseCode);
+  if (!key) {
+    return null;
+  }
+
+  return Object.values(state.tickets || {}).find((ticket) => chatKey(ticket.caseCode) === key) || null;
+}
+
+function findSupportTicketByEmailAndCase(email, caseCode) {
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  const normalizedCaseCode = chatKey(caseCode);
+  if (!normalizedEmail || !normalizedCaseCode) {
+    return null;
+  }
+
+  return Object.values(state.tickets || {}).find((ticket) => String(ticket.email || '').trim().toLowerCase() === normalizedEmail
+    && chatKey(ticket.caseCode) === normalizedCaseCode) || null;
+}
+
+function buildSupportTicket(payload, existingTicket = null) {
+  const now = new Date().toISOString();
+  const dashboardId = normalizeDashboardId(payload.dashboardId || (existingTicket && existingTicket.dashboardId) || '');
+  const caseCode = chatKey(payload.caseCode || (existingTicket && existingTicket.caseCode) || '');
+  const email = String(payload.email || (existingTicket && existingTicket.email) || '').trim();
+  const agent = String(payload.agent || (existingTicket && existingTicket.agent) || 'KUAC Associate').trim() || 'KUAC Associate';
+  const clientName = String(payload.clientName || (existingTicket && existingTicket.clientName) || 'Client').trim() || 'Client';
+  const role = String(payload.role || (existingTicket && existingTicket.role) || 'Requester').trim() || 'Requester';
+  const paymentId = String(payload.paymentId || (existingTicket && existingTicket.paymentId) || '').trim();
+  const proofName = String(payload.proofName || (existingTicket && existingTicket.proofName) || '').trim();
+  const subject = String(payload.subject || (existingTicket && existingTicket.subject) || '').trim();
+  const summary = String(payload.summary || payload.note || (existingTicket && existingTicket.summary) || '').trim();
+  const status = String(payload.status || (existingTicket && existingTicket.status) || 'open').trim() || 'open';
+  const priority = String(payload.priority || (existingTicket && existingTicket.priority) || 'normal').trim() || 'normal';
+
+  return {
+    dashboardId,
+    caseCode,
+    email,
+    agent,
+    clientName,
+    role,
+    paymentId,
+    proofName,
+    subject,
+    summary,
+    status,
+    priority,
+    createdAt: (existingTicket && existingTicket.createdAt) || now,
+    updatedAt: now,
+    lastMessageAt: (existingTicket && existingTicket.lastMessageAt) || null,
+    accessCode: String(payload.accessCode || (existingTicket && existingTicket.accessCode) || '').trim(),
+  };
+}
+
+function saveSupportTicket(ticket) {
+  if (!ticket || !ticket.dashboardId) {
+    return null;
+  }
+
+  state.tickets[supportTicketKey(ticket.dashboardId)] = ticket;
+  return state.tickets[supportTicketKey(ticket.dashboardId)];
+}
+
+function upsertSupportTicket(payload) {
+  const dashboardId = normalizeDashboardId(payload.dashboardId);
+  const caseCode = chatKey(payload.caseCode);
+  const email = String(payload.email || '').trim();
+  const existing =
+    findSupportTicketByDashboardId(dashboardId) ||
+    findSupportTicketByCaseCode(caseCode) ||
+    findSupportTicketByEmailAndCase(email, caseCode) ||
+    null;
+  const ticket = buildSupportTicket(payload, existing);
+
+  if (!ticket.dashboardId) {
+    const err = new Error('Dashboard ID is required');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  if (!ticket.caseCode) {
+    const fallbackCase = existing && existing.caseCode ? existing.caseCode : '';
+    ticket.caseCode = fallbackCase;
+  }
+
+  saveSupportTicket(ticket);
+  return ticket;
+}
+
+function updateSupportTicketStatus(payload) {
+  const dashboardId = normalizeDashboardId(payload.dashboardId);
+  const caseCode = chatKey(payload.caseCode);
+  const ticket =
+    findSupportTicketByDashboardId(dashboardId) ||
+    findSupportTicketByCaseCode(caseCode) ||
+    findSupportTicketByEmailAndCase(payload.email, caseCode);
+
+  if (!ticket) {
+    const err = new Error('Support ticket not found');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const updated = buildSupportTicket({
+    dashboardId: ticket.dashboardId,
+    caseCode: ticket.caseCode,
+    email: ticket.email,
+    agent: ticket.agent,
+    clientName: ticket.clientName,
+    role: ticket.role,
+    paymentId: ticket.paymentId,
+    proofName: ticket.proofName,
+    subject: ticket.subject,
+    summary: ticket.summary,
+    priority: ticket.priority,
+    accessCode: ticket.accessCode,
+    status: payload.status || ticket.status,
+  }, ticket);
+
+  saveSupportTicket(updated);
+  return updated;
+}
+
+function appendSupportTicketMessage(payload) {
+  const ticket = resolveSupportTicket(payload);
+  if (!ticket) {
+    const err = new Error('Support ticket not found');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const message = appendChatMessage(Object.assign({}, payload, {
+    dashboardId: ticket.dashboardId,
+    caseCode: ticket.caseCode,
+  }));
+
+  ticket.lastMessageAt = message.createdAt;
+  ticket.updatedAt = message.createdAt;
+  ticket.status = String(payload.status || ticket.status || 'open').trim() || 'open';
+  saveSupportTicket(ticket);
+  return message;
+}
+
+function resolveSupportTicket(payload = {}) {
+  const dashboardId = normalizeDashboardId(payload.dashboardId);
+  const caseCode = chatKey(payload.caseCode);
+  const email = String(payload.email || '').trim();
+
+  return findSupportTicketByDashboardId(dashboardId)
+    || findSupportTicketByCaseCode(caseCode)
+    || findSupportTicketByEmailAndCase(email, caseCode)
+    || null;
 }
 
 function getChatThread(caseCode) {
@@ -332,6 +507,20 @@ function upsertSubmission(payload) {
     note: String(payload.note || '').trim(),
   };
 
+  upsertSupportTicket({
+    dashboardId,
+    caseCode,
+    email,
+    agent: state.submissions[key].agent,
+    clientName: state.submissions[key].clientName,
+    role: state.submissions[key].role,
+    paymentId: state.submissions[key].paymentId,
+    proofName: state.submissions[key].proofName,
+    summary: state.submissions[key].note || `Support request for ${caseCode}`,
+    status: 'open',
+    priority: String(payload.priority || 'normal').trim() || 'normal',
+  });
+
   return state.submissions[key];
 }
 
@@ -361,6 +550,20 @@ function issueAccessCode(payload) {
     dashboardId: dashboardId || String(state.submissions[key] && state.submissions[key].dashboardId || '').trim(),
     updatedAt: new Date().toISOString(),
   };
+
+  const ticketDashboardId = state.issued[key].dashboardId;
+  if (ticketDashboardId) {
+    upsertSupportTicket({
+      dashboardId: ticketDashboardId,
+      caseCode,
+      email,
+      agent,
+      clientName,
+      status: 'issued',
+      accessCode: code,
+      summary: note || `Access code issued for ${caseCode}`,
+    });
+  }
 
   if (state.submissions[key]) {
     state.submissions[key].status = 'issued';
@@ -544,6 +747,43 @@ function handleApi(req, res, urlObj) {
     return;
   }
 
+  if (req.method === 'GET' && urlObj.pathname === '/api/support/ticket') {
+    const dashboardId = urlObj.searchParams.get('dashboardId') || '';
+    const caseCode = urlObj.searchParams.get('caseCode') || '';
+    const email = urlObj.searchParams.get('email') || '';
+    const record =
+      findSupportTicketByDashboardId(dashboardId) ||
+      findSupportTicketByCaseCode(caseCode) ||
+      findSupportTicketByEmailAndCase(email, caseCode) ||
+      (dashboardId.trim() ? findCaseRecordByDashboardId(dashboardId) : null);
+
+    if (!dashboardId.trim() && !caseCode.trim() && !email.trim()) {
+      sendJson(res, 400, { ok: false, error: 'Dashboard ID, case code, or email is required' });
+      return;
+    }
+
+    if (!record) {
+      sendJson(res, 404, { ok: false, error: 'Support ticket not found' });
+      return;
+    }
+
+    const resolvedDashboardId = record.dashboardId || normalizeDashboardId(dashboardId);
+    const resolvedCaseCode = chatKey(record.caseCode || caseCode);
+    const submission = record.email && resolvedCaseCode ? getSubmission(record.email, resolvedCaseCode) : null;
+    const issued = record.email && resolvedCaseCode ? getIssued(record.email, resolvedCaseCode) : null;
+
+    sendJson(res, 200, {
+      ok: true,
+      ticket: record.ticket || record,
+      submission: submission || record.submission || record,
+      issued: issued || record.issued || null,
+      messages: resolvedCaseCode ? getChatThread(resolvedCaseCode) : [],
+      dashboardId: resolvedDashboardId,
+      caseCode: resolvedCaseCode,
+    });
+    return;
+  }
+
   if (req.method === 'POST' && urlObj.pathname === '/api/submissions') {
     readJsonBody(req)
       .then(async (payload) => {
@@ -557,12 +797,68 @@ function handleApi(req, res, urlObj) {
     return;
   }
 
+  if (req.method === 'POST' && urlObj.pathname === '/api/support/ticket') {
+    readJsonBody(req)
+      .then(async (payload) => {
+        const submission = upsertSubmission(payload);
+        await saveState();
+        const issued = getIssued(submission.email, submission.caseCode);
+        const ticket = findSupportTicketByDashboardId(submission.dashboardId) || findSupportTicketByCaseCode(submission.caseCode);
+        sendJson(res, 200, {
+          ok: true,
+          ticket: ticket || submission,
+          submission,
+          issued,
+          messages: submission.caseCode ? getChatThread(submission.caseCode) : [],
+          state: publicState(),
+        });
+      })
+      .catch((error) => {
+        sendJson(res, error.statusCode || 500, { ok: false, error: error.message || 'Server error' });
+      });
+    return;
+  }
+
   if (req.method === 'POST' && urlObj.pathname === '/api/agent/issue') {
     readJsonBody(req)
       .then(async (payload) => {
         const issued = issueAccessCode(payload);
         await saveState();
         sendJson(res, 200, { ok: true, issued, state: publicState() });
+      })
+      .catch((error) => {
+        sendJson(res, error.statusCode || 500, { ok: false, error: error.message || 'Server error' });
+      });
+    return;
+  }
+
+  if ((req.method === 'PATCH' || req.method === 'POST') && urlObj.pathname === '/api/support/ticket/status') {
+    readJsonBody(req)
+      .then(async (payload) => {
+        const ticket = updateSupportTicketStatus(payload);
+        await saveState();
+        const issued = ticket.email && ticket.caseCode ? getIssued(ticket.email, ticket.caseCode) : null;
+        sendJson(res, 200, {
+          ok: true,
+          ticket,
+          submission: ticket.email && ticket.caseCode ? getSubmission(ticket.email, ticket.caseCode) || ticket : ticket,
+          issued,
+          messages: ticket.caseCode ? getChatThread(ticket.caseCode) : [],
+          state: publicState(),
+        });
+      })
+      .catch((error) => {
+        sendJson(res, error.statusCode || 500, { ok: false, error: error.message || 'Server error' });
+      });
+    return;
+  }
+
+  if (req.method === 'POST' && urlObj.pathname === '/api/support/ticket/messages') {
+    readJsonBody(req)
+      .then(async (payload) => {
+        const message = appendSupportTicketMessage(payload);
+        await saveState();
+        sendJson(res, 200, { ok: true, message, messages: getChatThread(message.caseCode) });
       })
       .catch((error) => {
         sendJson(res, error.statusCode || 500, { ok: false, error: error.message || 'Server error' });
