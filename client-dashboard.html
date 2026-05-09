@@ -3,12 +3,161 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="KUAC client dashboard for verified support cases and live associate help."
+    />
     <title>KUAC Client Dashboard</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #04121b;
+        --panel: rgba(10, 29, 41, 0.94);
+        --line: rgba(188, 233, 228, 0.12);
+        --text: #eef9f7;
+        --muted: rgba(238, 249, 247, 0.72);
+        --accent: #64d0d7;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at top left, rgba(100, 208, 215, 0.12), transparent 36%),
+          linear-gradient(180deg, #071824 0%, var(--bg) 55%, #020b10 100%);
+        color: var(--text);
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .shell {
+        width: min(760px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--panel);
+        box-shadow: 0 28px 64px rgba(0, 0, 0, 0.34);
+        padding: 28px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(100, 208, 215, 0.25);
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(30px, 5vw, 54px);
+        line-height: 0.96;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .status {
+        margin-top: 18px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--line);
+      }
+
+      .spinner {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+        border: 2px solid rgba(100, 208, 215, 0.2);
+        border-top-color: var(--accent);
+        animation: spin 0.9s linear infinite;
+        vertical-align: -2px;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .fallback {
+        display: none;
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+      }
+
+      a {
+        color: var(--accent);
+      }
+    </style>
+    <script>
+      (function loadDashboard() {
+        const statusText = 'Loading the KUAC client support dashboard...';
+        window.addEventListener('DOMContentLoaded', async () => {
+          const shell = document.querySelector('.shell');
+          const status = document.getElementById('statusText');
+          try {
+            const response = await fetch('/support-chat/index.html', { cache: 'no-store' });
+            if (!response.ok) {
+              throw new Error(`Dashboard load failed (${response.status})`);
+            }
+            const html = await response.text();
+            document.open();
+            document.write(html);
+            document.close();
+          } catch (error) {
+            status.textContent = 'The dashboard could not load right now.';
+            const fallback = document.getElementById('fallback');
+            if (fallback) {
+              fallback.style.display = 'block';
+            }
+            if (shell) {
+              shell.setAttribute('data-error', 'true');
+            }
+          }
+        });
+      })();
+    </script>
   </head>
   <body>
-    <p>
-      This URL is reserved for the KUAC client dashboard on the live site.
-      <a href="support-chat/index.html">Open the dashboard here</a>.
-    </p>
+    <main class="shell">
+      <div class="eyebrow">KUAC Client Dashboard</div>
+      <h1>Your support portal is loading</h1>
+      <p>
+        This page will open your KUAC support ticket, show the live case thread, and keep the
+        Dashboard ID you were given attached to the portal.
+      </p>
+      <div class="status">
+        <span class="spinner" aria-hidden="true"></span>
+        <span id="statusText">Loading the KUAC client support dashboard...</span>
+      </div>
+      <div class="fallback" id="fallback">
+        <p>
+          If the dashboard does not appear, open
+          <a href="/support-chat/index.html">the live support portal</a>.
+        </p>
+      </div>
+    </main>
   </body>
 </html>
