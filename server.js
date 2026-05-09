@@ -345,6 +345,10 @@ async function serveStatic(req, res, pathname) {
     requestPath = '/index.html';
   }
 
+  if (requestPath === '/client-dashboard.html') {
+    requestPath = '/support-chat/index.html';
+  }
+
   let filePath = path.join(ROOT, requestPath);
   let stat;
 
