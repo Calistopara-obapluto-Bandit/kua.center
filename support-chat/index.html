@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC private client and associate support chat tied to an unlocked request."
+      content="KUAC client dashboard for verified support cases and live associate help."
     />
-    <title>KUAC Assigned Support Chat</title>
+    <title>KUAC Client Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -926,12 +926,11 @@
     <div class="shell">
       <header class="app-header">
         <div class="brand">
-          <span class="eyebrow">KUAC Support Chat</span>
-          <h1>Private chat for a verified support case and its assigned associate</h1>
+          <span class="eyebrow">KUAC Client Dashboard</span>
+          <h1>Private dashboard for a verified support case and its assigned associate</h1>
           <p>
-            A compact, static messaging workspace for the verified case flow. It keeps the
-            conversation focused, readable, and easy to follow inside the bottom-left drawer or as
-            a standalone page.
+            A compact dashboard for the verified case flow. It keeps the conversation focused,
+            readable, and easy to follow inside the bottom-left drawer or as a standalone page.
           </p>
         </div>
         <div class="header-actions">
@@ -943,10 +942,10 @@
       <section class="access-gate panel" id="accessGate">
         <div>
           <span class="gate-badge"><i class="far fa-lock-alt" aria-hidden="true"></i> Private access</span>
-          <h2>Enter the private section for your assigned agent.</h2>
+          <h2>Enter the private section for your assigned associate.</h2>
           <p>
             This page is for verified support cases that have been assigned manually by KUAC.
-            Enter the case details you were given to unlock the private chat and keep the case with
+            Enter the case details you were given to unlock the dashboard and keep the case with
             the associate assigned to you.
           </p>
           <div class="gate-points" aria-label="Verification steps">
@@ -970,7 +969,7 @@
             <strong>Send the case proof to KUAC and unlock the room</strong>
           </div>
           <input type="hidden" name="_subject" id="verificationSubject" value="KUAC | Payment Proof Received" />
-          <input type="hidden" name="_next" id="verificationNext" value="support-chat.html?verified=sent" />
+          <input type="hidden" name="_next" id="verificationNext" value="client-dashboard.html?verified=sent" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="hidden" name="_template" value="box" />
           <div class="gate-grid">
@@ -1016,7 +1015,7 @@
       <section class="hero">
         <div class="panel hero-copy">
           <span class="eyebrow">Chat workspace</span>
-          <h2>Private client chat for verified support cases and manually assigned associates.</h2>
+          <h2>Private client dashboard for verified support cases and manually assigned associates.</h2>
           <p>
             This section is for clients whose support request has been verified and who have been
             manually assigned an associate by KUAC. It is not automatic matching. The goal is a
@@ -1042,7 +1041,7 @@
           <div class="summary-card">
             <small>Private section</small>
             <strong id="heroCaseCode">KUAC-INT-01</strong>
-            <span>Use the assigned case code to enter the private chat area.</span>
+            <span>Use the assigned case code to enter the private client dashboard.</span>
           </div>
         </aside>
       </section>
@@ -1050,7 +1049,7 @@
       <section class="access-strip">
         <div>
           <p class="chat-kicker">Verified section</p>
-          <h2>Client chat space for personal needs and requirements.</h2>
+          <h2>Client support space for personal needs and requirements.</h2>
           <p>
             Once a request is verified, KUAC places the client into a private section with the
             specific associate assigned to their case. This keeps the conversation personal,
@@ -1082,21 +1081,22 @@
           <p>Choose a client thread that already has a manually assigned agent.</p>
           <div class="room-list" id="roomList"></div>
           <div class="sidebar-note">
-            This is a static chat surface. The access model is manual and client-specific, so it
-            can be used as a static client room without changing the layout.
+            This is a client dashboard with a live support thread. The access model is manual and
+            client-specific, so it can be used as a private support space without changing the
+            layout.
           </div>
         </aside>
 
         <main class="panel chat">
           <div class="chat-top">
             <div>
-              <p class="chat-kicker">Private thread</p>
+              <p class="chat-kicker">Live support thread</p>
               <h2 id="roomTitle">Room</h2>
               <p id="roomSubtitle"></p>
             </div>
             <div class="chat-meta">
               <span class="status-pill" id="roomStatus">Assigned associate online</span>
-              <span class="meta-chip" id="roomMetaChip">Paid client only</span>
+              <span class="meta-chip" id="roomMetaChip">Paid client dashboard</span>
             </div>
           </div>
 
@@ -1287,13 +1287,13 @@
       function getSupportChatNextUrl() {
         const fallbackOrigin = (verifyConfig.liveSiteUrl || '').replace(/\/$/, '');
         const fallbackUrl = fallbackOrigin
-          ? `${fallbackOrigin}/support-chat.html?verified=sent#accessGate`
-          : 'support-chat.html?verified=sent#accessGate';
+          ? `${fallbackOrigin}/client-dashboard.html?verified=sent#accessGate`
+          : 'client-dashboard.html?verified=sent#accessGate';
 
         try {
           const currentUrl = new URL(window.location.href);
           if (currentUrl.protocol === 'http:' || currentUrl.protocol === 'https:') {
-            return `${currentUrl.origin}/support-chat.html?verified=sent#accessGate`;
+            return `${currentUrl.origin}/client-dashboard.html?verified=sent#accessGate`;
           }
         } catch (error) {
           // fall through to the configured static fallback

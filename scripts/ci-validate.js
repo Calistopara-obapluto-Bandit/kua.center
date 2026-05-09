@@ -7,6 +7,7 @@ const REQUIRED_FILES = [
   'agent-login.html',
   'agent-dashboard.html',
   'support-chat.html',
+  'client-dashboard.html',
   'config.js',
   'server.js',
   'render.yaml',
