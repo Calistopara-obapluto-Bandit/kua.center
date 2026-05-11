@@ -124,7 +124,7 @@
       .support-portal {
         position: relative;
         z-index: 1;
-        padding: 22px;
+        padding: 24px;
       }
 
       .support-portal-header {
@@ -132,7 +132,7 @@
         justify-content: space-between;
         align-items: flex-start;
         gap: 16px;
-        margin-bottom: 18px;
+        margin-bottom: 20px;
       }
 
       .support-portal-header h2 {
@@ -149,10 +149,13 @@
 
       .support-portal-grid {
         display: grid;
-        gap: 16px;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+        gap: 18px;
+        align-items: stretch;
       }
 
       .support-window {
+        min-height: 100%;
         border: 1px solid rgba(100, 208, 215, 0.18);
         background:
           linear-gradient(135deg, rgba(100, 208, 215, 0.12), rgba(7, 23, 34, 0.94)),
@@ -168,7 +171,7 @@
       }
 
       .support-window-main {
-        padding: 20px;
+        padding: 22px;
       }
 
       .support-window-title {
@@ -206,8 +209,8 @@
 
       .support-window-banner {
         display: grid;
-        gap: 10px;
-        padding: 18px;
+        gap: 12px;
+        padding: 20px;
         border-radius: 20px;
         border: 1px solid rgba(100, 208, 215, 0.16);
         background: rgba(6, 24, 35, 0.82);
@@ -254,10 +257,149 @@
       }
 
       .support-footer {
-        margin-top: 16px;
+        margin-top: 18px;
         color: var(--muted);
         font-size: 0.92rem;
         line-height: 1.6;
+      }
+
+      .support-aside {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      .signal-card {
+        padding: 18px;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background:
+          linear-gradient(180deg, rgba(100, 208, 215, 0.08), transparent 70%),
+          rgba(255, 255, 255, 0.04);
+      }
+
+      .signal-card small {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        font-weight: 800;
+      }
+
+      .signal-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 1rem;
+      }
+
+      .signal-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .support-preview {
+        padding: 20px;
+        min-height: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at top right, rgba(100, 208, 215, 0.16), transparent 32%),
+          linear-gradient(180deg, rgba(7, 23, 34, 0.98), rgba(6, 18, 28, 0.96));
+        display: grid;
+        gap: 14px;
+      }
+
+      .preview-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .preview-top h3 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .preview-top span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .preview-frame {
+        position: relative;
+        min-height: 340px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent),
+          rgba(255, 255, 255, 0.02);
+        overflow: hidden;
+      }
+
+      .preview-frame::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(100, 208, 215, 0.12), transparent 26%),
+          radial-gradient(circle at 80% 70%, rgba(29, 127, 138, 0.16), transparent 32%);
+        pointer-events: none;
+      }
+
+      .preview-row {
+        position: relative;
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        padding: 18px;
+      }
+
+      .preview-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, rgba(100, 208, 215, 0.32), rgba(29, 127, 138, 0.28));
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var(--text);
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
+      .preview-bubble {
+        max-width: 100%;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .preview-bubble strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+      }
+
+      .preview-bubble p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .preview-bubble.user {
+        justify-self: end;
+        background: linear-gradient(135deg, rgba(100, 208, 215, 0.2), rgba(29, 127, 138, 0.16));
+      }
+
+      .preview-bubble.user p,
+      .preview-bubble.user strong {
+        color: var(--text);
       }
 
       @media (max-width: 720px) {
@@ -275,6 +417,14 @@
         .app-header,
         .support-portal-header {
           flex-direction: column;
+        }
+
+        .support-portal-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .preview-frame {
+          min-height: 280px;
         }
 
         .status-pill {
@@ -298,7 +448,7 @@
         <div class="support-portal-header">
           <div>
             <h2>Private support chat</h2>
-            <p>The page loads the Tawk room directly and keeps the support experience inside this styled window.</p>
+            <p>The Tawk room loads directly inside a calmer support console so the page feels like a real private help desk.</p>
           </div>
           <span class="status-pill" id="supportPortalStatus">Loading Tawk</span>
         </div>
@@ -328,6 +478,47 @@
               </div>
             </div>
           </article>
+          <aside class="support-aside" aria-label="Support details">
+            <div class="signal-card">
+              <small>Support mode</small>
+              <strong>Private and direct</strong>
+              <p>
+                Tawk is the actual support surface. The page frame is just there to make the experience look intentional.
+              </p>
+            </div>
+            <div class="signal-card">
+              <small>What you see</small>
+              <strong>Live chat in a clean frame</strong>
+              <p>
+                The widget opens with the page still visible, so the customer gets context without losing the support room.
+              </p>
+            </div>
+            <div class="support-preview">
+              <div class="preview-top">
+                <div>
+                  <h3>Conversation preview</h3>
+                  <span>Matches the private support tone</span>
+                </div>
+                <span class="meta-chip">Tawk ready</span>
+              </div>
+              <div class="preview-frame">
+                <div class="preview-row">
+                  <div class="preview-avatar">KU</div>
+                  <div class="preview-bubble">
+                    <strong>KUAC Support</strong>
+                    <p>Hello, you’re in the private support room. We’ll keep this page calm and focused while the chat handles the conversation.</p>
+                  </div>
+                </div>
+                <div class="preview-row">
+                  <div class="preview-bubble user">
+                    <strong>Client</strong>
+                    <p>I’m ready to continue in private support.</p>
+                  </div>
+                  <div class="preview-avatar">CL</div>
+                </div>
+              </div>
+            </div>
+          </aside>
         </div>
 
         <div class="support-footer">
