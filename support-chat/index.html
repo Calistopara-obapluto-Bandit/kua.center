@@ -350,56 +350,111 @@
         pointer-events: none;
       }
 
-      .preview-row {
+      .consent-modal {
         position: relative;
-        display: grid;
-        grid-template-columns: 42px minmax(0, 1fr);
-        gap: 12px;
-        align-items: start;
-        padding: 18px;
+        width: min(100%, 380px);
+        min-height: 460px;
+        margin: 20px auto;
+        border-radius: 22px;
+        overflow: hidden;
+        background: #14ad52;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
       }
 
-      .preview-avatar {
-        width: 42px;
-        height: 42px;
+      .consent-dialog {
+        position: absolute;
+        top: 46px;
+        left: 18px;
+        width: min(252px, calc(100% - 36px));
+        background: #ffffff;
+        color: #2a2a2a;
+        border-radius: 12px;
+        padding: 18px 16px 14px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+        text-align: center;
+        display: grid;
+        gap: 14px;
+      }
+
+      .consent-dialog p {
+        margin: 0;
+        line-height: 1.42;
+        font-size: 0.91rem;
+        color: #2f2f2f;
+      }
+
+      .consent-actions {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: nowrap;
+      }
+
+      .consent-button {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 0;
+        font-weight: 500;
+        font-size: 0.92rem;
+        line-height: 1;
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+      }
+
+      .consent-button:focus,
+      .consent-button:hover {
+        transform: translateY(-1px);
+      }
+
+      .consent-button.secondary {
+        background: #e8e8e8;
+        color: #444;
+      }
+
+      .consent-button.primary {
+        background: #14ad52;
+        color: #fff;
+      }
+
+      .consent-button.secondary:hover,
+      .consent-button.secondary:focus {
+        background: #dedede;
+      }
+
+      .consent-button.primary:hover,
+      .consent-button.primary:focus {
+        background: #129647;
+      }
+
+      .consent-footer {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+      }
+
+      .consent-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #f3f3f3;
+        color: #4a4a4a;
+        font-size: 0.78rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .consent-badge {
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         display: grid;
         place-items: center;
-        background: linear-gradient(135deg, rgba(100, 208, 215, 0.32), rgba(29, 127, 138, 0.28));
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: var(--text);
-        font-weight: 800;
-        letter-spacing: 0.04em;
-      }
-
-      .preview-bubble {
-        max-width: 100%;
-        padding: 14px 16px;
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      .preview-bubble strong {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 0.95rem;
-      }
-
-      .preview-bubble p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .preview-bubble.user {
-        justify-self: end;
-        background: linear-gradient(135deg, rgba(100, 208, 215, 0.2), rgba(29, 127, 138, 0.16));
-      }
-
-      .preview-bubble.user p,
-      .preview-bubble.user strong {
-        color: var(--text);
+        background: #14ad52;
+        color: #fff;
+        font-size: 0.68rem;
       }
 
       @media (max-width: 1100px) {
@@ -470,12 +525,112 @@
           align-items: flex-start;
         }
 
-        .preview-frame {
-          min-height: 240px;
-        }
-
         .status-pill {
           align-self: flex-start;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .shell {
+          padding: 10px;
+        }
+
+        .app-header {
+          margin-bottom: 12px;
+        }
+
+        .support-portal {
+          padding: 14px;
+        }
+
+        .support-portal-header {
+          margin-bottom: 14px;
+        }
+
+        .support-portal-header h2 {
+          font-size: 1.25rem;
+        }
+
+        .brand h1 {
+          font-size: 1.3rem;
+        }
+
+        .support-window,
+        .support-preview,
+        .signal-card {
+          padding: 12px;
+        }
+
+        .support-window-main {
+          padding: 12px;
+        }
+
+        .support-window-banner {
+          padding: 12px;
+          gap: 10px;
+        }
+
+        .support-window-banner strong {
+          font-size: 0.98rem;
+        }
+
+        .support-window-title {
+          margin-bottom: 12px;
+        }
+
+        .support-window-title h3,
+        .preview-top h3 {
+          font-size: 1rem;
+        }
+
+        .consent-modal {
+          min-height: 390px;
+          width: min(100%, 330px);
+        }
+
+        .consent-dialog {
+          top: 42px;
+          left: 14px;
+          width: min(230px, calc(100% - 28px));
+          padding: 16px 12px 12px;
+          gap: 12px;
+        }
+
+        .consent-dialog p {
+          font-size: 0.86rem;
+        }
+
+        .consent-actions {
+          gap: 10px;
+        }
+
+        .consent-button {
+          padding: 11px 12px;
+          font-size: 0.88rem;
+        }
+
+        .consent-footer {
+          right: 10px;
+          bottom: 10px;
+        }
+
+        .consent-brand {
+          padding: 7px 10px;
+          font-size: 0.72rem;
+          gap: 6px;
+        }
+
+        .support-aside {
+          gap: 10px;
+        }
+
+        .signal-card {
+          border-radius: 18px;
+        }
+
+        .support-footer {
+          margin-top: 14px;
+          font-size: 0.86rem;
         }
       }
     </style>
@@ -543,25 +698,30 @@
             <div class="support-preview">
               <div class="preview-top">
                 <div>
-                  <h3>Conversation preview</h3>
-                  <span>Matches the private support tone</span>
+                  <h3>Consent preview</h3>
+                  <span>Matches the web widget style</span>
                 </div>
                 <span class="meta-chip">Tawk ready</span>
               </div>
               <div class="preview-frame">
-                <div class="preview-row">
-                  <div class="preview-avatar">KU</div>
-                  <div class="preview-bubble">
-                    <strong>KUAC Support</strong>
-                    <p>Hello, you’re in the private support room. We’ll keep this page calm while the chat handles the conversation.</p>
+                <div class="consent-modal">
+                  <div class="consent-dialog">
+                    <p>
+                      Hello! We would like to talk to you. Under the EU General Data Protection regulation,
+                      we need your approval for the use of personal information (e.g. your name and email)
+                    </p>
+                    <p>Is this ok with you?</p>
+                    <div class="consent-actions">
+                      <button type="button" class="consent-button secondary">Not now</button>
+                      <button type="button" class="consent-button primary">I accept</button>
+                    </div>
                   </div>
-                </div>
-                <div class="preview-row">
-                  <div class="preview-bubble user">
-                    <strong>Client</strong>
-                    <p>I’m ready to continue in chat.</p>
+                  <div class="consent-footer">
+                    <span class="consent-brand">
+                      <span class="consent-badge">✦</span>
+                      Powered by tawk.to
+                    </span>
                   </div>
-                  <div class="preview-avatar">CL</div>
                 </div>
               </div>
             </div>
