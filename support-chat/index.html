@@ -402,6 +402,20 @@
         color: var(--text);
       }
 
+      @media (max-width: 1100px) {
+        .support-portal-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .support-aside {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .support-preview {
+          grid-column: 1 / -1;
+        }
+      }
+
       @media (max-width: 720px) {
         .shell {
           padding: 14px;
@@ -423,8 +437,41 @@
           grid-template-columns: 1fr;
         }
 
+        .support-aside {
+          grid-template-columns: 1fr;
+        }
+
+        .support-window,
+        .support-preview,
+        .signal-card {
+          padding: 16px;
+        }
+
+        .support-window-main {
+          padding: 16px;
+        }
+
+        .support-window-banner {
+          padding: 16px;
+        }
+
+        .support-window-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .support-link-button {
+          width: 100%;
+        }
+
+        .support-window-title,
+        .preview-top {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
         .preview-frame {
-          min-height: 280px;
+          min-height: 240px;
         }
 
         .status-pill {
