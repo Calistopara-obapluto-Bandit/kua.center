@@ -397,6 +397,14 @@
         background: linear-gradient(135deg, rgba(100, 208, 215, 0.2), rgba(29, 127, 138, 0.16));
       }
 
+      .preview-row.user {
+        grid-template-columns: minmax(0, 1fr) 42px;
+      }
+
+      .preview-row.user .preview-bubble {
+        justify-self: stretch;
+      }
+
       .preview-bubble.user p,
       .preview-bubble.user strong {
         color: var(--text);
@@ -542,6 +550,10 @@
           grid-template-columns: 34px minmax(0, 1fr);
         }
 
+        .preview-row.user {
+          grid-template-columns: minmax(0, 1fr) 34px;
+        }
+
         .preview-avatar {
           width: 34px;
           height: 34px;
@@ -644,7 +656,7 @@
                     <p>Hello, you’re in the private support room. We’ll keep this page calm while the chat handles the conversation.</p>
                   </div>
                 </div>
-                <div class="preview-row">
+                <div class="preview-row user">
                   <div class="preview-bubble user">
                     <strong>Client</strong>
                     <p>I’m ready to continue in chat.</p>
