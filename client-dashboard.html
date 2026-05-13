@@ -550,17 +550,16 @@
           setPageStatus('Checking case');
 
           try {
-            const url = new URL('/api/support/ticket', window.location.origin);
-            url.searchParams.set('email', email);
-            url.searchParams.set('caseCode', caseCode);
-            url.searchParams.set('accessCode', accessCode);
+            const payload = backend && backend.available
+              ? await backend.fetchSupportTicket({ email, caseCode, accessCode })
+              : null;
 
-            const response = await fetch(url.toString(), { cache: 'no-store' });
-            const payload = await response.json();
+            if (!payload) {
+              throw new Error('The help case service is unavailable from this preview. Open the deployed KUAC site to continue.');
+            }
 
-            if (!response.ok || !payload.ok) {
-              const message = payload && payload.error ? payload.error : 'We could not open this case.';
-              throw new Error(message);
+            if (!payload.ok) {
+              throw new Error(payload && payload.error ? payload.error : 'We could not open this case.');
             }
 
             const issued = payload.issued || {};
