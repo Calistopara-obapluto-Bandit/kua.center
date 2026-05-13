@@ -113,7 +113,7 @@
     </style>
     <script>
       (function loadDashboard() {
-        const statusText = 'Loading the KUAC client support dashboard...';
+        const statusText = 'Loading the KUAC client support page...';
         window.addEventListener('DOMContentLoaded', async () => {
           const shell = document.querySelector('.shell');
           const status = document.getElementById('statusText');
@@ -127,7 +127,7 @@
             document.write(html);
             document.close();
           } catch (error) {
-            status.textContent = 'The dashboard could not load right now.';
+            status.textContent = 'The support page could not load right now.';
             const fallback = document.getElementById('fallback');
             if (fallback) {
               fallback.style.display = 'block';
@@ -143,19 +143,18 @@
   <body>
     <main class="shell">
       <div class="eyebrow">KUAC Client Dashboard</div>
-      <h1>Your support portal is loading</h1>
+      <h1>Your support page is loading</h1>
       <p>
-        This page will open your KUAC support ticket, show the live case thread, and keep the
-        Dashboard ID you were given attached to the portal.
+        This page will open your KUAC support page and keep the private Tawk room in view.
       </p>
       <div class="status">
         <span class="spinner" aria-hidden="true"></span>
-        <span id="statusText">Loading the KUAC client support dashboard...</span>
+        <span id="statusText">Loading the KUAC client support page...</span>
       </div>
       <div class="fallback" id="fallback">
         <p>
           If the dashboard does not appear, open
-          <a href="/support-chat/index.html">the live support portal</a>.
+          <a href="/support-chat/index.html">the live support page</a>.
         </p>
       </div>
     </main>

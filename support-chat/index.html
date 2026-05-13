@@ -300,161 +300,45 @@
         line-height: 1.65;
       }
 
-      .support-preview {
-        padding: 20px;
-        min-height: 100%;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 22px;
-        background:
-          radial-gradient(circle at top right, rgba(100, 208, 215, 0.16), transparent 32%),
-          linear-gradient(180deg, rgba(7, 23, 34, 0.98), rgba(6, 18, 28, 0.96));
+      .support-note-grid {
         display: grid;
         gap: 14px;
       }
 
-      .preview-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
+      .support-note-card {
+        padding: 18px;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background:
+          linear-gradient(180deg, rgba(100, 208, 215, 0.08), transparent 70%),
+          rgba(255, 255, 255, 0.04);
       }
 
-      .preview-top h3 {
-        margin: 0;
-        font-size: 1.05rem;
-      }
-
-      .preview-top span {
+      .support-note-card small {
+        display: block;
+        margin-bottom: 8px;
         color: var(--muted);
-        font-size: 0.88rem;
-      }
-
-      .preview-frame {
-        position: relative;
-        min-height: 340px;
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent),
-          rgba(255, 255, 255, 0.02);
-        overflow: hidden;
-      }
-
-      .preview-frame::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-          radial-gradient(circle at 20% 20%, rgba(100, 208, 215, 0.12), transparent 26%),
-          radial-gradient(circle at 80% 70%, rgba(29, 127, 138, 0.16), transparent 32%);
-        pointer-events: none;
-      }
-
-      .consent-modal {
-        position: relative;
-        width: min(100%, 420px);
-        min-height: 500px;
-        margin: 20px auto;
-        border-radius: 22px;
-        overflow: hidden;
-        background: #14ad52;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
-      }
-
-      .consent-dialog {
-        position: absolute;
-        top: 50px;
-        left: 20px;
-        width: min(250px, calc(100% - 40px));
-        background: #ffffff;
-        color: #2a2a2a;
-        border-radius: 12px;
-        padding: 18px 16px 14px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
-        text-align: center;
-        display: grid;
-        gap: 14px;
-      }
-
-      .consent-dialog p {
-        margin: 0;
-        line-height: 1.38;
-        font-size: 0.9rem;
-        color: #2f2f2f;
-      }
-
-      .consent-actions {
-        display: flex;
-        gap: 14px;
-        justify-content: center;
-        flex-wrap: nowrap;
-      }
-
-      .consent-button {
-        flex: 1 1 0;
-        min-width: 0;
-        padding: 11px 14px;
-        border-radius: 10px;
-        border: 0;
-        font-weight: 500;
-        font-size: 0.9rem;
-        line-height: 1;
-        cursor: pointer;
-        transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
-      }
-
-      .consent-button:focus,
-      .consent-button:hover {
-        transform: translateY(-1px);
-      }
-
-      .consent-button.secondary {
-        background: #e8e8e8;
-        color: #444;
-      }
-
-      .consent-button.primary {
-        background: #14ad52;
-        color: #fff;
-      }
-
-      .consent-button.secondary:hover,
-      .consent-button.secondary:focus {
-        background: #dedede;
-      }
-
-      .consent-button.primary:hover,
-      .consent-button.primary:focus {
-        background: #129647;
-      }
-
-      .consent-footer {
-        position: absolute;
-        right: 12px;
-        bottom: 12px;
-      }
-
-      .consent-brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        background: #f3f3f3;
-        color: #4a4a4a;
-        font-size: 0.78rem;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-      }
-
-      .consent-badge {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        background: #14ad52;
-        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
         font-size: 0.68rem;
+        font-weight: 800;
+      }
+
+      .support-note-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 1rem;
+      }
+
+      .support-note-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .support-note-card .meta-chip {
+        margin-top: 12px;
+        width: fit-content;
       }
 
       @media (max-width: 1100px) {
@@ -466,7 +350,11 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .support-preview {
+        .support-note-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .support-note-card:last-child {
           grid-column: 1 / -1;
         }
       }
@@ -497,8 +385,8 @@
         }
 
         .support-window,
-        .support-preview,
-        .signal-card {
+        .signal-card,
+        .support-note-card {
           padding: 16px;
         }
 
@@ -519,8 +407,7 @@
           width: 100%;
         }
 
-        .support-window-title,
-        .preview-top {
+        .support-window-title {
           flex-direction: column;
           align-items: flex-start;
         }
@@ -556,8 +443,8 @@
         }
 
         .support-window,
-        .support-preview,
-        .signal-card {
+        .signal-card,
+        .support-note-card {
           padding: 12px;
         }
 
@@ -578,46 +465,8 @@
           margin-bottom: 12px;
         }
 
-        .support-window-title h3,
-        .preview-top h3 {
+        .support-window-title h3 {
           font-size: 1rem;
-        }
-
-        .consent-modal {
-          min-height: 430px;
-          width: min(100%, 360px);
-        }
-
-        .consent-dialog {
-          top: 44px;
-          left: 16px;
-          width: min(232px, calc(100% - 32px));
-          padding: 16px 12px 12px;
-          gap: 12px;
-        }
-
-        .consent-dialog p {
-          font-size: 0.86rem;
-        }
-
-        .consent-actions {
-          gap: 10px;
-        }
-
-        .consent-button {
-          padding: 11px 12px;
-          font-size: 0.88rem;
-        }
-
-        .consent-footer {
-          right: 10px;
-          bottom: 10px;
-        }
-
-        .consent-brand {
-          padding: 7px 10px;
-          font-size: 0.72rem;
-          gap: 6px;
         }
 
         .support-aside {
@@ -626,6 +475,10 @@
 
         .signal-card {
           border-radius: 18px;
+        }
+
+        .support-note-grid {
+          grid-template-columns: 1fr;
         }
 
         .support-footer {
@@ -641,7 +494,7 @@
         <div class="brand">
           <span class="eyebrow">KUAC</span>
           <h1>Private support chat</h1>
-          <p>Tawk is the private support surface on this page, kept inside a calm support console.</p>
+          <p>Tawk is the private support surface on this page, kept inside a calm support console that works on a static Render host.</p>
         </div>
         <span class="status-pill" id="supportStatusPill">Connecting support</span>
       </header>
@@ -650,7 +503,7 @@
         <div class="support-portal-header">
           <div>
             <h2>Private support chat</h2>
-            <p>The Tawk room loads directly inside a support console designed to keep the private chat focused.</p>
+            <p>The Tawk room loads directly inside a support console designed to stay calm, comfortable, and static-host friendly.</p>
           </div>
           <span class="status-pill" id="supportPortalStatus">Private support ready</span>
         </div>
@@ -695,41 +548,35 @@
                 The widget opens with the page still visible, so the customer keeps context while the chat stays in focus.
               </p>
             </div>
-            <div class="support-preview">
-              <div class="preview-top">
-                <div>
-                  <h3>Consent preview</h3>
-                  <span>Matches the web widget style</span>
-                </div>
-                <span class="meta-chip">Tawk ready</span>
+            <div class="support-note-grid">
+              <div class="support-note-card">
+                <small>Static site</small>
+                <strong>Compatible with Render without a backend</strong>
+                <p>
+                  The support page only needs the HTML, CSS, config file, and the Tawk embed. No server-only chat thread is required here.
+                </p>
               </div>
-              <div class="preview-frame">
-                <div class="consent-modal">
-                  <div class="consent-dialog">
-                    <p>
-                      Hello! We would like to talk to you. We need your approval to use personal information
-                      like your name and email.
-                    </p>
-                    <p>Is this ok with you?</p>
-                    <div class="consent-actions">
-                      <button type="button" class="consent-button secondary">Not now</button>
-                      <button type="button" class="consent-button primary">I accept</button>
-                    </div>
-                  </div>
-                  <div class="consent-footer">
-                    <span class="consent-brand">
-                      <span class="consent-badge">✦</span>
-                      Powered by tawk.to
-                    </span>
-                  </div>
-                </div>
+              <div class="support-note-card">
+                <small>Live chat UI</small>
+                <strong>Tawk controls the actual chat window</strong>
+                <p>
+                  Instead of faking the widget in the page, the site now gives Tawk a clean frame and lets the real widget handle the conversation.
+                </p>
+              </div>
+              <div class="support-note-card">
+                <small>Fallback</small>
+                <strong>Direct chat stays ready if the widget is blocked</strong>
+                <p>
+                  If the embedded widget does not load, the same button still opens the Tawk direct chat URL from <code>config.js</code>.
+                </p>
+                <span class="meta-chip">Tawk ready</span>
               </div>
             </div>
           </aside>
         </div>
 
         <div class="support-footer">
-          This page is intentionally Tawk-only. No extra case dashboard, thread list, or hidden support sections remain.
+          This page is intentionally Tawk-only. The surrounding layout is static-host friendly, and Tawk handles the live chat UI.
         </div>
       </section>
     </main>
