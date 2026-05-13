@@ -524,20 +524,61 @@ function upsertSubmission(payload) {
   return state.submissions[key];
 }
 
+function isAccessCodeTaken(code, ignoreKey = '') {
+  const normalizedCode = String(code || '').trim().toUpperCase();
+  const normalizedIgnoreKey = normalizeCaseKey(
+    ignoreKey.split('::')[0] || '',
+    ignoreKey.split('::')[1] || '',
+  );
+
+  if (!normalizedCode) {
+    return false;
+  }
+
+  return Object.entries(state.issued || {}).some(([key, issued]) => {
+    if (key === normalizedIgnoreKey) {
+      return false;
+    }
+
+    return String((issued && (issued.code || issued.accessCode)) || '').trim().toUpperCase() === normalizedCode;
+  });
+}
+
+function generateAccessCode(caseCode, email) {
+  const casePrefix = chatKey(caseCode).replace(/[^A-Z0-9]/g, '').slice(0, 4) || 'CASE';
+  const emailPrefix = String(email || '')
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, 3) || 'USR';
+
+  let candidate = '';
+  do {
+    const token = crypto.randomBytes(3).toString('hex').toUpperCase();
+    candidate = `KUAC-${casePrefix}-${emailPrefix}-${token}`;
+  } while (isAccessCodeTaken(candidate));
+
+  return candidate;
+}
+
 function issueAccessCode(payload) {
   const email = String(payload.email || '').trim();
   const caseCode = String(payload.caseCode || '').trim().toUpperCase();
   const agent = String(payload.agent || 'KUAC Associate').trim() || 'KUAC Associate';
   const clientName = String(payload.clientName || 'Client').trim() || 'Client';
-  const code = String(payload.code || '').trim();
+  let code = String(payload.code || '').trim();
   const note = String(payload.note || '').trim();
   const dashboardId = String(payload.dashboardId || '').trim();
   const key = normalizeCaseKey(email, caseCode);
 
-  if (!email || !caseCode || !code) {
-    const err = new Error('Email, case code, and access code are required');
+  if (!email || !caseCode) {
+    const err = new Error('Email and case code are required');
     err.statusCode = 400;
     throw err;
+  }
+
+  if (!code || isAccessCodeTaken(code, key)) {
+    code = generateAccessCode(caseCode, email);
   }
 
   state.issued[key] = {
@@ -546,6 +587,7 @@ function issueAccessCode(payload) {
     agent,
     clientName,
     code,
+    accessCode: code,
     note,
     dashboardId: dashboardId || String(state.submissions[key] && state.submissions[key].dashboardId || '').trim(),
     updatedAt: new Date().toISOString(),
