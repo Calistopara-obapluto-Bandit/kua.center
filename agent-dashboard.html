@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC internal support desk for reviewing requests, assigning associates, and issuing case access codes."
+      content="KUAC internal staff desk for reviewing verified requests, assigning associates, and preparing follow-up."
     />
     <title>KUAC Agent Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -513,12 +513,12 @@
     <div class="shell">
       <header class="topbar">
         <div class="brand">
-          <span class="eyebrow"><i class="far fa-user-shield" aria-hidden="true"></i> Private support desk</span>
-          <h1>Internal case desk for verified KUAC support requests.</h1>
+          <span class="eyebrow"><i class="far fa-user-shield" aria-hidden="true"></i> Internal staff desk</span>
+          <h1>Internal desk for verified KUAC help requests.</h1>
           <p>
-            Use this private dashboard to review support submissions, assign the associate, and
-            issue the case access code for a private follow-up room. It is a browser-side static
-            gate, so it works on a plain static host.
+            Use this private dashboard to review verified help requests, assign the associate, add
+            internal notes, and prepare the follow-up flow. It is a browser-side static gate, so it
+            works on a plain static host.
           </p>
         </div>
         <div class="actions">
@@ -533,7 +533,7 @@
         <section class="panel">
           <div class="panel-head">
             <small>Case assignment</small>
-            <h2>Assign a code to a support request</h2>
+            <h2>Assign follow-up to a verified request</h2>
           </div>
           <div class="panel-body">
             <form class="form" id="agentForm">
@@ -566,8 +566,8 @@
                 <textarea id="agentNote" rows="4" placeholder="Short note about the request, routing, or follow-up."></textarea>
               </div>
               <div class="actions-row">
-                <div class="status" id="agentStatus">Load a verified support request, then issue the code manually.</div>
-                <button class="button" type="submit">Issue case code</button>
+                <div class="status" id="agentStatus">Load a verified request, then issue the follow-up code manually.</div>
+                <button class="button" type="submit">Issue follow-up code</button>
               </div>
             </form>
           </div>
@@ -576,7 +576,7 @@
         <section class="panel">
           <div class="panel-head">
             <small>Request queue</small>
-            <h2>What the desk sees right now</h2>
+            <h2>Current verified requests</h2>
           </div>
           <div class="panel-body">
             <div class="stack" id="currentCaseList"></div>
@@ -590,7 +590,7 @@
                 <strong id="metricAgent">Waiting</strong>
               </div>
               <div class="metric">
-                <small>Case code</small>
+                <small>Follow-up code</small>
                 <strong id="metricCode">Pending</strong>
               </div>
             </div>
@@ -599,8 +599,8 @@
 
         <section class="panel" style="grid-column: 1 / -1;">
           <div class="panel-head">
-            <small>Live chat</small>
-            <h2>Reply to the current case without leaving the desk</h2>
+            <small>Internal notes</small>
+            <h2>Reply to the verified request without leaving the desk</h2>
           </div>
           <div class="panel-body chat-panel">
             <div>
@@ -613,7 +613,7 @@
                 <textarea id="agentChatMessage" placeholder="Type a reply for the current case"></textarea>
               </div>
               <div class="chat-actions">
-                <div class="chat-help">This keeps the internal desk notes separate from the public Tawk support page.</div>
+                <div class="chat-help">This keeps internal desk notes separate from the public Tawk help room.</div>
                 <button class="button" type="submit">Send reply</button>
               </div>
             </form>
@@ -623,7 +623,7 @@
         <section class="panel" style="grid-column: 1 / -1;">
           <div class="panel-head">
             <small>Issued codes</small>
-            <h2>Private follow-up registry</h2>
+            <h2>Follow-up registry</h2>
           </div>
           <div class="panel-body">
             <div class="table-wrap">
@@ -641,8 +641,8 @@
               </table>
             </div>
             <div class="empty-state" id="emptyState" hidden>
-              No case codes have been issued yet. Use the form above after reviewing a verified
-              support request.
+              No follow-up codes have been issued yet. Use the form above after reviewing a verified
+              help request.
             </div>
           </div>
         </section>
@@ -848,7 +848,7 @@
             currentCaseList.innerHTML = `
               <div class="notice">
                 <strong>No active request found.</strong>
-                Open the public support page first, or issue a code manually below.
+                Open the public help page first, or issue a code manually below.
               </div>
             `;
             metricClient.textContent = 'None loaded';
