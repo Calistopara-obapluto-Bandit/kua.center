@@ -731,6 +731,26 @@
           </div>
         </section>
       </div>
+      <form
+        id="issueMailForm"
+        action=""
+        method="POST"
+        enctype="multipart/form-data"
+        target="issueMailSink"
+        hidden
+      >
+        <input type="hidden" name="name" id="issueMailName" />
+        <input type="hidden" name="email" id="issueMailEmail" />
+        <input type="hidden" name="caseCode" id="issueMailCaseCode" />
+        <input type="hidden" name="accessCode" id="issueMailAccessCode" />
+        <input type="hidden" name="agent" id="issueMailAgent" />
+        <input type="hidden" name="note" id="issueMailNote" />
+        <input type="hidden" name="_replyto" id="issueMailReplyTo" />
+        <input type="hidden" name="_subject" id="issueMailSubject" />
+        <input type="hidden" name="_template" value="box" />
+        <input type="hidden" name="_autoresponse" id="issueMailAutoresponse" />
+      </form>
+      <iframe name="issueMailSink" id="issueMailSink" hidden title="Issue email delivery"></iframe>
     <script>
       const config = window.KUAC_CONFIG || {};
       const STATIC_DASHBOARD_CODE = String(config.dashboardAccessCode || 'KUAC-OPS-2026').trim();
@@ -760,6 +780,16 @@
       const metricClient = document.getElementById('metricClient');
       const metricAgent = document.getElementById('metricAgent');
       const metricCode = document.getElementById('metricCode');
+      const issueMailForm = document.getElementById('issueMailForm');
+      const issueMailName = document.getElementById('issueMailName');
+      const issueMailEmail = document.getElementById('issueMailEmail');
+      const issueMailCaseCode = document.getElementById('issueMailCaseCode');
+      const issueMailAccessCode = document.getElementById('issueMailAccessCode');
+      const issueMailAgent = document.getElementById('issueMailAgent');
+      const issueMailNote = document.getElementById('issueMailNote');
+      const issueMailReplyTo = document.getElementById('issueMailReplyTo');
+      const issueMailSubject = document.getElementById('issueMailSubject');
+      const issueMailAutoresponse = document.getElementById('issueMailAutoresponse');
       const backend = window.KUAC_BACKEND || null;
 
       let accessState = loadJson(ACCESS_STATE_KEY, null);
@@ -1061,6 +1091,69 @@
           .replaceAll("'", '&#39;');
       }
 
+      function buildIssueAutoreponse(payload) {
+        const recipientName = payload.clientName || 'KUAC client';
+        const caseLabel = payload.caseCode || 'your case';
+        const accessLabel = payload.code || 'your access code';
+        const agentLabel = payload.agent || 'KUAC Associate';
+
+        return [
+          `Dear ${recipientName},`,
+          '',
+          `KUAC has issued your access code for case ${caseLabel}.`,
+          '',
+          `Case code: ${caseLabel}`,
+          `Access code: ${accessLabel}`,
+          `Assigned associate: ${agentLabel}`,
+          '',
+          'Use the access code to open your assigned case in the KUAC help page.',
+          '',
+          'If you need help, reply to this email and our team will follow up.',
+          '',
+          'Kind regards,',
+          'KUAC Support Team',
+        ].join('\n');
+      }
+
+      function queueIssueNotification(payload) {
+        if (!issueMailForm) {
+          return false;
+        }
+
+        issueMailForm.action = config.formEndpoint || 'https://formsubmit.co/kua.center@gmail.com';
+
+        if (issueMailName) {
+          issueMailName.value = payload.clientName || 'KUAC client';
+        }
+        if (issueMailEmail) {
+          issueMailEmail.value = payload.email || '';
+        }
+        if (issueMailCaseCode) {
+          issueMailCaseCode.value = payload.caseCode || '';
+        }
+        if (issueMailAccessCode) {
+          issueMailAccessCode.value = payload.code || '';
+        }
+        if (issueMailAgent) {
+          issueMailAgent.value = payload.agent || 'KUAC Associate';
+        }
+        if (issueMailNote) {
+          issueMailNote.value = payload.note || '';
+        }
+        if (issueMailReplyTo) {
+          issueMailReplyTo.value = payload.email || '';
+        }
+        if (issueMailSubject) {
+          issueMailSubject.value = config.issueNotificationSubject || 'KUAC | Access Code Issued';
+        }
+        if (issueMailAutoresponse) {
+          issueMailAutoresponse.value = buildIssueAutoreponse(payload);
+        }
+
+        issueMailForm.submit();
+        return true;
+      }
+
       function setSessionChip(text, kind) {
         if (!sessionChip) {
           return;
@@ -1116,7 +1209,7 @@
         });
       }
 
-      document.getElementById('agentForm').addEventListener('submit', (event) => {
+      document.getElementById('agentForm').addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const email = clientEmail.value.trim();
@@ -1124,6 +1217,7 @@
         const agent = agentName.value.trim() || 'KUAC Associate';
         const client = clientName.value.trim() || 'Client';
         const access = accessCode.value.trim();
+        const note = agentNote.value.trim();
 
         if (!email || !code || !access) {
           agentStatus.className = 'status is-error';
@@ -1138,7 +1232,7 @@
             agent,
             clientName: client,
             code: access,
-            note: agentNote.value.trim(),
+            note,
             updatedAt: new Date().toISOString(),
           },
         });
@@ -1159,8 +1253,32 @@
           displayName: client,
         });
         saveStateSnapshot();
-        agentStatus.className = 'status is-success';
-        agentStatus.textContent = `Case code issued for ${email} in ${code}.`;
+
+        const issuePayload = {
+          email,
+          caseCode: code,
+          agent,
+          clientName: client,
+          code: access,
+          note,
+        };
+
+        let serverSynced = false;
+        if (backend && backend.available) {
+          try {
+            await backend.postIssuedCode(issuePayload);
+            serverSynced = true;
+          } catch (error) {
+            serverSynced = false;
+          }
+        }
+
+        queueIssueNotification(issuePayload);
+
+        agentStatus.className = serverSynced ? 'status is-success' : 'status is-error';
+        agentStatus.textContent = serverSynced
+          ? `Case code issued for ${email} in ${code}. Email notification queued.`
+          : `Case code issued for ${email} in ${code}. Saved locally, but the server sync failed.`;
         metricClient.textContent = email;
         metricAgent.textContent = agent;
         metricCode.textContent = access;
