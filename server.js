@@ -50,11 +50,24 @@ async function saveState() {
 function sendJson(res, statusCode, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(statusCode, {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS',
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
     'Content-Length': Buffer.byteLength(body),
   });
   res.end(body);
+}
+
+function sendNoContent(res) {
+  res.writeHead(204, {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS',
+    'Cache-Control': 'no-store',
+  });
+  res.end();
 }
 
 function parseCookies(header) {
@@ -957,6 +970,11 @@ function handleApi(req, res, urlObj) {
 
 async function handleRequest(req, res) {
   const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+
+  if (urlObj.pathname.startsWith('/api/') && req.method === 'OPTIONS') {
+    sendNoContent(res);
+    return;
+  }
 
   const adminProtectedRoute =
     urlObj.pathname === '/api/state' ||

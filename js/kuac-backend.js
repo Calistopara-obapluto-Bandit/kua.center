@@ -1,8 +1,31 @@
 window.KUAC_BACKEND = (function () {
   const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+  const config = window.KUAC_CONFIG || {};
+
+  function getApiBaseUrl() {
+    const liveSiteUrl = String(config.liveSiteUrl || '').trim().replace(/\/$/, '');
+
+    if (!liveSiteUrl) {
+      return '';
+    }
+
+    try {
+      const currentUrl = new URL(window.location.href);
+      const liveUrl = new URL(liveSiteUrl);
+      if (currentUrl.origin === liveUrl.origin) {
+        return '';
+      }
+    } catch (error) {
+      // Fall back to the configured live site URL.
+    }
+
+    return liveSiteUrl;
+  }
 
   function apiUrl(path) {
-    return path;
+    const normalizedPath = String(path || '').startsWith('/') ? String(path) : `/${String(path || '')}`;
+    const baseUrl = getApiBaseUrl();
+    return baseUrl ? `${baseUrl}${normalizedPath}` : normalizedPath;
   }
 
   async function request(path, options) {
@@ -17,14 +40,21 @@ window.KUAC_BACKEND = (function () {
       cache: 'no-store',
     }, options || {}));
 
+    const rawBody = await response.text().catch(() => '');
+
     if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      const error = new Error(errorText || `Request failed with status ${response.status}`);
+      const error = new Error(rawBody || `Request failed with status ${response.status}`);
       error.status = response.status;
       throw error;
     }
 
-    return response.json();
+    try {
+      return rawBody ? JSON.parse(rawBody) : {};
+    } catch (error) {
+      const parseError = new Error(rawBody ? `Unexpected response: ${rawBody}` : 'Unexpected empty response');
+      parseError.status = response.status;
+      throw parseError;
+    }
   }
 
   function fileToDataUrl(file) {
