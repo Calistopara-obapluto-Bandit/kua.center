@@ -596,10 +596,6 @@ async function serveStatic(req, res, pathname) {
     requestPath = '/index.html';
   }
 
-  if (requestPath === '/client-dashboard.html') {
-    requestPath = '/support-chat/index.html';
-  }
-
   let filePath = path.join(ROOT, requestPath);
   let stat;
 
@@ -751,6 +747,7 @@ function handleApi(req, res, urlObj) {
     const dashboardId = urlObj.searchParams.get('dashboardId') || '';
     const caseCode = urlObj.searchParams.get('caseCode') || '';
     const email = urlObj.searchParams.get('email') || '';
+    const accessCode = urlObj.searchParams.get('accessCode') || '';
     const record =
       findSupportTicketByDashboardId(dashboardId) ||
       findSupportTicketByCaseCode(caseCode) ||
@@ -762,21 +759,30 @@ function handleApi(req, res, urlObj) {
       return;
     }
 
-    if (!record) {
+    const submission = record || (email.trim() && caseCode.trim() ? getSubmission(email, caseCode) : null);
+    const issued = record || (email.trim() && caseCode.trim() ? getIssued(email, caseCode) : null);
+    const issuedAccessCode = String((issued && (issued.accessCode || issued.code)) || '').trim();
+
+    if (accessCode.trim() && issuedAccessCode && accessCode.trim() !== issuedAccessCode) {
+      sendJson(res, 401, { ok: false, error: 'Invalid access code' });
+      return;
+    }
+
+    if (!record && !submission && !issued) {
       sendJson(res, 404, { ok: false, error: 'Support ticket not found' });
       return;
     }
 
-    const resolvedDashboardId = record.dashboardId || normalizeDashboardId(dashboardId);
-    const resolvedCaseCode = chatKey(record.caseCode || caseCode);
-    const submission = record.email && resolvedCaseCode ? getSubmission(record.email, resolvedCaseCode) : null;
-    const issued = record.email && resolvedCaseCode ? getIssued(record.email, resolvedCaseCode) : null;
+    const resolvedDashboardId = (record && record.dashboardId) || (submission && submission.dashboardId) || (issued && issued.dashboardId) || normalizeDashboardId(dashboardId);
+    const resolvedCaseCode = chatKey((record && record.caseCode) || (submission && submission.caseCode) || (issued && issued.caseCode) || caseCode);
+    const resolvedSubmission = submission || (record && record.submission) || record || null;
+    const resolvedIssued = issued || (record && record.issued) || null;
 
     sendJson(res, 200, {
       ok: true,
-      ticket: record.ticket || record,
-      submission: submission || record.submission || record,
-      issued: issued || record.issued || null,
+      ticket: (record && (record.ticket || record)) || resolvedSubmission || resolvedIssued || null,
+      submission: resolvedSubmission,
+      issued: resolvedIssued,
       messages: resolvedCaseCode ? getChatThread(resolvedCaseCode) : [],
       dashboardId: resolvedDashboardId,
       caseCode: resolvedCaseCode,

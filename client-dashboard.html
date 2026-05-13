@@ -5,18 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC client dashboard for verified support cases and live associate help."
+      content="KUAC help page for opening an assigned case with an access code and viewing the follow-up details."
     />
-    <title>KUAC Client Dashboard</title>
+    <title>KUAC Help Page</title>
     <style>
       :root {
         color-scheme: dark;
         --bg: #04121b;
-        --panel: rgba(10, 29, 41, 0.94);
+        --panel: rgba(10, 29, 41, 0.96);
+        --panel-2: rgba(14, 38, 54, 0.96);
         --line: rgba(188, 233, 228, 0.12);
         --text: #eef9f7;
         --muted: rgba(238, 249, 247, 0.72);
+        --muted-2: rgba(238, 249, 247, 0.52);
         --accent: #64d0d7;
+        --accent-2: #1d7f8a;
+        --success: #79e2a9;
+        --danger: #ffb5b5;
+        --shadow: 0 28px 64px rgba(0, 0, 0, 0.34);
       }
 
       * {
@@ -34,20 +40,41 @@
         font-family: "Space Grotesk", "Segoe UI", sans-serif;
       }
 
-      body {
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
+      a {
+        color: var(--accent);
+      }
+
+      button,
+      input {
+        font: inherit;
       }
 
       .shell {
-        width: min(760px, 100%);
+        min-height: 100vh;
+        padding: 24px;
+        display: grid;
+        place-items: center;
+      }
+
+      .card {
+        width: min(920px, 100%);
         border: 1px solid var(--line);
         border-radius: 28px;
         background: var(--panel);
-        box-shadow: 0 28px 64px rgba(0, 0, 0, 0.34);
+        box-shadow: var(--shadow);
         padding: 28px;
+      }
+
+      .topline {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 18px;
+      }
+
+      .brand {
+        max-width: 70ch;
       }
 
       .eyebrow {
@@ -56,107 +83,532 @@
         gap: 8px;
         padding: 8px 12px;
         border-radius: 999px;
-        border: 1px solid rgba(100, 208, 215, 0.25);
-        color: var(--accent);
-        font-size: 12px;
-        letter-spacing: 0.12em;
+        border: 1px solid rgba(100, 208, 215, 0.22);
+        background: rgba(100, 208, 215, 0.1);
+        color: #d9fbfd;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
-        margin-bottom: 16px;
       }
 
-      h1 {
-        margin: 0 0 12px;
-        font-size: clamp(30px, 5vw, 54px);
-        line-height: 0.96;
-      }
-
+      h1,
+      h2,
       p {
         margin: 0;
-        color: var(--muted);
-        line-height: 1.7;
       }
 
-      .status {
-        margin-top: 18px;
-        padding: 16px 18px;
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.04);
+      .brand h1 {
+        margin-top: 12px;
+        font-size: clamp(1.8rem, 3vw, 2.8rem);
+        line-height: 1.02;
+        letter-spacing: -0.04em;
+      }
+
+      .brand p {
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 70ch;
+      }
+
+      .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(100, 208, 215, 0.22);
+        background: rgba(100, 208, 215, 0.08);
+        color: #d9fbfd;
+        white-space: nowrap;
+        font-size: 0.86rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: var(--panel-2);
+        backdrop-filter: blur(12px);
+      }
+
+      .panel-head {
+        padding: 18px 18px 0;
+      }
+
+      .panel-head small {
+        display: block;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        margin-bottom: 6px;
+        font-weight: 800;
+      }
+
+      .panel-head h2 {
+        font-size: 1.2rem;
+        letter-spacing: -0.02em;
+      }
+
+      .panel-body {
+        padding: 18px;
+      }
+
+      .form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .field.full {
+        grid-column: 1 / -1;
+      }
+
+      .field label {
+        color: var(--muted);
+        font-size: 0.84rem;
+        letter-spacing: 0.03em;
+      }
+
+      .field input {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(17, 36, 52, 0.96);
+        color: var(--text);
+        border-radius: 14px;
+        padding: 12px 13px;
+      }
+
+      .field input::placeholder {
+        color: var(--muted-2);
+      }
+
+      .field input:focus {
+        outline: 2px solid rgba(100, 208, 215, 0.48);
+        outline-offset: 2px;
+      }
+
+      .actions-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+      }
+
+      .button.secondary {
+        background: rgba(255, 255, 255, 0.06);
         border: 1px solid var(--line);
       }
 
-      .spinner {
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 10px;
-        border: 2px solid rgba(100, 208, 215, 0.2);
-        border-top-color: var(--accent);
-        animation: spin 0.9s linear infinite;
-        vertical-align: -2px;
+      .status {
+        margin-top: 12px;
+        padding: 14px 15px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        line-height: 1.6;
       }
 
-      @keyframes spin {
-        to { transform: rotate(360deg); }
+      .status.is-error {
+        color: var(--danger);
       }
 
-      .fallback {
+      .status.is-success {
+        color: var(--success);
+      }
+
+      .issue-shell {
+        display: grid;
+        gap: 12px;
+      }
+
+      .issue-card,
+      .message-card,
+      .info-card {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .issue-card strong,
+      .message-card strong,
+      .info-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 1rem;
+      }
+
+      .issue-card p,
+      .message-card p,
+      .info-card p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .meta-grid {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .meta {
+        padding: 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .meta small {
+        display: block;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-size: 0.68rem;
+        margin-bottom: 6px;
+        font-weight: 800;
+      }
+
+      .meta strong {
+        display: block;
+        font-size: 1rem;
+      }
+
+      .message-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .message-card .meta-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted-2);
+        font-size: 0.76rem;
+        margin-bottom: 8px;
+      }
+
+      .message-card .meta-line strong {
+        margin: 0;
+        color: var(--text);
+        font-size: 0.82rem;
+      }
+
+      .notice {
+        margin-top: 16px;
+        padding: 14px 15px;
+        border-radius: 18px;
+        border: 1px solid rgba(100, 208, 215, 0.18);
+        background: rgba(100, 208, 215, 0.06);
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .hidden {
         display: none;
-        margin-top: 18px;
-        padding-top: 18px;
-        border-top: 1px solid var(--line);
       }
 
-      a {
-        color: var(--accent);
+      @media (max-width: 960px) {
+        .grid,
+        .field-row,
+        .meta-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topline {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          padding: 14px;
+        }
+
+        .card {
+          padding: 18px;
+          border-radius: 22px;
+        }
+
+        .panel-head,
+        .panel-body {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        .actions-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .button {
+          width: 100%;
+        }
+
+        .brand h1 {
+          font-size: 1.6rem;
+        }
       }
     </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="card">
+        <header class="topline">
+          <div class="brand">
+            <span class="eyebrow">KUAC</span>
+            <h1>Open your assigned help case</h1>
+            <p>
+              If KUAC issued you an access code, use it here to open the case that was assigned to you.
+              The live help room stays available for private follow-up once your case is unlocked.
+            </p>
+          </div>
+          <span class="status-chip" id="pageStatus">Awaiting access code</span>
+        </header>
+
+        <div class="grid">
+          <article class="panel">
+            <div class="panel-head">
+              <small>Access code</small>
+              <h2>Open the request KUAC assigned</h2>
+            </div>
+            <div class="panel-body">
+              <form id="accessForm" class="form" novalidate>
+                <div class="field-row">
+                  <div class="field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" placeholder="client@example.com" required />
+                  </div>
+                  <div class="field">
+                    <label for="caseCode">Case code</label>
+                    <input id="caseCode" name="caseCode" type="text" placeholder="KUAC-INT-01" required />
+                  </div>
+                </div>
+                <div class="field full">
+                  <label for="accessCode">Access code</label>
+                  <input id="accessCode" name="accessCode" type="text" placeholder="KUAC-ACCESS-2048" required />
+                </div>
+                <div class="actions-row">
+                  <div class="status" id="formStatus">Enter the details KUAC sent you, then open your assigned help case.</div>
+                  <button class="button" type="submit">Open assigned case</button>
+                </div>
+              </form>
+            </div>
+          </article>
+
+          <aside class="panel">
+            <div class="panel-head">
+              <small>Case view</small>
+              <h2>What opens after the code matches</h2>
+            </div>
+            <div class="panel-body">
+              <div class="issue-shell hidden" id="issueShell">
+                <div class="issue-card">
+                  <strong id="issueTitle">Assigned help case</strong>
+                  <p id="issueSummary"></p>
+                </div>
+
+                <div class="meta-grid">
+                  <div class="meta">
+                    <small>Agent</small>
+                    <strong id="issueAgent">Pending</strong>
+                  </div>
+                  <div class="meta">
+                    <small>Dashboard ID</small>
+                    <strong id="issueDashboard">Pending</strong>
+                  </div>
+                  <div class="meta">
+                    <small>Status</small>
+                    <strong id="issueStatus">Pending</strong>
+                  </div>
+                </div>
+
+                <div class="message-list" id="messageList"></div>
+
+                <div class="info-card">
+                  <strong>Live follow-up room</strong>
+                  <p>
+                    Once the access code matches, you can continue to the private KUAC help room for live
+                    support and follow-up.
+                  </p>
+                  <div class="actions-row" style="margin-top: 12px;">
+                    <a class="button" id="openHelpRoom" href="/support-chat/index.html">Open help room</a>
+                    <button class="button secondary" id="copyCaseCode" type="button">Copy case code</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="notice" id="emptyNotice">
+                KUAC staff issue the access code after they open your request. Use the code here to unlock the
+                assigned case and keep the follow-up together in one place.
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
     <script>
-      (function loadDashboard() {
-        const statusText = 'Loading the KUAC help page...';
-        window.addEventListener('DOMContentLoaded', async () => {
-          const shell = document.querySelector('.shell');
-          const status = document.getElementById('statusText');
+      (function initClientDashboard() {
+        const form = document.getElementById('accessForm');
+        const pageStatus = document.getElementById('pageStatus');
+        const formStatus = document.getElementById('formStatus');
+        const issueShell = document.getElementById('issueShell');
+        const emptyNotice = document.getElementById('emptyNotice');
+        const issueTitle = document.getElementById('issueTitle');
+        const issueSummary = document.getElementById('issueSummary');
+        const issueAgent = document.getElementById('issueAgent');
+        const issueDashboard = document.getElementById('issueDashboard');
+        const issueStatus = document.getElementById('issueStatus');
+        const messageList = document.getElementById('messageList');
+        const openHelpRoom = document.getElementById('openHelpRoom');
+        const copyCaseCode = document.getElementById('copyCaseCode');
+
+        function setFormStatus(text, type) {
+          formStatus.className = `status${type ? ` is-${type}` : ''}`;
+          formStatus.textContent = text;
+        }
+
+        function setPageStatus(text, type) {
+          pageStatus.className = `status-chip${type ? ` is-${type}` : ''}`;
+          pageStatus.textContent = text;
+        }
+
+        function renderMessages(messages) {
+          messageList.innerHTML = '';
+
+          if (!Array.isArray(messages) || !messages.length) {
+            const empty = document.createElement('div');
+            empty.className = 'notice';
+            empty.textContent = 'No internal messages have been added to this case yet.';
+            messageList.appendChild(empty);
+            return;
+          }
+
+          messages.forEach((message) => {
+            const card = document.createElement('div');
+            card.className = 'message-card';
+            const meta = document.createElement('div');
+            meta.className = 'meta-line';
+            const left = document.createElement('strong');
+            left.textContent = message.sender || 'KUAC';
+            const right = document.createElement('span');
+            right.textContent = [message.role || 'Update', message.time || ''].filter(Boolean).join(' • ');
+            meta.append(left, right);
+
+            const body = document.createElement('p');
+            body.textContent = message.text || '';
+            card.append(meta, body);
+            messageList.appendChild(card);
+          });
+        }
+
+        async function openAssignedCase(event) {
+          event.preventDefault();
+
+          const email = document.getElementById('email').value.trim();
+          const caseCode = document.getElementById('caseCode').value.trim().toUpperCase();
+          const accessCode = document.getElementById('accessCode').value.trim();
+
+          if (!email || !caseCode || !accessCode) {
+            setFormStatus('Please enter your email, case code, and the KUAC access code.', 'error');
+            setPageStatus('Awaiting access code');
+            return;
+          }
+
+          setFormStatus('Checking your assigned help case...', '');
+          setPageStatus('Checking case');
+
           try {
-            const response = await fetch('/support-chat/index.html', { cache: 'no-store' });
-            if (!response.ok) {
-              throw new Error(`Dashboard load failed (${response.status})`);
+            const url = new URL('/api/support/ticket', window.location.origin);
+            url.searchParams.set('email', email);
+            url.searchParams.set('caseCode', caseCode);
+            url.searchParams.set('accessCode', accessCode);
+
+            const response = await fetch(url.toString(), { cache: 'no-store' });
+            const payload = await response.json();
+
+            if (!response.ok || !payload.ok) {
+              const message = payload && payload.error ? payload.error : 'We could not open this case.';
+              throw new Error(message);
             }
-            const html = await response.text();
-            document.open();
-            document.write(html);
-            document.close();
+
+            const issued = payload.issued || {};
+            const issuedCode = String(issued.code || issued.accessCode || '').trim();
+            if (issuedCode && issuedCode !== accessCode) {
+              throw new Error('That access code does not match the code KUAC issued for this case.');
+            }
+
+            const ticket = payload.ticket || payload.submission || {};
+            const summary = ticket.summary || ticket.note || 'Your assigned help case is open.';
+
+            issueShell.classList.remove('hidden');
+            emptyNotice.classList.add('hidden');
+            issueTitle.textContent = `Case ${ticket.caseCode || caseCode}`;
+            issueSummary.textContent = summary;
+            issueAgent.textContent = ticket.agent || issued.agent || 'KUAC Associate';
+            issueDashboard.textContent = ticket.dashboardId || issued.dashboardId || 'Pending';
+            issueStatus.textContent = ticket.status || 'issued';
+            openHelpRoom.href = '/support-chat/index.html';
+
+            renderMessages(payload.messages || []);
+            setFormStatus('Access code confirmed. Your assigned help case is open.', 'success');
+            setPageStatus('Case opened', 'success');
           } catch (error) {
-            status.textContent = 'The help page could not load right now.';
-            const fallback = document.getElementById('fallback');
-            if (fallback) {
-              fallback.style.display = 'block';
-            }
-            if (shell) {
-              shell.setAttribute('data-error', 'true');
-            }
+            issueShell.classList.add('hidden');
+            emptyNotice.classList.remove('hidden');
+            setFormStatus(error.message || 'We could not open that case.', 'error');
+            setPageStatus('Access code needed', 'error');
+          }
+        }
+
+        form.addEventListener('submit', openAssignedCase);
+
+        copyCaseCode.addEventListener('click', async () => {
+          const caseCode = document.getElementById('caseCode').value.trim();
+          if (!caseCode) {
+            setFormStatus('Enter a case code first, then copy it.', 'error');
+            return;
+          }
+
+          try {
+            await navigator.clipboard.writeText(caseCode);
+            setFormStatus('Case code copied.', 'success');
+          } catch (error) {
+            setFormStatus('Your browser blocked copying. You can select the case code manually.', 'error');
           }
         });
       })();
     </script>
-  </head>
-  <body>
-    <main class="shell">
-      <div class="eyebrow">KUAC Client Dashboard</div>
-      <h1>Your help page is loading</h1>
-      <p>
-        This page will open your KUAC help page and keep the private Tawk room in view.
-      </p>
-      <div class="status">
-        <span class="spinner" aria-hidden="true"></span>
-        <span id="statusText">Loading the KUAC help page...</span>
-      </div>
-      <div class="fallback" id="fallback">
-        <p>
-          If the dashboard does not appear, open
-          <a href="/support-chat/index.html">the live help page</a>.
-        </p>
-      </div>
-    </main>
   </body>
 </html>

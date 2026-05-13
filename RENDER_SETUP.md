@@ -44,6 +44,7 @@ To rotate the private dashboard code:
 
 - The public help page is Tawk-backed and works as a static page on Render without a server API.
 - `config.js` supplies the Tawk property ID, widget ID, and direct chat URL used by the help page.
+- The client dashboard uses the access code to open the assigned case, while Tawk handles the live help room.
 - The agent dashboard still links to the help page, but the live conversation itself is handled by Tawk.
 
 ## Callback Flow
