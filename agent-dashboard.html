@@ -652,7 +652,10 @@
               </div>
               <div class="actions-row">
                 <div class="status" id="agentStatus">Load a verified request, then generate its unique access code.</div>
-                <button class="button" type="submit">Issue follow-up code</button>
+                <div class="actions-row" style="justify-content:flex-end;">
+                  <button class="button secondary" id="regenerateAccessCodeButton" type="button">Regenerate code</button>
+                  <button class="button" type="submit">Issue follow-up code</button>
+                </div>
               </div>
             </form>
           </div>
@@ -771,6 +774,7 @@
       const accessCode = document.getElementById('accessCode');
       const agentNote = document.getElementById('agentNote');
       const agentStatus = document.getElementById('agentStatus');
+      const regenerateAccessCodeButton = document.getElementById('regenerateAccessCodeButton');
       const currentCaseList = document.getElementById('currentCaseList');
       const agentChatThread = document.getElementById('agentChatThread');
       const agentChatForm = document.getElementById('agentChatForm');
@@ -1141,6 +1145,15 @@
         return generated;
       }
 
+      function regenerateAccessCode() {
+        const generated = generateAccessCode(
+          caseCode.value || (accessState && accessState.caseCode) || '',
+          clientEmail.value || (accessState && accessState.email) || '',
+        );
+        accessCode.value = generated;
+        return generated;
+      }
+
       function buildIssueAutoreponse(payload) {
         const recipientName = payload.clientName || 'KUAC client';
         const caseLabel = payload.caseCode || 'your case';
@@ -1256,6 +1269,24 @@
         logoutButton.addEventListener('click', () => {
           clearStaticSession();
           window.location.href = 'agent-login.html';
+        });
+      }
+
+      if (regenerateAccessCodeButton) {
+        regenerateAccessCodeButton.addEventListener('click', () => {
+          const email = clientEmail.value.trim();
+          const code = caseCode.value.trim();
+
+          if (!email || !code) {
+            agentStatus.className = 'status is-error';
+            agentStatus.textContent = 'Enter the requester email and case code before generating a new access code.';
+            return;
+          }
+
+          const generated = regenerateAccessCode();
+          agentStatus.className = 'status';
+          agentStatus.textContent = `Fresh access code ${generated} generated for this requester.`;
+          metricCode.textContent = generated;
         });
       }
 
