@@ -478,6 +478,7 @@
       </section>
     </main>
 
+    <script src="/js/kuac-backend.js"></script>
     <script>
       (function initClientDashboard() {
         const form = document.getElementById('accessForm');
@@ -493,6 +494,7 @@
         const messageList = document.getElementById('messageList');
         const openHelpRoom = document.getElementById('openHelpRoom');
         const copyCaseCode = document.getElementById('copyCaseCode');
+        const backend = window.KUAC_BACKEND || null;
 
         function setFormStatus(text, type) {
           formStatus.className = `status${type ? ` is-${type}` : ''}`;
