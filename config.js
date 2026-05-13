@@ -5,6 +5,7 @@ window.KUAC_CONFIG = Object.freeze({
   successQuery: '?callback=sent',
   successHash: '#contact',
   dashboardAccessCode: 'KUAC-OPS-2026',
+  issueNotificationSubject: 'KUAC | Access Code Issued',
   paymentVerificationEndpoint: '',
   tawkPropertyId: '6a023f80ee7ca01c362e9164',
   tawkWidgetId: '1joccg43k',
