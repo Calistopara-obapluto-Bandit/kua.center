@@ -496,6 +496,7 @@
         const copyCaseCode = document.getElementById('copyCaseCode');
         const backend = window.KUAC_BACKEND || null;
         const AGENT_CREDENTIALS_KEY = 'kuac-agent-issued-credentials';
+        const CHAT_STORAGE_PREFIX = 'kuac-agent-chat-';
 
         function setFormStatus(text, type) {
           formStatus.className = `status${type ? ` is-${type}` : ''}`;
@@ -526,7 +527,8 @@
             const left = document.createElement('strong');
             left.textContent = message.sender || 'KUAC';
             const right = document.createElement('span');
-            right.textContent = [message.role || 'Update', message.time || ''].filter(Boolean).join(' • ');
+            const messageTime = formatMessageTime(message.time || message.createdAt || message.timestamp);
+            right.textContent = [message.role || 'Update', messageTime].filter(Boolean).join(' • ');
             meta.append(left, right);
 
             const body = document.createElement('p');
@@ -534,6 +536,40 @@
             card.append(meta, body);
             messageList.appendChild(card);
           });
+        }
+
+        function formatMessageTime(value) {
+          if (!value) {
+            return '';
+          }
+
+          const date = new Date(value);
+          if (Number.isNaN(date.getTime())) {
+            return String(value);
+          }
+
+          return date.toLocaleString([], {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          });
+        }
+
+        function chatStorageKey(caseCode) {
+          return `${CHAT_STORAGE_PREFIX}${String(caseCode || '').trim().toUpperCase()}`;
+        }
+
+        function loadLocalChatMessages(caseCode) {
+          try {
+            const stored = localStorage.getItem(chatStorageKey(caseCode));
+            if (!stored) {
+              return [];
+            }
+
+            const messages = JSON.parse(stored);
+            return Array.isArray(messages) ? messages : [];
+          } catch (error) {
+            return [];
+          }
         }
 
         function loadLocalIssuedCase(email, caseCode, accessCode) {
@@ -580,7 +616,7 @@
                 accessCode: issuedCode,
                 dashboardId: issued.dashboardId || 'local-browser',
               },
-              messages: [],
+              messages: loadLocalChatMessages(caseCode),
               source: 'local-storage',
             };
           } catch (error) {
