@@ -82,6 +82,116 @@
         }
       }
 
+      @media (max-width: 992px) {
+        .tm-hero-actions {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+        }
+
+        .tm-hero-btn {
+          width: 100%;
+        }
+
+        .tm-hero-badges {
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .tm-chat-drawer-shell {
+          left: 14px;
+          bottom: 14px;
+          width: min(680px, calc(100vw - 28px));
+          height: min(76vh, 680px);
+        }
+
+        .tm-chat-drawer {
+          width: min(680px, calc(100vw - 28px));
+          height: min(76vh, 680px);
+        }
+
+        .tm-mini-fields {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .tm-chat-launcher {
+          left: 14px;
+          width: auto;
+          justify-content: center;
+        }
+
+        .tm-chat-drawer-shell {
+          left: 14px;
+          right: 14px;
+          width: auto;
+          height: min(80vh, 680px);
+        }
+
+        .tm-chat-drawer {
+          width: auto;
+          height: min(80vh, 680px);
+        }
+
+        .tm-chat-drawer-header,
+        .tm-mini-casebar,
+        .tm-mini-composer {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+
+        .tm-mini-casebar,
+        .tm-chat-drawer-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .tm-chat-drawer-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .tm-mini-status {
+          white-space: normal;
+        }
+
+        .tm-mini-thread {
+          padding: 12px 14px;
+        }
+
+        .tm-mini-message {
+          max-width: 100%;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .tm-chat-launcher {
+          padding: 12px 14px;
+        }
+
+        .tm-mini-switcher {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+
+        .tm-footer-grid,
+        .tm-faq-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tm-footer-links {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .tm-footer-links-right {
+          justify-content: flex-start;
+        }
+      }
+
       .tm-chat-drawer-shell {
         position: fixed;
         left: 20px;
@@ -1416,11 +1526,11 @@
       });
     </script>
     <div class="tm-chat-drawer-backdrop" id="chatBackdrop" hidden></div>
-    <a class="tm-chat-launcher" id="chatLauncher" href="client-dashboard.html" aria-label="Open client dashboard">
+    <a class="tm-chat-launcher" id="chatLauncher" href="client-dashboard.html" aria-label="Open KUAC help page">
         <i class="far fa-comment-dots" aria-hidden="true"></i>
         <span class="tm-chat-launcher-text">
-          <strong>Client Dashboard</strong>
-          <small>Verified case and live support</small>
+          <strong>Help Page</strong>
+          <small>Private follow-up and live support</small>
         </span>
       </a>
   </body>

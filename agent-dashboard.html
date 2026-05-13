@@ -507,6 +507,90 @@
           justify-content: flex-start;
         }
       }
+
+      @media (max-width: 720px) {
+        .shell {
+          padding: 14px;
+        }
+
+        .topbar {
+          gap: 12px;
+        }
+
+        .brand h1 {
+          font-size: 1.6rem;
+        }
+
+        .panel-head,
+        .panel-body {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        .actions {
+          width: 100%;
+        }
+
+        .session-chip,
+        .pill-link {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .chat-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .chat-thread {
+          max-height: 240px;
+        }
+
+        .chat-actions,
+        .actions-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .button {
+          width: 100%;
+        }
+
+        .chat-composer textarea {
+          min-height: 126px;
+        }
+      }
+
+      @media (max-width: 540px) {
+        .panel-head h2 {
+          font-size: 1.05rem;
+        }
+
+        .brand h1 {
+          font-size: 1.35rem;
+        }
+
+        .brand p {
+          font-size: 0.95rem;
+          line-height: 1.55;
+        }
+
+        .status,
+        .chat-help,
+        .chat-status {
+          font-size: 0.82rem;
+        }
+
+        .metric,
+        .notice,
+        .client-card,
+        .case-card {
+          padding: 14px;
+        }
+
+        .table-wrap {
+          border-radius: 16px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -605,7 +689,7 @@
           <div class="panel-body chat-panel">
             <div>
               <div class="chat-thread" id="agentChatThread" aria-live="polite"></div>
-              <div class="chat-status" id="agentChatStatus">Select or load a case to see the live thread here.</div>
+              <div class="chat-status" id="agentChatStatus">Select or load a request to see the internal notes here.</div>
             </div>
             <form class="chat-composer" id="agentChatForm">
               <div class="field full">
