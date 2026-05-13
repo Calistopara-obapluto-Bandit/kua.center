@@ -495,6 +495,7 @@
         const openHelpRoom = document.getElementById('openHelpRoom');
         const copyCaseCode = document.getElementById('copyCaseCode');
         const backend = window.KUAC_BACKEND || null;
+        const AGENT_CREDENTIALS_KEY = 'kuac-agent-issued-credentials';
 
         function setFormStatus(text, type) {
           formStatus.className = `status${type ? ` is-${type}` : ''}`;
@@ -533,6 +534,58 @@
             card.append(meta, body);
             messageList.appendChild(card);
           });
+        }
+
+        function loadLocalIssuedCase(email, caseCode, accessCode) {
+          try {
+            const raw = localStorage.getItem(AGENT_CREDENTIALS_KEY);
+            const registry = raw ? JSON.parse(raw) : {};
+            const key = `${String(email || '').trim().toLowerCase()}::${String(caseCode || '').trim().toUpperCase()}`;
+            const issued = registry[key];
+
+            if (!issued) {
+              return null;
+            }
+
+            const issuedCode = String(issued.code || '').trim();
+            if (issuedCode && accessCode && issuedCode !== accessCode) {
+              return null;
+            }
+
+            return {
+              ok: true,
+              ticket: {
+                email: issued.email || email,
+                caseCode: issued.caseCode || caseCode,
+                agent: issued.agent || 'KUAC Associate',
+                clientName: issued.clientName || 'Client',
+                status: 'issued',
+                dashboardId: issued.dashboardId || 'local-browser',
+                summary: issued.note || 'Your assigned help case is open.',
+              },
+              submission: {
+                email: issued.email || email,
+                caseCode: issued.caseCode || caseCode,
+                agent: issued.agent || 'KUAC Associate',
+                clientName: issued.clientName || 'Client',
+                dashboardId: issued.dashboardId || 'local-browser',
+                status: 'issued',
+              },
+              issued: {
+                email: issued.email || email,
+                caseCode: issued.caseCode || caseCode,
+                agent: issued.agent || 'KUAC Associate',
+                clientName: issued.clientName || 'Client',
+                code: issuedCode,
+                accessCode: issuedCode,
+                dashboardId: issued.dashboardId || 'local-browser',
+              },
+              messages: [],
+              source: 'local-storage',
+            };
+          } catch (error) {
+            return null;
+          }
         }
 
         async function openAssignedCase(event) {
@@ -586,9 +639,32 @@
             setFormStatus('Access code confirmed. Your assigned help case is open.', 'success');
             setPageStatus('Case opened', 'success');
           } catch (error) {
+            const fallback = loadLocalIssuedCase(email, caseCode, accessCode);
+            if (fallback) {
+              const issued = fallback.issued || {};
+              const ticket = fallback.ticket || fallback.submission || {};
+
+              issueShell.classList.remove('hidden');
+              emptyNotice.classList.add('hidden');
+              issueTitle.textContent = `Case ${ticket.caseCode || caseCode}`;
+              issueSummary.textContent = ticket.summary || ticket.note || 'Your assigned help case is open.';
+              issueAgent.textContent = ticket.agent || issued.agent || 'KUAC Associate';
+              issueDashboard.textContent = ticket.dashboardId || issued.dashboardId || 'local-browser';
+              issueStatus.textContent = ticket.status || 'issued';
+              openHelpRoom.href = '/support-chat/index.html';
+
+              renderMessages([]);
+              setFormStatus('Loaded from the local browser record because the server does not have this case yet.', 'success');
+              setPageStatus('Case opened', 'success');
+              return;
+            }
+
             issueShell.classList.add('hidden');
             emptyNotice.classList.remove('hidden');
-            setFormStatus(error.message || 'We could not open that case.', 'error');
+            const message = error && error.status === 404
+              ? 'KUAC could not find that case on the server yet. Try again from the same browser that issued it, or wait for the deployment to finish.'
+              : error.message || 'We could not open that case.';
+            setFormStatus(message, 'error');
             setPageStatus('Access code needed', 'error');
           }
         }
