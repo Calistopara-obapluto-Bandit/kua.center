@@ -10,6 +10,8 @@ This project is set up for Render and keeps the help page compatible with a stat
 
 ## Service Type
 
+- Static site name: `kua-center`
+- API service name: `kua-center-api`
 - Type: `Web Service`
 - Environment: `Node`
 - Build command: `npm run ci:validate`
@@ -27,6 +29,8 @@ Set `KUAC_DATA_DIR` to the mounted disk path if you change the default data loca
 Use this quick note when setting up or updating Render:
 
 ```text
+Static site name: kua-center
+API service name: kua-center-api
 Service type: Web Service
 Branch: main
 Start command: npm start
