@@ -507,6 +507,57 @@
         .actions {
           justify-content: flex-start;
         }
+
+        .table-wrap {
+          overflow: visible;
+        }
+
+        table {
+          min-width: 0;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tbody,
+        tr,
+        td {
+          display: block;
+          width: 100%;
+        }
+
+        tbody {
+          display: grid;
+          gap: 12px;
+        }
+
+        tr {
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 18px;
+          background: var(--panel-2);
+        }
+
+        td {
+          padding: 12px 14px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        td:last-child {
+          border-bottom: 0;
+        }
+
+        td::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: 6px;
+          color: var(--muted-2);
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          font-size: 0.68rem;
+          font-weight: 800;
+        }
       }
 
       @media (max-width: 720px) {
@@ -563,56 +614,6 @@
           gap: 10px;
         }
 
-        .table-wrap {
-          overflow: visible;
-        }
-
-        table {
-          min-width: 0;
-        }
-
-        thead {
-          display: none;
-        }
-
-        tbody,
-        tr,
-        td {
-          display: block;
-          width: 100%;
-        }
-
-        tbody {
-          display: grid;
-          gap: 12px;
-        }
-
-        tr {
-          overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 18px;
-          background: var(--panel-2);
-        }
-
-        td {
-          padding: 12px 14px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        td:last-child {
-          border-bottom: 0;
-        }
-
-        td::before {
-          content: attr(data-label);
-          display: block;
-          margin-bottom: 6px;
-          color: var(--muted-2);
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-          font-size: 0.68rem;
-          font-weight: 800;
-        }
         .button {
           width: 100%;
         }
@@ -652,14 +653,6 @@
         .table-wrap {
           border-radius: 16px;
           overflow: visible;
-        }
-
-        table {
-          min-width: 0;
-        }
-
-        thead {
-          display: none;
         }
       }
     </style>
