@@ -1,7 +1,7 @@
 services:
   - type: web
     env: node
-    name: kua-center
+    name: kua-center-api
     branch: main
     buildCommand: npm run ci:validate
     startCommand: npm start
