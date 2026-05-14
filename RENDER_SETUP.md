@@ -14,11 +14,13 @@ This project is set up for Render and keeps the help page compatible with a stat
 - Environment: `Node`
 - Build command: `npm run ci:validate`
 - Start command: `npm start`
+- Plan: `starter` or higher, so the service can use a persistent disk for saved case data
 
 ## Required Render Settings
 
 Set `AGENT_DASHBOARD_PASSWORD` in Render if you want the private dashboard login to work against the server-backed session gate.
 The private dashboard gate is configured in `config.js` through `dashboardAccessCode` for the static fallback.
+Set `KUAC_DATA_DIR` to the mounted disk path if you change the default data location. The current blueprint uses `/opt/render/project/src/data`.
 
 ## Copy-Paste Setup Note
 

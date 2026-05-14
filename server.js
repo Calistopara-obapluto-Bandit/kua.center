@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const { URL } = require('url');
 
 const ROOT = __dirname;
-const DATA_DIR = path.join(ROOT, 'data');
+const DATA_DIR = path.resolve(process.env.KUAC_DATA_DIR || path.join(ROOT, 'data'));
 const DATA_FILE = path.join(DATA_DIR, 'kuac-state.json');
 const PORT = Number(process.env.PORT || 3000);
 const DASHBOARD_ACCESS_CODE = String(process.env.AGENT_DASHBOARD_PASSWORD || '').trim();
