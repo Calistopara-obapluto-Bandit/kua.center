@@ -1924,6 +1924,14 @@ p {
     padding: 20px 18px;
   }
 
+  .contact-item .item-link {
+    align-items: flex-start;
+  }
+
+  .item-link div {
+    min-width: 0;
+  }
+
   .tm-section-title {
     font-size: 1.78rem;
     line-height: 1.12;
@@ -2027,6 +2035,22 @@ p {
     max-width: none;
   }
 
+  .tm-faq-card--cta {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  .tm-faq-card--cta .tm-faq-link {
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
+  }
+
+  .tm-footer-links-right {
+    flex-wrap: wrap;
+  }
+
   .tm-support-card,
   .tm-partner-card,
   .tm-contact-card {
@@ -2072,6 +2096,15 @@ p {
     padding: 18px 14px 16px;
   }
 
+  .tm-footer-links {
+    padding: 14px 16px;
+  }
+
+  .tm-footer-links-right a {
+    width: 34px;
+    height: 34px;
+  }
+
   .tm-expectation-toggle {
     padding: 12px 14px;
     font-size: 0.88rem;
@@ -2109,6 +2142,19 @@ p {
   .tm-service-list li {
     padding-left: 26px;
     line-height: 1.65;
+  }
+
+  .tm-contact-list {
+    gap: 10px;
+  }
+
+  .contact-item .item-link {
+    padding: 12px 13px;
+  }
+
+  .contact-item .item-link strong,
+  .contact-item .item-link span {
+    word-break: break-word;
   }
 
   .tm-file-input {
