@@ -829,10 +829,6 @@
       <iframe name="issueMailSink" id="issueMailSink" hidden title="Issue email delivery"></iframe>
     <script>
       const config = window.KUAC_CONFIG || {};
-      const STATIC_DASHBOARD_CODE = String(config.dashboardAccessCode || 'KUAC-OPS-2026').trim();
-      const STATIC_SESSION_KEY = 'kuac-static-admin-session';
-      const STATIC_SESSION_EXPIRES_KEY = 'kuac-static-admin-session-expires';
-      const STATIC_SESSION_TTL_MS = 1000 * 60 * 60 * 8;
       const ACCESS_STATE_KEY = 'kuac-private-chat-access';
       const DRAFT_STATE_KEY = 'kuac-private-chat-draft';
       const AGENT_CREDENTIALS_KEY = 'kuac-agent-issued-credentials';
@@ -1298,48 +1294,46 @@
         sessionChip.innerHTML = text;
       }
 
-      function saveStaticSession() {
-        const expiresAt = Date.now() + STATIC_SESSION_TTL_MS;
-        localStorage.setItem(STATIC_SESSION_KEY, 'true');
-        localStorage.setItem(STATIC_SESSION_EXPIRES_KEY, String(expiresAt));
-        return expiresAt;
-      }
-
-      function clearStaticSession() {
-        localStorage.removeItem(STATIC_SESSION_KEY);
-        localStorage.removeItem(STATIC_SESSION_EXPIRES_KEY);
-      }
-
-      function getStaticSessionExpiry() {
-        const expiresAt = Number(localStorage.getItem(STATIC_SESSION_EXPIRES_KEY) || 0);
-        if (!expiresAt || Date.now() > expiresAt) {
-          clearStaticSession();
-          return 0;
-        }
-        return expiresAt;
-      }
-
-      function verifyDashboardSession() {
-        const hasSession = localStorage.getItem(STATIC_SESSION_KEY) === 'true';
-        const expiresAt = getStaticSessionExpiry();
-
-        if (!hasSession || !expiresAt) {
-          setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Static session required');
+      async function verifyDashboardSession() {
+        if (!backend || !backend.available) {
+          setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Server session required');
           window.location.replace('agent-login.html');
           return false;
         }
 
-        const expiresLabel = `Static session active until ${new Date(expiresAt).toLocaleString([], {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-        })}`;
-        setSessionChip(`<i class="far fa-shield-check" aria-hidden="true"></i> ${escapeHtml(expiresLabel)}`);
-        return true;
+        try {
+          const result = await backend.request('/api/admin/session');
+          if (!result || !result.authenticated) {
+            setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Server session required');
+            window.location.replace('agent-login.html');
+            return false;
+          }
+
+          const expiresLabel = result.expiresAt
+            ? `Server session active until ${new Date(result.expiresAt).toLocaleString([], {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+            })}`
+            : 'Server session active';
+          setSessionChip(`<i class="far fa-shield-check" aria-hidden="true"></i> ${escapeHtml(expiresLabel)}`);
+          return true;
+        } catch (error) {
+          setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Server session required');
+          window.location.replace('agent-login.html');
+          return false;
+        }
       }
 
       if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-          clearStaticSession();
+        logoutButton.addEventListener('click', async () => {
+          if (backend && backend.available) {
+            try {
+              await backend.request('/api/admin/logout', { method: 'POST' });
+            } catch (error) {
+              // Redirect even if the server logout request fails.
+            }
+          }
+
           window.location.href = 'agent-login.html';
         });
       }
@@ -1458,11 +1452,13 @@
         }
       });
 
-      if (verifyDashboardSession()) {
-        syncFromClientState();
-        renderRegistry();
-        syncLiveChat();
-      }
+      (async () => {
+        if (await verifyDashboardSession()) {
+          syncFromClientState();
+          renderRegistry();
+          syncLiveChat();
+        }
+      })();
 
       caseCode.addEventListener('input', () => {
         syncLiveChat();

@@ -16,6 +16,7 @@
     />
     <link rel="stylesheet" href="fontawesome-5.5/css/all.min.css" />
     <script src="config.js"></script>
+    <script src="/js/kuac-backend.js"></script>
     <style>
       :root {
         --bg: #07131d;
@@ -166,9 +167,9 @@
         Enter your private access code to open the KUAC operations dashboard.
       </p>
       <div class="session-note">
-        <strong><i class="far fa-shield-check" aria-hidden="true"></i> Secure browser session</strong>
+        <strong><i class="far fa-shield-check" aria-hidden="true"></i> Secure staff session</strong>
         <span>
-          The code is verified in your browser and stored on this device for a limited time.
+          The code is checked against the KUAC server and opens a temporary dashboard session.
         </span>
       </div>
       <form class="form" id="loginForm">
@@ -188,11 +189,7 @@
     </section>
 
     <script>
-      const config = window.KUAC_CONFIG || {};
-      const STATIC_DASHBOARD_CODE = String(config.dashboardAccessCode || 'KUAC-OPS-2026').trim();
-      const STATIC_SESSION_KEY = 'kuac-static-admin-session';
-      const STATIC_SESSION_EXPIRES_KEY = 'kuac-static-admin-session-expires';
-      const STATIC_SESSION_TTL_MS = 1000 * 60 * 60 * 8;
+      const backend = window.KUAC_BACKEND || null;
 
       const loginForm = document.getElementById('loginForm');
       const loginCode = document.getElementById('loginCode');
@@ -201,26 +198,6 @@
       function setStatus(text, kind) {
         loginStatus.className = `status${kind ? ` is-${kind}` : ''}`;
         loginStatus.textContent = text;
-      }
-
-      function saveStaticSession() {
-        const expiresAt = Date.now() + STATIC_SESSION_TTL_MS;
-        localStorage.setItem(STATIC_SESSION_KEY, 'true');
-        localStorage.setItem(STATIC_SESSION_EXPIRES_KEY, String(expiresAt));
-        return expiresAt;
-      }
-
-      function hasStaticSession() {
-        const active = localStorage.getItem(STATIC_SESSION_KEY) === 'true';
-        const expiresAt = Number(localStorage.getItem(STATIC_SESSION_EXPIRES_KEY) || 0);
-
-        if (!active || !expiresAt || Date.now() > expiresAt) {
-          localStorage.removeItem(STATIC_SESSION_KEY);
-          localStorage.removeItem(STATIC_SESSION_EXPIRES_KEY);
-          return false;
-        }
-
-        return true;
       }
 
       loginForm.addEventListener('submit', async (event) => {
@@ -232,19 +209,27 @@
           return;
         }
 
-        if (code !== STATIC_DASHBOARD_CODE) {
-          setStatus('That access code is not valid for KUAC staff access.', 'error');
+        if (!backend || !backend.available) {
+          setStatus('The staff portal is unavailable from this preview. Open the deployed KUAC site to continue.', 'error');
           return;
         }
 
-        saveStaticSession();
-        setStatus('Dashboard opened.', 'success');
-        window.location.href = 'agent-dashboard.html';
-      });
+        try {
+          const result = await backend.request('/api/admin/login', {
+            method: 'POST',
+            body: JSON.stringify({ code }),
+          });
 
-      if (hasStaticSession()) {
-        window.location.replace('agent-dashboard.html');
-      }
+          if (!result || !result.authenticated) {
+            throw new Error('That access code is not valid for KUAC staff access.');
+          }
+
+          setStatus('Dashboard opened.', 'success');
+          window.location.href = 'agent-dashboard.html';
+        } catch (error) {
+          setStatus(error && error.message ? error.message : 'That access code is not valid for KUAC staff access.', 'error');
+        }
+      });
     </script>
   </body>
 </html>
