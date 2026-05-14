@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="KUAC private help room for travel guidance, arrival support, referrals, and follow-up powered by Tawk." />
-    <title>KUAC Private Support Chat</title>
+    <meta name="description" content="KUAC private support room for live assistance, referrals, arrival guidance, and follow-up powered by Tawk." />
+    <title>KUAC Private Support Room</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -493,19 +493,19 @@
       <header class="app-header">
         <div class="brand">
           <span class="eyebrow">KUAC</span>
-          <h1>Private help room</h1>
-          <p>Use this private room for travel guidance, arrival help, referrals, and follow-up with the KUAC team.</p>
+          <h1>Private support room</h1>
+          <p>Use this room for live assistance, arrival guidance, referrals, and case follow-up with the KUAC team.</p>
         </div>
-        <span class="status-pill" id="supportStatusPill">Connecting support</span>
+        <span class="status-pill" id="supportStatusPill">Connecting to support</span>
       </header>
 
-      <section class="panel support-portal" aria-label="Private help room">
+      <section class="panel support-portal" aria-label="Private support room">
         <div class="support-portal-header">
           <div>
-            <h2>Private help room</h2>
-            <p>The Tawk room opens inside a simple support shell that stays comfortable on desktop, mobile, and static hosting.</p>
+            <h2>Support portal</h2>
+            <p>The Tawk room opens inside a branded support frame that stays comfortable on desktop and mobile.</p>
           </div>
-          <span class="status-pill" id="supportPortalStatus">Private support ready</span>
+          <span class="status-pill" id="supportPortalStatus">Support ready</span>
         </div>
 
         <div class="support-portal-grid">
@@ -513,19 +513,19 @@
             <div class="support-window-shell">
               <div class="support-window-main">
                 <div class="support-window-title">
-                  <small>Live chat</small>
-                  <h3>Private help room</h3>
+                  <small>Live support</small>
+                  <h3>Private support room</h3>
                   <span class="meta-chip" id="tawkStatusChip">Preparing chat</span>
                 </div>
 
                 <div class="support-window-banner">
                   <strong>Chat with KUAC support</strong>
                   <span id="tawkSupportCopy">
-                    Open the live Tawk room for help with travel, arrival, referrals, or follow-up.
+                    Open the live Tawk room for private assistance, referrals, and follow-up.
                   </span>
                   <div class="support-window-actions">
                     <a class="support-link-button" id="openLiveChatButton" href="#" target="_blank" rel="noopener noreferrer">
-                      Open chat
+                      Open support chat
                     </a>
                     <span class="meta-chip">Tawk</span>
                   </div>
@@ -538,7 +538,7 @@
               <small>Support mode</small>
               <strong>For KUAC assistance</strong>
               <p>
-                Tawk is the actual support surface. The page frame only keeps the experience calm and branded.
+                Tawk provides the live conversation while this page keeps the experience calm and branded.
               </p>
             </div>
             <div class="signal-card">
@@ -551,13 +551,13 @@
             <div class="support-note-grid">
               <div class="support-note-card">
                 <small>Access code</small>
-                <strong>Opens the assigned help case</strong>
+                <strong>Opens the assigned case</strong>
                 <p>
                   KUAC staff issue an access code so the client dashboard can open the assigned case and its follow-up details.
                 </p>
               </div>
               <div class="support-note-card">
-                <small>Live chat UI</small>
+                <small>Live support</small>
                 <strong>Tawk handles the conversation</strong>
                 <p>
                   Use the live chat room for private support while the assigned case stays tied to the access code.
@@ -565,7 +565,7 @@
               </div>
               <div class="support-note-card">
                 <small>Render</small>
-                <strong>Still light on static hosting</strong>
+                <strong>Lightweight on Render</strong>
                 <p>
                   The page stays lightweight on Render, with Tawk loaded from <code>config.js</code> and the case flow handled separately.
                 </p>
@@ -576,7 +576,7 @@
         </div>
 
         <div class="support-footer">
-          This page is intentionally Tawk-only. Access codes open the assigned case in the client dashboard, and Tawk handles live follow-up.
+          This page is dedicated to Tawk-powered support. Access codes open the assigned case in the client dashboard, and Tawk handles live follow-up.
         </div>
       </section>
     </main>
@@ -603,21 +603,21 @@
 
         openLiveChatButton.href = directChatUrl;
 
-        setStatus('Connecting support');
+        setStatus('Connecting to support');
         tawkSupportCopy.textContent =
           'The private Tawk room is loading now. If the widget is blocked or unavailable, the direct chat link will open instead.';
 
         window.Tawk_API = window.Tawk_API || {};
         window.Tawk_LoadStart = new Date();
         window.Tawk_API.onLoad = function () {
-          setStatus('Private support ready');
+          setStatus('Support ready');
           tawkSupportCopy.textContent = 'The private Tawk room is ready. Use the button below to open the chat.';
         };
         window.Tawk_API.onChatMaximized = function () {
           setStatus('Chat opened');
         };
         window.Tawk_API.onChatMinimized = function () {
-          setStatus('Private support ready');
+          setStatus('Support ready');
         };
 
         openLiveChatButton.addEventListener('click', function (event) {

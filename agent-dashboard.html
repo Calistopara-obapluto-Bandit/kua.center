@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC internal staff desk for reviewing verified requests, assigning associates, and preparing follow-up."
+      content="KUAC operations dashboard for reviewing requests, assigning associates, issuing access codes, and managing follow-up."
     />
-    <title>KUAC Agent Dashboard</title>
+    <title>KUAC Operations Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -670,19 +670,18 @@
     <div class="shell">
       <header class="topbar">
         <div class="brand">
-          <span class="eyebrow"><i class="far fa-user-shield" aria-hidden="true"></i> Internal staff desk</span>
-          <h1>Internal desk for verified KUAC help requests.</h1>
+          <span class="eyebrow"><i class="far fa-user-shield" aria-hidden="true"></i> Internal operations</span>
+          <h1>Operations dashboard for verified KUAC requests.</h1>
           <p>
-            Use this private dashboard to review verified help requests, assign the associate, add
-            internal notes, and prepare the follow-up flow. It is a browser-side static gate, so it
-            works on a plain static host.
+            Review submitted requests, assign an associate, issue access codes, and manage follow-up from
+            one internal workspace.
           </p>
         </div>
         <div class="actions">
-          <span class="session-chip" id="sessionChip"><i class="far fa-shield-check" aria-hidden="true"></i> Static session pending</span>
-          <a class="pill-link" href="support-chat/index.html"><i class="far fa-comments" aria-hidden="true"></i> Open help page</a>
-          <button class="pill-link" id="logoutButton" type="button"><i class="far fa-sign-out" aria-hidden="true"></i> Sign out</button>
-          <a class="pill-link" href="index.html"><i class="far fa-arrow-left" aria-hidden="true"></i> Back to KUAC</a>
+          <span class="session-chip" id="sessionChip"><i class="far fa-shield-check" aria-hidden="true"></i> Session pending</span>
+          <a class="pill-link" href="support-chat/index.html"><i class="far fa-comments" aria-hidden="true"></i> Open support room</a>
+          <button class="pill-link" id="logoutButton" type="button"><i class="far fa-sign-out" aria-hidden="true"></i> Log out</button>
+          <a class="pill-link" href="index.html"><i class="far fa-arrow-left" aria-hidden="true"></i> Back to site</a>
         </div>
       </header>
 
@@ -701,33 +700,33 @@
                 </div>
                 <div class="field">
                   <label for="caseCode">Case code</label>
-                  <input id="caseCode" type="text" placeholder="KUAC-INT-01" required />
+                  <input id="caseCode" type="text" placeholder="KUAC-CASE-01" required />
                 </div>
               </div>
               <div class="field-row">
                 <div class="field">
                   <label for="agentName">Assigned associate</label>
-                  <input id="agentName" type="text" placeholder="KUAC Associate" required />
+                  <input id="agentName" type="text" placeholder="KUAC Support Associate" required />
                 </div>
                 <div class="field">
                   <label for="clientName">Requester name</label>
-                  <input id="clientName" type="text" placeholder="Requester name" />
+                  <input id="clientName" type="text" placeholder="Client name" />
                 </div>
               </div>
               <div class="field full">
                 <label for="accessCode">Generated access code</label>
-                <input id="accessCode" type="text" placeholder="Will be generated for this requester" />
-                <small class="chat-help">Leave this blank and KUAC will generate a unique access code for this person.</small>
+                <input id="accessCode" type="text" placeholder="Generated automatically" />
+                <small class="chat-help">Leave this blank and KUAC will generate a unique access code automatically.</small>
               </div>
               <div class="field full">
                 <label for="agentNote">Internal note</label>
-                <textarea id="agentNote" rows="4" placeholder="Short note about the request, routing, or follow-up."></textarea>
+                <textarea id="agentNote" rows="4" placeholder="Add a short note about the request, routing, or follow-up."></textarea>
               </div>
               <div class="actions-row">
-                <div class="status" id="agentStatus">Load a verified request, then generate its unique access code.</div>
+                <div class="status" id="agentStatus">Load a verified request, then generate its access code.</div>
                 <div class="actions-row" style="justify-content:flex-end;">
                   <button class="button secondary" id="regenerateAccessCodeButton" type="button">Regenerate code</button>
-                  <button class="button" type="submit">Issue follow-up code</button>
+                  <button class="button" type="submit">Issue access code</button>
                 </div>
               </div>
             </form>
@@ -744,15 +743,15 @@
             <div class="subtle-grid">
               <div class="metric">
                 <small>Verified requester</small>
-                <strong id="metricClient">None loaded</strong>
+                  <strong id="metricClient">None loaded</strong>
               </div>
               <div class="metric">
                 <small>Assigned associate</small>
-                <strong id="metricAgent">Waiting</strong>
+                  <strong id="metricAgent">Waiting</strong>
               </div>
               <div class="metric">
-                <small>Follow-up code</small>
-                <strong id="metricCode">Pending</strong>
+                <small>Access code</small>
+                  <strong id="metricCode">Pending</strong>
               </div>
             </div>
           </div>
@@ -761,12 +760,12 @@
         <section class="panel" style="grid-column: 1 / -1;">
           <div class="panel-head">
             <small>Internal notes</small>
-            <h2>Reply to the verified request without leaving the desk</h2>
+            <h2>Reply to the verified request without leaving the dashboard</h2>
           </div>
           <div class="panel-body chat-panel">
             <div>
               <div class="chat-thread" id="agentChatThread" aria-live="polite"></div>
-              <div class="chat-status" id="agentChatStatus">Select or load a request to see the internal notes here.</div>
+              <div class="chat-status" id="agentChatStatus">Select or load a request to view the internal notes.</div>
             </div>
             <form class="chat-composer" id="agentChatForm">
               <div class="field full">
@@ -774,7 +773,7 @@
                 <textarea id="agentChatMessage" placeholder="Type a reply for the current case"></textarea>
               </div>
               <div class="chat-actions">
-                <div class="chat-help">This keeps internal desk notes separate from the public Tawk help room.</div>
+                <div class="chat-help">This keeps internal desk notes separate from the public Tawk support room.</div>
                 <button class="button" type="submit">Send reply</button>
               </div>
             </form>
@@ -963,7 +962,7 @@
         agentChatThread.innerHTML = '';
 
         if (!code) {
-          agentChatStatus.textContent = 'Load a case to see the live thread.';
+          agentChatStatus.textContent = 'Load a case to view the live thread.';
           return;
         }
 
@@ -972,7 +971,7 @@
         if (!threadMessages.length) {
           agentChatThread.innerHTML = `
             <div class="notice">
-              <strong>No live messages yet.</strong>
+              <strong>No messages yet.</strong>
               Once the client sends a note or the associate replies, the thread will appear here.
             </div>
           `;
@@ -1029,8 +1028,8 @@
               <div class="client-card">
                 <small>Verified request</small>
                 <strong>${escapeHtml(submission.email || 'Unknown requester')}</strong>
-                <span>Case ${escapeHtml(submission.caseCode || 'Unassigned')} is waiting for its unique access code.</span>
-                <span>Dashboard ID: ${escapeHtml(submission.dashboardId || 'Pending')}</span>
+                <span>Case ${escapeHtml(submission.caseCode || 'Unassigned')} is waiting for its access code.</span>
+                <span>Record ID: ${escapeHtml(submission.dashboardId || 'Pending')}</span>
               </div>
             `).join('');
             metricClient.textContent = latest.email || 'Unknown';
@@ -1066,7 +1065,7 @@
             <small>Verified request</small>
             <strong>${escapeHtml(accessState.email || 'Unknown requester')}</strong>
             <span>Case ${escapeHtml(accessState.caseCode || 'Unassigned')} is currently open with ${escapeHtml(accessState.agent || 'KUAC Associate')}.</span>
-            <span>Dashboard ID: ${escapeHtml(accessState.dashboardId || 'Pending')}</span>
+            <span>Record ID: ${escapeHtml(accessState.dashboardId || 'Pending')}</span>
           </div>
           <div class="case-card">
             <small>Proof</small>
@@ -1078,7 +1077,7 @@
         metricClient.textContent = accessState.email || 'Unknown';
         metricAgent.textContent = accessState.agent || 'KUAC Associate';
         metricCode.textContent = issuedCodeLabel(accessState.email, accessState.caseCode);
-        agentChatStatus.textContent = `Live thread ready for ${accessState.caseCode || 'the selected case'}.`;
+          agentChatStatus.textContent = `Live thread ready for ${accessState.caseCode || 'the selected case'}.`;
       }
 
       function issuedCodeLabel(email, code) {
@@ -1440,8 +1439,8 @@
 
         agentStatus.className = serverSynced ? 'status is-success' : 'status is-error';
         agentStatus.textContent = serverSynced
-          ? `Unique access code ${serverIssuedCode} issued for ${email} in ${code}. Email notification queued.`
-          : `Unique access code ${serverIssuedCode} issued for ${email} in ${code}. Saved locally, but the server sync failed.`;
+          ? `Access code ${serverIssuedCode} issued for ${email} in ${code}. Email notification queued.`
+          : `Access code ${serverIssuedCode} issued for ${email} in ${code}. Saved locally, but server sync failed.`;
         metricClient.textContent = email;
         metricAgent.textContent = agent;
         metricCode.textContent = serverIssuedCode;

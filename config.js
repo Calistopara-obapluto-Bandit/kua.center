@@ -1,4 +1,4 @@
-// Centralized config for the static callback form.
+// Centralized configuration for the KUAC site.
 window.KUAC_CONFIG = Object.freeze({
   formEndpoint: 'https://formsubmit.co/kua.center@gmail.com',
   liveSiteUrl: 'https://kua-center.onrender.com/',
@@ -16,9 +16,9 @@ window.KUAC_CONFIG = Object.freeze({
   autoresponse: [
     '<b>Hi {{ name }},</b>',
     '',
-    'Your message has been received and is currently being reviewed by our team.',
+    'Thank you for contacting KUAC. Your request has been received and is now being reviewed by our team.',
     '',
-    'For your reference, this ticket id is <b>{{ ticketId }}</b>.',
+    'For reference, your ticket ID is <b>{{ ticketId }}</b>.',
   ].join('\n'),
 });
 

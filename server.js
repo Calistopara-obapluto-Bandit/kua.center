@@ -153,7 +153,7 @@ function requireDashboardAuth(req, res, opts = {}) {
     return false;
   }
 
-  sendJson(res, 401, { ok: false, error: 'Authentication required' });
+  sendJson(res, 401, { ok: false, error: 'Staff authentication required' });
   return false;
 }
 
@@ -470,7 +470,7 @@ function appendChatMessage(payload) {
   }
 
   if (!hasKnownCase(caseCode)) {
-    const err = new Error('Unknown case code');
+    const err = new Error('Case code not found');
     err.statusCode = 404;
     throw err;
   }
@@ -643,7 +643,7 @@ async function serveStatic(req, res, pathname) {
   let requestPath = decodeURIComponent(pathname);
   if (requestPath.includes('\0')) {
     res.writeHead(400);
-    res.end('Bad request');
+    res.end('Invalid request');
     return;
   }
 
@@ -723,7 +723,7 @@ function handleApi(req, res, urlObj) {
       .then(async (payload) => {
         const code = String(payload.code || '').trim();
         if (!DASHBOARD_ACCESS_CODE || code !== DASHBOARD_ACCESS_CODE) {
-          sendJson(res, 401, { ok: false, error: 'Invalid access code' });
+          sendJson(res, 401, { ok: false, error: 'Access code is invalid' });
           return;
         }
 
@@ -783,7 +783,7 @@ function handleApi(req, res, urlObj) {
     }
 
     if (!record) {
-      sendJson(res, 404, { ok: false, error: 'Unknown dashboard ID' });
+      sendJson(res, 404, { ok: false, error: 'Dashboard record not found' });
       return;
     }
 
@@ -810,7 +810,7 @@ function handleApi(req, res, urlObj) {
       (dashboardId.trim() ? findCaseRecordByDashboardId(dashboardId) : null);
 
     if (!dashboardId.trim() && !caseCode.trim() && !email.trim()) {
-      sendJson(res, 400, { ok: false, error: 'Dashboard ID, case code, or email is required' });
+      sendJson(res, 400, { ok: false, error: 'Provide a dashboard ID, case code, or email' });
       return;
     }
 
@@ -819,7 +819,7 @@ function handleApi(req, res, urlObj) {
     const issuedAccessCode = String((issued && (issued.accessCode || issued.code)) || '').trim();
 
     if (accessCode.trim() && issuedAccessCode && accessCode.trim() !== issuedAccessCode) {
-      sendJson(res, 401, { ok: false, error: 'Invalid access code' });
+      sendJson(res, 401, { ok: false, error: 'Access code is invalid' });
       return;
     }
 
@@ -934,12 +934,12 @@ function handleApi(req, res, urlObj) {
     const resolvedCaseCode = String(caseCode || (record && record.caseCode) || '').trim().toUpperCase();
 
     if (!resolvedCaseCode) {
-      sendJson(res, 400, { ok: false, error: 'Case code or dashboard ID is required' });
+      sendJson(res, 400, { ok: false, error: 'Provide a case code or dashboard ID' });
       return;
     }
 
     if (!hasKnownCase(resolvedCaseCode)) {
-      sendJson(res, 404, { ok: false, error: 'Unknown case code' });
+      sendJson(res, 404, { ok: false, error: 'Case code not found' });
       return;
     }
 
@@ -1000,7 +1000,7 @@ async function handleRequest(req, res) {
       return;
     }
 
-    sendJson(res, 401, { ok: false, error: 'Authentication required' });
+    sendJson(res, 401, { ok: false, error: 'Staff authentication required' });
     return;
   }
 

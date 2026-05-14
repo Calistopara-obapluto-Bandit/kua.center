@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC private admin login for the agent dashboard."
+      content="KUAC staff login for the private operations dashboard."
     />
-    <title>KUAC Agent Login</title>
+    <title>KUAC Staff Login</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -160,32 +160,30 @@
   </head>
   <body>
     <section class="panel">
-      <span class="eyebrow"><i class="far fa-lock" aria-hidden="true"></i> Private ops only</span>
-      <h1>KUAC agent login</h1>
+      <span class="eyebrow"><i class="far fa-lock" aria-hidden="true"></i> Authorized staff only</span>
+      <h1>Staff access portal</h1>
       <p>
-        This portal is for KUAC staff only. Enter the private access code to open the static
-        admin dashboard.
+        Enter your private access code to open the KUAC operations dashboard.
       </p>
       <div class="session-note">
-        <strong><i class="far fa-shield-check" aria-hidden="true"></i> Browser session required</strong>
+        <strong><i class="far fa-shield-check" aria-hidden="true"></i> Secure browser session</strong>
         <span>
-          The code is checked in the browser and stored on this device for a limited time. This is
-          a static-site gate, not a server session.
+          The code is verified in your browser and stored on this device for a limited time.
         </span>
       </div>
       <form class="form" id="loginForm">
         <div>
           <label for="loginCode">Access code</label>
-          <input id="loginCode" type="password" autocomplete="off" placeholder="Enter staff code" required />
+          <input id="loginCode" type="password" autocomplete="off" placeholder="Enter private staff code" required />
         </div>
         <div class="row">
-          <div class="status" id="loginStatus">Enter the KUAC staff access code to continue.</div>
-          <button class="button" type="submit">Unlock dashboard</button>
+          <div class="status" id="loginStatus">Enter your access code to continue.</div>
+          <button class="button" type="submit">Open dashboard</button>
         </div>
       </form>
       <div class="links">
-        <a class="link" href="index.html">Back to KUAC</a>
-        <a class="link" href="client-dashboard.html">Open client dashboard</a>
+        <a class="link" href="index.html">Back to site</a>
+        <a class="link" href="client-dashboard.html">Open case portal</a>
       </div>
     </section>
 
@@ -230,17 +228,17 @@
 
         const code = loginCode.value.trim();
         if (!code) {
-          setStatus('Enter the staff access code before continuing.', 'error');
+          setStatus('Enter the private access code before continuing.', 'error');
           return;
         }
 
         if (code !== STATIC_DASHBOARD_CODE) {
-          setStatus('That access code is not valid for KUAC operations.', 'error');
+          setStatus('That access code is not valid for KUAC staff access.', 'error');
           return;
         }
 
         saveStaticSession();
-        setStatus('Dashboard unlocked.', 'success');
+        setStatus('Dashboard opened.', 'success');
         window.location.href = 'agent-dashboard.html';
       });
 

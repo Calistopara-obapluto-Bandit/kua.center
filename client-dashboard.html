@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC help page for opening an assigned case with an access code and viewing the follow-up details."
+      content="KUAC client portal for opening an assigned case with an access code and reviewing follow-up details."
     />
-    <title>KUAC Help Page</title>
+    <title>KUAC Client Portal</title>
     <style>
       :root {
         color-scheme: dark;
@@ -387,20 +387,20 @@
         <header class="topline">
           <div class="brand">
             <span class="eyebrow">KUAC</span>
-            <h1>Open your assigned help case</h1>
+            <h1>Open your assigned case</h1>
             <p>
-              If KUAC issued you an access code, use it here to open the case that was assigned to you.
-              The live help room stays available for private follow-up once your case is unlocked.
+              If KUAC issued you an access code, use it here to open the case assigned to you and review
+              the next steps.
             </p>
           </div>
-          <span class="status-chip" id="pageStatus">Awaiting access code</span>
+          <span class="status-chip" id="pageStatus">Awaiting code</span>
         </header>
 
         <div class="grid">
           <article class="panel">
             <div class="panel-head">
-              <small>Access code</small>
-              <h2>Open the request KUAC assigned</h2>
+              <small>Case access</small>
+              <h2>Open the case KUAC assigned</h2>
             </div>
             <div class="panel-body">
               <form id="accessForm" class="form" novalidate>
@@ -419,8 +419,8 @@
                   <input id="accessCode" name="accessCode" type="text" placeholder="KUAC-ACCESS-2048" required />
                 </div>
                 <div class="actions-row">
-                  <div class="status" id="formStatus">Enter the details KUAC sent you, then open your assigned help case.</div>
-                  <button class="button" type="submit">Open assigned case</button>
+                    <div class="status" id="formStatus">Enter the details KUAC sent you to open your case.</div>
+                    <button class="button" type="submit">Open case</button>
                 </div>
               </form>
             </div>
@@ -429,12 +429,12 @@
           <aside class="panel">
             <div class="panel-head">
               <small>Case view</small>
-              <h2>What opens after the code matches</h2>
+              <h2>What opens after verification</h2>
             </div>
             <div class="panel-body">
               <div class="issue-shell hidden" id="issueShell">
                 <div class="issue-card">
-                  <strong id="issueTitle">Assigned help case</strong>
+                  <strong id="issueTitle">Assigned case</strong>
                   <p id="issueSummary"></p>
                 </div>
 
@@ -444,7 +444,7 @@
                     <strong id="issueAgent">Pending</strong>
                   </div>
                   <div class="meta">
-                    <small>Dashboard ID</small>
+                    <small>Record ID</small>
                     <strong id="issueDashboard">Pending</strong>
                   </div>
                   <div class="meta">
@@ -456,21 +456,21 @@
                 <div class="message-list" id="messageList"></div>
 
                 <div class="info-card">
-                  <strong>Live follow-up room</strong>
+                  <strong>Follow-up room</strong>
                   <p>
-                    Once the access code matches, you can continue to the private KUAC help room for live
-                    support and follow-up.
+                    Once the code matches, you can continue to the private KUAC support room for live help
+                    and follow-up.
                   </p>
                   <div class="actions-row" style="margin-top: 12px;">
-                    <a class="button" id="openHelpRoom" href="/support-chat/index.html">Open help room</a>
+                    <a class="button" id="openHelpRoom" href="/support-chat/index.html">Open support room</a>
                     <button class="button secondary" id="copyCaseCode" type="button">Copy case code</button>
                   </div>
                 </div>
               </div>
 
               <div class="notice" id="emptyNotice">
-                KUAC staff issue the access code after they open your request. Use the code here to unlock the
-                assigned case and keep the follow-up together in one place.
+                KUAC staff issue the access code after your request is reviewed. Use the code here to open the
+                assigned case and keep all follow-up in one place.
               </div>
             </div>
           </aside>
@@ -514,7 +514,7 @@
           if (!Array.isArray(messages) || !messages.length) {
             const empty = document.createElement('div');
             empty.className = 'notice';
-            empty.textContent = 'No internal messages have been added to this case yet.';
+            empty.textContent = 'No updates have been added to this case yet.';
             messageList.appendChild(empty);
             return;
           }
@@ -596,7 +596,7 @@
                 clientName: issued.clientName || 'Client',
                 status: 'issued',
                 dashboardId: issued.dashboardId || 'local-browser',
-                summary: issued.note || 'Your assigned help case is open.',
+                summary: issued.note || 'Your assigned case is open.',
               },
               submission: {
                 email: issued.email || email,
@@ -631,13 +631,13 @@
           const accessCode = document.getElementById('accessCode').value.trim();
 
           if (!email || !caseCode || !accessCode) {
-            setFormStatus('Please enter your email, case code, and the KUAC access code.', 'error');
-            setPageStatus('Awaiting access code');
+            setFormStatus('Please enter your email, case code, and access code.', 'error');
+            setPageStatus('Awaiting code');
             return;
           }
 
-          setFormStatus('Checking your assigned help case...', '');
-          setPageStatus('Checking case');
+          setFormStatus('Checking your case details...', '');
+          setPageStatus('Checking details');
 
           try {
             const payload = backend && backend.available
@@ -645,7 +645,7 @@
               : null;
 
             if (!payload) {
-              throw new Error('The help case service is unavailable from this preview. Open the deployed KUAC site to continue.');
+              throw new Error('The case service is unavailable from this preview. Open the deployed KUAC site to continue.');
             }
 
             if (!payload.ok) {
@@ -655,11 +655,11 @@
             const issued = payload.issued || {};
             const issuedCode = String(issued.code || issued.accessCode || '').trim();
             if (issuedCode && issuedCode !== accessCode) {
-              throw new Error('That access code does not match the code KUAC issued for this case.');
+              throw new Error('That access code does not match the code issued for this case.');
             }
 
             const ticket = payload.ticket || payload.submission || {};
-            const summary = ticket.summary || ticket.note || 'Your assigned help case is open.';
+            const summary = ticket.summary || ticket.note || 'Your assigned case is open.';
 
             issueShell.classList.remove('hidden');
             emptyNotice.classList.add('hidden');
@@ -671,7 +671,7 @@
             openHelpRoom.href = '/support-chat/index.html';
 
             renderMessages(payload.messages || []);
-            setFormStatus('Access code confirmed. Your assigned help case is open.', 'success');
+            setFormStatus('Access code confirmed. Your case is open.', 'success');
             setPageStatus('Case opened', 'success');
           } catch (error) {
             const fallback = loadLocalIssuedCase(email, caseCode, accessCode);
@@ -682,7 +682,7 @@
               issueShell.classList.remove('hidden');
               emptyNotice.classList.add('hidden');
               issueTitle.textContent = `Case ${ticket.caseCode || caseCode}`;
-              issueSummary.textContent = ticket.summary || ticket.note || 'Your assigned help case is open.';
+              issueSummary.textContent = ticket.summary || ticket.note || 'Your case is open.';
               issueAgent.textContent = ticket.agent || issued.agent || 'KUAC Associate';
               issueDashboard.textContent = ticket.dashboardId || issued.dashboardId || 'local-browser';
               issueStatus.textContent = ticket.status || 'issued';
@@ -697,8 +697,8 @@
             issueShell.classList.add('hidden');
             emptyNotice.classList.remove('hidden');
             const message = error && error.status === 404
-              ? 'KUAC could not find that case on the server yet. Try again from the same browser that issued it, or wait for the deployment to finish.'
-              : error.message || 'We could not open that case.';
+                ? 'KUAC could not find that case on the server yet. Try again from the same browser that created it, or wait for the deployment to finish.'
+                : error.message || 'We could not open that case.';
             setFormStatus(message, 'error');
             setPageStatus('Access code needed', 'error');
           }
