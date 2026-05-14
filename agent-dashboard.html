@@ -361,6 +361,7 @@
         display: flex;
         justify-content: space-between;
         gap: 10px;
+        flex-wrap: wrap;
         font-size: 0.76rem;
         color: var(--muted-2);
         margin-bottom: 6px;
@@ -529,12 +530,19 @@
 
         .actions {
           width: 100%;
+          gap: 8px;
         }
 
         .session-chip,
         .pill-link {
           width: 100%;
           justify-content: center;
+        }
+
+        .session-chip {
+          white-space: normal;
+          text-align: center;
+          line-height: 1.35;
         }
 
         .chat-panel {
@@ -549,6 +557,10 @@
         .actions-row {
           flex-direction: column;
           align-items: stretch;
+        }
+
+        .chat-actions {
+          gap: 10px;
         }
 
         .button {
