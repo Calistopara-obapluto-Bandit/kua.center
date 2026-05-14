@@ -692,7 +692,7 @@
               openHelpRoom.href = '/support-chat/index.html';
 
               renderMessages([]);
-              setFormStatus('Loaded from your local browser record because the server does not have this case yet.', 'success');
+              setFormStatus('Loaded from the local case record because the server does not have this case yet.', 'success');
               setPageStatus('Case opened', 'success');
               return;
             }
@@ -700,7 +700,7 @@
             issueShell.classList.add('hidden');
             emptyNotice.classList.remove('hidden');
             const message = error && error.status === 404
-                ? 'KUAC could not find that case on the server yet. Try again from the same browser that created it, or wait for the deployment to finish.'
+                ? 'KUAC could not find that case on the server yet. Try again from the same device that created it, or wait for the deployment to finish.'
                 : error.message || 'We could not open that case.';
             setFormStatus(message, 'error');
             setPageStatus('Access code needed', 'error');
