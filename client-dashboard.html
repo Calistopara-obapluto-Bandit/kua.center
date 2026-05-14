@@ -390,7 +390,7 @@
             <h1>Open your assigned case</h1>
             <p>
               If KUAC issued you an access code, use it here to open the case assigned to you and review
-              the next steps.
+              the next steps in one place. Keep the email, case code, and access code together for a faster lookup.
             </p>
           </div>
           <span class="status-chip" id="pageStatus">Awaiting code</span>
@@ -403,23 +403,26 @@
               <h2>Open the case KUAC assigned</h2>
             </div>
             <div class="panel-body">
+              <div class="notice">
+                Have your email, case code, and access code ready. KUAC will confirm the match and show your follow-up details below.
+              </div>
               <form id="accessForm" class="form" novalidate>
                 <div class="field-row">
                   <div class="field">
                     <label for="email">Email</label>
-                    <input id="email" name="email" type="email" placeholder="client@example.com" required />
+                    <input id="email" name="email" type="email" placeholder="Email KUAC used for the case" required />
                   </div>
                   <div class="field">
                     <label for="caseCode">Case code</label>
-                    <input id="caseCode" name="caseCode" type="text" placeholder="KUAC-INT-01" required />
+                    <input id="caseCode" name="caseCode" type="text" placeholder="Case code from KUAC" required />
                   </div>
                 </div>
                 <div class="field full">
                   <label for="accessCode">Access code</label>
-                  <input id="accessCode" name="accessCode" type="text" placeholder="KUAC-ACCESS-2048" required />
+                  <input id="accessCode" name="accessCode" type="text" placeholder="Access code from KUAC" required />
                 </div>
                 <div class="actions-row">
-                    <div class="status" id="formStatus">Enter the details KUAC sent you to open your case.</div>
+                    <div class="status" id="formStatus">Enter the email, case code, and access code KUAC sent you.</div>
                     <button class="button" type="submit">Open case</button>
                 </div>
               </form>
@@ -440,7 +443,7 @@
 
                 <div class="meta-grid">
                   <div class="meta">
-                    <small>Agent</small>
+                    <small>Assigned associate</small>
                     <strong id="issueAgent">Pending</strong>
                   </div>
                   <div class="meta">
@@ -514,7 +517,7 @@
           if (!Array.isArray(messages) || !messages.length) {
             const empty = document.createElement('div');
             empty.className = 'notice';
-            empty.textContent = 'No updates have been added to this case yet.';
+            empty.textContent = 'No updates have been added to this case yet. KUAC will show the latest note here once the case is active.';
             messageList.appendChild(empty);
             return;
           }
@@ -689,7 +692,7 @@
               openHelpRoom.href = '/support-chat/index.html';
 
               renderMessages([]);
-              setFormStatus('Loaded from the local browser record because the server does not have this case yet.', 'success');
+              setFormStatus('Loaded from your local browser record because the server does not have this case yet.', 'success');
               setPageStatus('Case opened', 'success');
               return;
             }
