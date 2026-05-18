@@ -1179,6 +1179,7 @@
                       </div>
                       <input type="hidden" name="_subject" value="KUAC | Support Request Received" />
                       <input type="hidden" name="_template" value="box" />
+                      <input type="hidden" name="_api_url" value="https://kua-center.onrender.com/api/callbacks" />
                       <input type="hidden" name="_url" value="https://kua-center.onrender.com/" />
                       <input type="hidden" name="_next" value="https://kua-center.onrender.com/?callback=sent#contact" />
                       <input type="hidden" name="_replyto" value="" />
@@ -1491,7 +1492,10 @@
               throw new Error('This browser cannot submit the callback securely.');
             }
 
-            const response = await window.fetch('/api/callbacks', {
+            const apiUrlField = form.querySelector('input[name="_api_url"]');
+            const callbackApiUrl = apiUrlField && apiUrlField.value ? apiUrlField.value.trim() : '/api/callbacks';
+
+            const response = await window.fetch(callbackApiUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

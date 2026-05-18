@@ -41,6 +41,14 @@ function getCallbackNextUrl() {
   return fallbackUrl;
 }
 
+function getCallbackApiUrl() {
+  try {
+    return new URL('/api/callbacks', window.KUAC_CONFIG.liveSiteUrl).toString();
+  } catch (error) {
+    return '/api/callbacks';
+  }
+}
+
 (function configureCallbackForm() {
   const form = document.getElementById('callbackForm');
   if (!form) {
@@ -52,6 +60,11 @@ function getCallbackNextUrl() {
 
   form.action = formEndpoint;
   form.dataset.formEndpoint = formEndpoint;
+
+  const apiUrlField = form.querySelector('input[name="_api_url"]');
+  if (apiUrlField) {
+    apiUrlField.value = getCallbackApiUrl();
+  }
 
   const templateField = form.querySelector('input[name="_template"]');
   if (templateField) {
