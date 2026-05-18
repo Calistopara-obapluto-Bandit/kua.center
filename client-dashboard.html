@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC client portal for opening an assigned case with an access code and reviewing follow-up details."
+      content="KUAC client portal for opening an assigned case and reviewing follow-up details."
     />
     <title>KUAC Client Portal</title>
     <style>
@@ -389,8 +389,8 @@
             <span class="eyebrow">KUAC</span>
             <h1>Open your assigned case</h1>
             <p>
-              If KUAC issued you an access code, use it here to open the case assigned to you and review
-              the next steps in one place. Keep the email, case code, and access code together for a faster lookup.
+              If KUAC issued you an access code, use it here to open your case and review the next steps in one
+              place. Keep the email, case code, and access code together for a faster lookup.
             </p>
           </div>
           <span class="status-chip" id="pageStatus">Awaiting code</span>
@@ -404,13 +404,14 @@
             </div>
             <div class="panel-body">
               <div class="notice">
-                Have your email, case code, and access code ready. KUAC will confirm the match and show your follow-up details below.
+                Have your email, case code, and access code ready. KUAC will confirm the match and show your
+                follow-up details below.
               </div>
               <form id="accessForm" class="form" novalidate>
                 <div class="field-row">
                   <div class="field">
                     <label for="email">Email</label>
-                    <input id="email" name="email" type="email" placeholder="Email KUAC used for the case" required />
+                    <input id="email" name="email" type="email" placeholder="Email used for the case" required />
                   </div>
                   <div class="field">
                     <label for="caseCode">Case code</label>
@@ -422,7 +423,7 @@
                   <input id="accessCode" name="accessCode" type="text" placeholder="Access code from KUAC" required />
                 </div>
                 <div class="actions-row">
-                    <div class="status" id="formStatus">Enter the email, case code, and access code KUAC sent you.</div>
+                    <div class="status" id="formStatus">Enter the email, case code, and access code you received from KUAC.</div>
                     <button class="button" type="submit">Open case</button>
                 </div>
               </form>
@@ -432,7 +433,7 @@
           <aside class="panel">
             <div class="panel-head">
               <small>Case view</small>
-              <h2>What opens after verification</h2>
+              <h2>What you can see after verification</h2>
             </div>
             <div class="panel-body">
               <div class="issue-shell hidden" id="issueShell">
@@ -461,19 +462,18 @@
                 <div class="info-card">
                   <strong>Follow-up room</strong>
                   <p>
-                    Once the code matches, you can continue to the private KUAC support room for live help
-                    and follow-up.
+                    Once the code matches, you can open the private KUAC support room for live help and follow-up.
                   </p>
                   <div class="actions-row" style="margin-top: 12px;">
-                    <a class="button" id="openHelpRoom" href="/support-chat/index.html">Open support room</a>
+                    <a class="button" id="openHelpRoom" href="/support-chat/index.html">Open support chat</a>
                     <button class="button secondary" id="copyCaseCode" type="button">Copy case code</button>
                   </div>
                 </div>
               </div>
 
               <div class="notice" id="emptyNotice">
-                KUAC staff issue the access code after your request is reviewed. Use the code here to open the
-                assigned case and keep all follow-up in one place.
+                KUAC staff send the access code after your request is reviewed. Use it here to open the assigned
+                case and keep all follow-up in one place.
               </div>
             </div>
           </aside>

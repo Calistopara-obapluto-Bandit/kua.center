@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC staff login for the private dashboard."
+      content="KUAC staff sign-in for the private dashboard."
     />
     <title>KUAC Staff Login</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -162,9 +162,9 @@
   <body>
     <section class="panel">
       <span class="eyebrow"><i class="far fa-lock" aria-hidden="true"></i> Authorized staff only</span>
-      <h1>Staff access portal</h1>
+      <h1>Staff sign-in</h1>
       <p>
-        Enter your private access code to open the KUAC dashboard.
+        Use your staff access code to open the private KUAC dashboard.
       </p>
       <div class="session-note">
         <strong><i class="far fa-shield-check" aria-hidden="true"></i> Secure staff session</strong>
@@ -175,16 +175,16 @@
       <form class="form" id="loginForm">
         <div>
           <label for="loginCode">Access code</label>
-          <input id="loginCode" type="password" autocomplete="off" placeholder="Enter private staff code" required />
+          <input id="loginCode" type="password" autocomplete="off" placeholder="Staff access code" required />
         </div>
         <div class="row">
-          <div class="status" id="loginStatus">Enter your access code to continue.</div>
+          <div class="status" id="loginStatus">Enter your staff code to continue.</div>
           <button class="button" type="submit">Open dashboard</button>
         </div>
       </form>
       <div class="links">
         <a class="link" href="index.html">Back to site</a>
-        <a class="link" href="client-dashboard.html">Open case portal</a>
+        <a class="link" href="client-dashboard.html">Open client portal</a>
       </div>
     </section>
 
@@ -205,7 +205,7 @@
 
         const code = loginCode.value.trim();
         if (!code) {
-          setStatus('Enter the private access code before continuing.', 'error');
+          setStatus('Enter the staff access code before continuing.', 'error');
           return;
         }
 
@@ -221,13 +221,13 @@
           });
 
           if (!result || !result.authenticated) {
-            throw new Error('That access code is not valid for KUAC staff access.');
+            throw new Error('That staff access code is not valid.');
           }
 
           setStatus('Dashboard opened.', 'success');
           window.location.href = 'agent-dashboard.html';
         } catch (error) {
-          setStatus(error && error.message ? error.message : 'That access code is not valid for KUAC staff access.', 'error');
+          setStatus(error && error.message ? error.message : 'That staff access code is not valid.', 'error');
         }
       });
     </script>

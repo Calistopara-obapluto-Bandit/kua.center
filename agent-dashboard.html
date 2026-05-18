@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="KUAC staff dashboard for reviewing requests, assigning associates, issuing access codes, and managing follow-up."
+      content="KUAC staff dashboard for reviewing requests, issuing access codes, and managing follow-up."
     />
     <title>KUAC Staff Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -671,15 +671,15 @@
       <header class="topbar">
         <div class="brand">
           <span class="eyebrow"><i class="far fa-user-shield" aria-hidden="true"></i> Private staff tools</span>
-          <h1>Staff dashboard for verified KUAC requests.</h1>
+          <h1>Staff dashboard for verified KUAC requests</h1>
           <p>
-            Review submitted requests, assign an associate, issue access codes, and manage follow-up from
-            one private workspace.
+            Review requests, assign an associate, issue access codes, and manage follow-up from one private
+            workspace.
           </p>
         </div>
         <div class="actions">
           <span class="session-chip" id="sessionChip"><i class="far fa-shield-check" aria-hidden="true"></i> Session pending</span>
-          <a class="pill-link" href="support-chat/index.html"><i class="far fa-comments" aria-hidden="true"></i> Open client support room</a>
+          <a class="pill-link" href="support-chat/index.html"><i class="far fa-comments" aria-hidden="true"></i> Open support room</a>
           <button class="pill-link" id="logoutButton" type="button"><i class="far fa-sign-out" aria-hidden="true"></i> Log out</button>
           <a class="pill-link" href="index.html"><i class="far fa-arrow-left" aria-hidden="true"></i> Back to site</a>
         </div>
@@ -689,7 +689,7 @@
         <section class="panel">
           <div class="panel-head">
             <small>Case assignment</small>
-            <h2>Assign follow-up to a verified request</h2>
+            <h2>Assign follow-up for a verified request</h2>
           </div>
           <div class="panel-body">
             <form class="form" id="agentForm">
@@ -716,14 +716,14 @@
               <div class="field full">
                 <label for="accessCode">Generated access code</label>
                 <input id="accessCode" type="text" placeholder="Generated automatically" />
-                <small class="chat-help">Leave this blank and KUAC will generate a unique access code automatically.</small>
+                <small class="chat-help">Leave this blank and KUAC will generate a code automatically.</small>
               </div>
               <div class="field full">
                 <label for="agentNote">Private note</label>
                 <textarea id="agentNote" rows="4" placeholder="Add a short note about the request, routing, or follow-up."></textarea>
               </div>
               <div class="actions-row">
-                <div class="status" id="agentStatus">Load a verified request, then generate an access code.</div>
+                <div class="status" id="agentStatus">Load a verified request, then issue an access code.</div>
                 <div class="actions-row" style="justify-content:flex-end;">
                   <button class="button secondary" id="regenerateAccessCodeButton" type="button">Regenerate code</button>
                   <button class="button" type="submit">Issue access code</button>
@@ -760,7 +760,7 @@
         <section class="panel" style="grid-column: 1 / -1;">
           <div class="panel-head">
             <small>Private notes</small>
-            <h2>Reply to the request without leaving the dashboard</h2>
+            <h2>Reply without leaving the dashboard</h2>
           </div>
           <div class="panel-body chat-panel">
             <div>
@@ -773,7 +773,7 @@
                 <textarea id="agentChatMessage" placeholder="Type a reply for the current case"></textarea>
               </div>
               <div class="chat-actions">
-                <div class="chat-help">These notes stay separate from the public Tawk support room.</div>
+                <div class="chat-help">These notes stay separate from the public Tawk chat.</div>
                 <button class="button" type="submit">Send reply</button>
               </div>
             </form>
@@ -783,7 +783,7 @@
         <section class="panel" style="grid-column: 1 / -1;">
           <div class="panel-head">
             <small>Issued codes</small>
-            <h2>Follow-up registry</h2>
+            <h2>Issued access codes</h2>
           </div>
           <div class="panel-body">
             <div class="table-wrap">
@@ -801,7 +801,7 @@
               </table>
             </div>
             <div class="empty-state" id="emptyState" hidden>
-              No access codes have been issued yet. Use the form above after reviewing a verified request.
+              No access codes have been issued yet. Review a verified request above to get started.
             </div>
           </div>
         </section>
@@ -1344,13 +1344,13 @@
 
           if (!email || !code) {
             agentStatus.className = 'status is-error';
-            agentStatus.textContent = 'Enter the requester email and case code before generating a new access code.';
+            agentStatus.textContent = 'Enter the requester email and case code before issuing a new access code.';
             return;
           }
 
           const generated = regenerateAccessCode();
           agentStatus.className = 'status';
-          agentStatus.textContent = `Fresh access code ${generated} generated for this requester.`;
+          agentStatus.textContent = `Issued access code ${generated} for this requester.`;
           metricCode.textContent = generated;
         });
       }
@@ -1367,7 +1367,7 @@
 
         if (!email || !code) {
           agentStatus.className = 'status is-error';
-          agentStatus.textContent = 'Enter the requester email and case code before issuing.';
+          agentStatus.textContent = 'Enter the requester email and case code before issuing a code.';
           return;
         }
 
