@@ -447,7 +447,7 @@
                     <strong id="issueAgent">Pending</strong>
                   </div>
                   <div class="meta">
-                    <small>Record ID</small>
+                    <small>Reference ID</small>
                     <strong id="issueDashboard">Pending</strong>
                   </div>
                   <div class="meta">
@@ -700,7 +700,7 @@
             issueShell.classList.add('hidden');
             emptyNotice.classList.remove('hidden');
             const message = error && error.status === 404
-                ? 'KUAC could not find that case on the server yet. Try again from the same device that created it, or wait for the deployment to finish.'
+                ? 'KUAC could not find that case on the server yet. Try again from the same device, or wait for the deployment to finish.'
                 : error.message || 'We could not open that case.';
             setFormStatus(message, 'error');
             setPageStatus('Access code needed', 'error');
