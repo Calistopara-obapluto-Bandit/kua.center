@@ -757,6 +757,19 @@
           </div>
         </section>
 
+        <section class="panel">
+          <div class="panel-head">
+            <small>Callback inbox</small>
+            <h2>Homepage requests</h2>
+          </div>
+          <div class="panel-body">
+            <div class="stack" id="callbackList"></div>
+            <div class="empty-state" id="callbackEmptyState" hidden>
+              No callback requests have been submitted yet.
+            </div>
+          </div>
+        </section>
+
         <section class="panel" style="grid-column: 1 / -1;">
           <div class="panel-head">
             <small>Private notes</small>
@@ -849,6 +862,8 @@
       const agentChatStatus = document.getElementById('agentChatStatus');
       const registryBody = document.getElementById('registryBody');
       const emptyState = document.getElementById('emptyState');
+      const callbackList = document.getElementById('callbackList');
+      const callbackEmptyState = document.getElementById('callbackEmptyState');
       const metricClient = document.getElementById('metricClient');
       const metricAgent = document.getElementById('metricAgent');
       const metricCode = document.getElementById('metricCode');
@@ -868,6 +883,7 @@
       let draftState = loadJson(DRAFT_STATE_KEY, {});
       let registry = loadJson(AGENT_CREDENTIALS_KEY, {});
       let remoteSubmissions = [];
+      let remoteCallbacks = [];
       let liveChatMessages = [];
 
       function loadJson(key, fallback) {
@@ -990,6 +1006,37 @@
         agentChatStatus.textContent = `Live thread synced for ${code}.`;
       }
 
+      function renderCallbacks() {
+        if (!callbackList || !callbackEmptyState) {
+          return;
+        }
+
+        const entries = Array.isArray(remoteCallbacks)
+          ? remoteCallbacks.slice().sort((a, b) => new Date(b.submittedAt || 0).getTime() - new Date(a.submittedAt || 0).getTime())
+          : [];
+
+        callbackList.innerHTML = '';
+        callbackEmptyState.hidden = entries.length > 0;
+
+        if (!entries.length) {
+          return;
+        }
+
+        entries.slice(0, 5).forEach((entry) => {
+          const item = document.createElement('article');
+          item.className = 'client-card';
+          item.innerHTML = `
+            <small>Callback request</small>
+            <strong>${escapeHtml(entry.name || 'Unknown requester')}</strong>
+            <span>Email: ${escapeHtml(entry.email || 'No email provided')}</span>
+            <span>Phone: ${escapeHtml(entry.phone || 'No phone provided')}</span>
+            <span>${escapeHtml(entry.message || 'No note provided')}</span>
+            <span>Submitted ${escapeHtml(fmtTime(entry.submittedAt))}</span>
+          `;
+          callbackList.appendChild(item);
+        });
+      }
+
       async function syncLiveChat() {
         const code = currentChatCode();
         if (!code) {
@@ -1013,6 +1060,28 @@
         }
 
         renderChatThread(code, liveChatMessages);
+      }
+
+      async function loadDashboardState() {
+        remoteSubmissions = [];
+        remoteCallbacks = [];
+
+        if (!backend || !backend.available) {
+          return;
+        }
+
+        try {
+          const state = await backend.fetchState();
+          remoteSubmissions = Object.values((state && state.submissions) || {}).sort((a, b) => {
+            const left = new Date(b.submittedAt || 0).getTime();
+            const right = new Date(a.submittedAt || 0).getTime();
+            return left - right;
+          });
+          remoteCallbacks = Object.values((state && state.callbacks) || {});
+        } catch (error) {
+          remoteSubmissions = [];
+          remoteCallbacks = [];
+        }
       }
 
       function syncFromClientState() {
@@ -1041,6 +1110,7 @@
             metricAgent.textContent = 'Waiting';
             metricCode.textContent = 'Pending';
           }
+          renderCallbacks();
           return;
         }
 
@@ -1072,7 +1142,9 @@
         metricClient.textContent = accessState.email || 'Unknown';
         metricAgent.textContent = accessState.agent || 'KUAC Associate';
         metricCode.textContent = issuedCodeLabel(accessState.email, accessState.caseCode);
-          agentChatStatus.textContent = `Live thread ready for ${accessState.caseCode || 'the selected case'}.`;
+        agentChatStatus.textContent = `Live thread ready for ${accessState.caseCode || 'the selected case'}.`;
+
+        renderCallbacks();
       }
 
       function issuedCodeLabel(email, code) {
@@ -1453,8 +1525,10 @@
 
       (async () => {
         if (await verifyDashboardSession()) {
+          await loadDashboardState();
           syncFromClientState();
           renderRegistry();
+          renderCallbacks();
           syncLiveChat();
         }
       })();
