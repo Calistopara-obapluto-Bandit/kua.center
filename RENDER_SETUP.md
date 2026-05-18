@@ -1,6 +1,6 @@
 # Render Setup for KUAC
 
-This project is set up for Render and keeps the help page compatible with a static host while the rest of the app can still run as a Node service.
+This project is set up for Render as a single Node web service that serves the public pages and the API together.
 
 ## Live Site
 
@@ -10,8 +10,7 @@ This project is set up for Render and keeps the help page compatible with a stat
 
 ## Service Type
 
-- Static site name: `kua-center`
-- API service name: `kua-center-api`
+- Service name: `kua-center-api`
 - Type: `Web Service`
 - Environment: `Node`
 - Build command: `npm run ci:validate`
@@ -29,13 +28,12 @@ Set `KUAC_DATA_DIR` to the mounted disk path if you change the default data loca
 Use this quick note when setting up or updating Render:
 
 ```text
-Static site name: kua-center
-API service name: kua-center-api
+Service name: kua-center-api
 Service type: Web Service
 Branch: main
 Start command: npm start
 Open /agent-login.html to access the private admin dashboard.
-The public help page is static-site friendly and uses Tawk for live chat.
+The public help page and API are both served by the Node service.
 ```
 
 ## Reset Admin Access
@@ -48,7 +46,7 @@ To rotate the private dashboard code:
 
 ## Support Chat
 
-- The public help page is Tawk-backed and works as a static page on Render without a server API.
+- The public help page is Tawk-backed and is served by the Node web service on Render.
 - `config.js` supplies the Tawk property ID, widget ID, and direct chat URL used by the help page.
 - The client dashboard uses the access code to open the assigned case, while Tawk handles the live help room.
 - The agent dashboard still links to the help page, but the live conversation itself is handled by Tawk.

@@ -13,22 +13,6 @@ const REQUIRED_FILES = [
   'render.yaml',
 ];
 
-const HTML_FILES = [
-  'index.html',
-  'agent-login.html',
-  'agent-dashboard.html',
-  'support-chat.html',
-];
-
-const CSS_FILES = [
-  'css/styles.css',
-  'css/bootstrap.min.css',
-  'css/tooplate-infinite-loop.css',
-  'magnific-popup/magnific-popup.css',
-  'slick/slick.css',
-  'slick/slick-theme.css',
-];
-
 function readText(relativePath) {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
 }
@@ -64,6 +48,7 @@ function normalizeReference(raw) {
 
 function checkRelativeReferences(relativePath, text, patterns) {
   for (const pattern of patterns) {
+    pattern.lastIndex = 0;
     let match;
     while ((match = pattern.exec(text)) !== null) {
       const reference = normalizeReference(match[1]);
@@ -88,12 +73,37 @@ function checkRelativeReferences(relativePath, text, patterns) {
   }
 }
 
+function walkFiles(dirRelative, allowedExtensions, collected = []) {
+  const dirFull = path.join(ROOT, dirRelative);
+  for (const entry of fs.readdirSync(dirFull, { withFileTypes: true })) {
+    if (entry.name === '.git') {
+      continue;
+    }
+
+    const nextRelative = path.join(dirRelative, entry.name);
+    if (entry.isDirectory()) {
+      walkFiles(nextRelative, allowedExtensions, collected);
+      continue;
+    }
+
+    if (allowedExtensions.has(path.extname(entry.name).toLowerCase())) {
+      collected.push(nextRelative);
+    }
+  }
+
+  return collected;
+}
+
 function main() {
   for (const file of REQUIRED_FILES) {
     assertExists(file);
   }
 
-  for (const file of HTML_FILES) {
+  const htmlFiles = walkFiles('.', new Set(['.html']));
+  const cssFiles = walkFiles('.', new Set(['.css']));
+  const jsFiles = walkFiles('.', new Set(['.js']));
+
+  for (const file of htmlFiles) {
     const text = readText(file);
     checkRelativeReferences(file, text, [
       /(?:src|href)=["']([^"']+)["']/gi,
@@ -101,7 +111,7 @@ function main() {
     ]);
   }
 
-  for (const file of CSS_FILES) {
+  for (const file of cssFiles) {
     const text = readText(file);
     checkRelativeReferences(file, text, [
       /url\(["']?([^"')]+)["']?\)/gi,
@@ -109,6 +119,13 @@ function main() {
   }
 
   const { spawnSync } = require('child_process');
+  for (const file of jsFiles) {
+    const result = spawnSync(process.execPath, ['--check', file], { cwd: ROOT, stdio: 'ignore' });
+    if (result.status !== 0) {
+      throw new Error(`JavaScript syntax check failed for: ${file}`);
+    }
+  }
+
   const result = spawnSync(process.execPath, ['--check', 'server.js'], { stdio: 'inherit', cwd: ROOT });
   if (result.status !== 0) {
     process.exit(result.status || 1);

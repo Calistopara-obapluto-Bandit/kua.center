@@ -1,8 +1,6 @@
 services:
   - type: web
     env: node
-    # Static site name on Render: kua-center
-    # API service name on Render: kua-center-api
     name: kua-center-api
     branch: main
     buildCommand: npm run ci:validate
