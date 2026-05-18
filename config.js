@@ -68,6 +68,11 @@ function getCallbackNextUrl() {
     subjectField.value = config.subject || subjectField.value;
   }
 
+  const urlField = form.querySelector('input[name="_url"]');
+  if (urlField) {
+    urlField.value = getCallbackNextUrl().split('?')[0];
+  }
+
   const nextField = form.querySelector('input[name="_next"]');
   if (nextField) {
     nextField.value = getCallbackNextUrl();
