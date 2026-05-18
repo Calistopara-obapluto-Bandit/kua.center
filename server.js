@@ -14,6 +14,7 @@ const DASHBOARD_SESSION_COOKIE = 'kuac_admin_session';
 const DASHBOARD_SESSION_TTL_MS = 1000 * 60 * 60 * 8;
 
 const DEFAULT_STATE = {
+  callbacks: {},
   submissions: {},
   issued: {},
   chats: {},
@@ -25,6 +26,7 @@ let state = cloneState(DEFAULT_STATE);
 
 function cloneState(source) {
   return {
+    callbacks: Object.assign({}, source.callbacks || {}),
     submissions: Object.assign({}, source.submissions || {}),
     issued: Object.assign({}, source.issued || {}),
     chats: Object.assign({}, source.chats || {}),
@@ -210,6 +212,7 @@ function normalizeDashboardId(dashboardId) {
 
 function publicState() {
   return {
+    callbacks: Object.assign({}, state.callbacks || {}),
     submissions: Object.assign({}, state.submissions || {}),
     issued: Object.assign({}, state.issued || {}),
     tickets: Object.assign({}, state.tickets || {}),
@@ -541,6 +544,40 @@ function upsertSubmission(payload) {
   return state.submissions[key];
 }
 
+function upsertCallbackRequest(payload) {
+  const name = String(payload.name || '').trim();
+  const email = String(payload.email || '').trim();
+  const phone = String(payload.phone || '').trim();
+  const message = String(payload.message || '').trim();
+  const attachmentName = String(payload.attachmentName || '').trim();
+  const attachmentType = String(payload.attachmentType || '').trim();
+  const attachmentSize = Number(payload.attachmentSize || 0) || 0;
+
+  if (!name || !email || !phone) {
+    const err = new Error('Name, email, and phone are required');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const id = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(12).toString('hex');
+  const callback = {
+    id,
+    name,
+    email,
+    phone,
+    message,
+    attachmentName,
+    attachmentType,
+    attachmentSize,
+    sourceUrl: String(payload.sourceUrl || '').trim(),
+    status: 'new',
+    submittedAt: new Date().toISOString(),
+  };
+
+  state.callbacks[id] = callback;
+  return callback;
+}
+
 function isAccessCodeTaken(code, ignoreKey = '') {
   const normalizedCode = String(code || '').trim().toUpperCase();
   const normalizedIgnoreKey = normalizeCaseKey(
@@ -857,6 +894,19 @@ function handleApi(req, res, urlObj) {
         const submission = upsertSubmission(payload);
         await saveState();
         sendJson(res, 200, { ok: true, submission, state: publicState() });
+      })
+      .catch((error) => {
+        sendJson(res, error.statusCode || 500, { ok: false, error: error.message || 'Server error' });
+      });
+    return;
+  }
+
+  if (req.method === 'POST' && urlObj.pathname === '/api/callbacks') {
+    readJsonBody(req)
+      .then(async (payload) => {
+        const callback = upsertCallbackRequest(payload);
+        await saveState();
+        sendJson(res, 200, { ok: true, callback, state: publicState() });
       })
       .catch((error) => {
         sendJson(res, error.statusCode || 500, { ok: false, error: error.message || 'Server error' });

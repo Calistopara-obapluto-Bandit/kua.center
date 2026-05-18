@@ -1415,7 +1415,9 @@
           }, 450);
         });
 
-        $('#callbackForm').on('submit', function () {
+        $('#callbackForm').on('submit', async function (event) {
+          event.preventDefault();
+
           const form = this;
           const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your request securely...');
           const submitButton = form.querySelector('.tm-btn-submit');
@@ -1424,8 +1426,22 @@
           const emailField = form.querySelector('input[name="email"]');
           const autoresponseField = form.querySelector('input[name="_autoresponse"]');
           const nameField = form.querySelector('input[name="name"]');
+          const attachmentField = form.querySelector('input[name="attachment"]');
           const displayName = nameField ? nameField.value.trim() : '';
           const recipientName = displayName || 'KUAC client';
+          const attachment = attachmentField && attachmentField.files ? attachmentField.files[0] : null;
+          const phoneField = form.querySelector('input[name="phone"]');
+          const messageField = form.querySelector('textarea[name="message"]');
+          const payload = {
+            name: displayName,
+            email: emailField ? emailField.value.trim() : '',
+            phone: phoneField ? phoneField.value.trim() : '',
+            message: messageField ? messageField.value.trim() : '',
+            sourceUrl: window.location.href,
+            attachmentName: attachment ? attachment.name : '',
+            attachmentType: attachment ? attachment.type : '',
+            attachmentSize: attachment ? attachment.size : 0,
+          };
 
           if (replyToField && emailField) {
             replyToField.value = emailField.value.trim();
@@ -1459,14 +1475,65 @@
             submitButton.setAttribute('aria-busy', 'true');
           }
 
-          window.setTimeout(function () {
-            if (submitButton) {
-              submitButton.disabled = false;
-              submitButton.textContent = originalButtonText;
-              submitButton.removeAttribute('aria-busy');
+          const currentConfig = window.KUAC_CONFIG || {};
+          let localSaveError = null;
+
+          if (window.fetch && typeof window.fetch === 'function') {
+            try {
+              await window.fetch('/api/callbacks', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+              });
+            } catch (error) {
+              localSaveError = error;
             }
-            $status.text('If the page does not redirect, please try again or contact KUAC directly.');
-          }, 12000);
+          }
+
+          let emailSendError = null;
+          try {
+            const hiddenFrameName = `callback-submit-${Date.now()}`;
+            const hiddenFrame = document.createElement('iframe');
+            hiddenFrame.name = hiddenFrameName;
+            hiddenFrame.title = 'KUAC callback submission';
+            hiddenFrame.style.display = 'none';
+            document.body.appendChild(hiddenFrame);
+
+            const previousTarget = form.target;
+            const previousAction = form.action;
+            form.target = hiddenFrameName;
+            form.action = form.dataset.formEndpoint || currentConfig.formEndpoint || previousAction;
+            form.submit();
+            window.setTimeout(function () {
+              form.target = previousTarget || '';
+              form.action = previousAction;
+              if (hiddenFrame && hiddenFrame.parentNode) {
+                hiddenFrame.parentNode.removeChild(hiddenFrame);
+              }
+            }, 0);
+            window.setTimeout(function () {
+              if (hiddenFrame && hiddenFrame.parentNode) {
+                hiddenFrame.parentNode.removeChild(hiddenFrame);
+              }
+            }, 8000);
+          } catch (error) {
+            emailSendError = error;
+          }
+
+          if (!localSaveError || !emailSendError) {
+            $status.removeClass('is-error').addClass('is-success').text('Thank you. We have your request and will review it shortly.');
+          } else {
+            const errorMessage = (emailSendError && emailSendError.message) || (localSaveError && localSaveError.message) || 'We could not send your request. Please try again or contact KUAC directly.';
+            $status.removeClass('is-success').addClass('is-error').text(errorMessage);
+          }
+
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+            submitButton.removeAttribute('aria-busy');
+          }
         });
 
         (function showCallbackSuccessMessage() {
