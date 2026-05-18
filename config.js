@@ -19,6 +19,9 @@ window.KUAC_CONFIG = Object.freeze({
     'Thank you for contacting KUAC. Your request has been received and is now being reviewed by our team.',
     '',
     'For reference, your ticket ID is <b>{{ ticketId }}</b>.',
+    '',
+    'If a payment is required for your request, we can accept bank transfer, KUAC gift card, or digital currency.',
+    'We will share the next payment steps with you by email if needed.',
   ].join('\n'),
 });
 
