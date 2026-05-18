@@ -49,10 +49,12 @@ async function saveState() {
 
 function sendJson(res, statusCode, payload) {
   const body = JSON.stringify(payload);
+  const origin = String(res.__kuacOrigin || '').trim();
   res.writeHead(statusCode, {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin || '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS',
+    ...(origin ? { 'Access-Control-Allow-Credentials': 'true', Vary: 'Origin' } : {}),
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
     'Content-Length': Buffer.byteLength(body),
@@ -61,10 +63,12 @@ function sendJson(res, statusCode, payload) {
 }
 
 function sendNoContent(res) {
+  const origin = String(res.__kuacOrigin || '').trim();
   res.writeHead(204, {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin || '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS',
+    ...(origin ? { 'Access-Control-Allow-Credentials': 'true', Vary: 'Origin' } : {}),
     'Cache-Control': 'no-store',
   });
   res.end();
@@ -709,6 +713,8 @@ async function serveStatic(req, res, pathname) {
 }
 
 function handleApi(req, res, urlObj) {
+  res.__kuacOrigin = req.headers.origin || '';
+
   if (req.method === 'GET' && urlObj.pathname === '/api/admin/session') {
     sendJson(res, 200, {
       ok: true,

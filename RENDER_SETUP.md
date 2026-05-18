@@ -21,7 +21,7 @@ This project is set up for Render and keeps the help page compatible with a stat
 ## Required Render Settings
 
 Set `AGENT_DASHBOARD_PASSWORD` in Render if you want the private dashboard login to work against the server-backed session gate.
-The private dashboard gate is configured in `config.js` through `dashboardAccessCode` for the static fallback.
+The private dashboard gate is configured in `config.js` through `dashboardAccessCode` for the staff login form.
 Set `KUAC_DATA_DIR` to the mounted disk path if you change the default data location. The current blueprint uses `/opt/render/project/src/data`.
 
 ## Copy-Paste Setup Note
@@ -65,7 +65,7 @@ To rotate the private dashboard code:
 
 ## Attachment Notes
 
-- The form uses normal browser form submission and FormSubmit relays the attachment.
+- The form uses normal browser submission and FormSubmit relays the attachment.
 - Keep the total file size within FormSubmit's limits.
 - Good formats for this workflow are `pdf`, `png`, `jpg`, `jpeg`, `webp`, `doc`, and `docx`.
 

@@ -37,6 +37,7 @@ window.KUAC_BACKEND = (function () {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       cache: 'no-store',
     }, options || {}));
 

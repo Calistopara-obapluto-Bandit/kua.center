@@ -598,7 +598,7 @@
                 agent: issued.agent || 'KUAC Associate',
                 clientName: issued.clientName || 'Client',
                 status: 'issued',
-                dashboardId: issued.dashboardId || 'local-browser',
+                dashboardId: issued.dashboardId || 'local-record',
                 summary: issued.note || 'Your assigned case is open.',
               },
               submission: {
@@ -606,7 +606,7 @@
                 caseCode: issued.caseCode || caseCode,
                 agent: issued.agent || 'KUAC Associate',
                 clientName: issued.clientName || 'Client',
-                dashboardId: issued.dashboardId || 'local-browser',
+                dashboardId: issued.dashboardId || 'local-record',
                 status: 'issued',
               },
               issued: {
@@ -616,10 +616,10 @@
                 clientName: issued.clientName || 'Client',
                 code: issuedCode,
                 accessCode: issuedCode,
-                dashboardId: issued.dashboardId || 'local-browser',
+                dashboardId: issued.dashboardId || 'local-record',
               },
               messages: loadLocalChatMessages(caseCode),
-              source: 'local-storage',
+              source: 'local-record',
             };
           } catch (error) {
             return null;
@@ -687,7 +687,7 @@
               issueTitle.textContent = `Case ${ticket.caseCode || caseCode}`;
               issueSummary.textContent = ticket.summary || ticket.note || 'Your case is open.';
               issueAgent.textContent = ticket.agent || issued.agent || 'KUAC Associate';
-              issueDashboard.textContent = ticket.dashboardId || issued.dashboardId || 'local-browser';
+              issueDashboard.textContent = ticket.dashboardId || issued.dashboardId || 'local-record';
               issueStatus.textContent = ticket.status || 'issued';
               openHelpRoom.href = '/support-chat/index.html';
 
