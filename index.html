@@ -1185,7 +1185,7 @@
                       <input type="hidden" name="_autoresponse" value="Dear KUAC client,&#10;&#10;Thank you for reaching out to KUAC. Your request has been received and is now being reviewed by our team.&#10;&#10;We will check the details you shared, look for the most appropriate support path, and follow up if a suitable partner is available.&#10;&#10;What happens next:&#10;- We confirm your request.&#10;- We review the details and context.&#10;- We share the next step by email if support is available.&#10;&#10;If a payment is required for your request, we can accept bank transfer, KUAC gift card, or digital currency. We will share the next payment steps with you by email if needed.&#10;&#10;If you need to add anything, simply reply to this email.&#10;&#10;Kind regards,&#10;KUAC Support Team" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <p class="tm-form-status tm-form-hint">
-                        Submit the form to send your request securely. A confirmation email will follow shortly.
+                        Submit the form to send your request securely. KUAC will verify it and review it shortly.
                       </p>
                       <button type="submit" class="btn tm-btn-submit">Submit Request</button>
                       <p class="tm-form-status" id="callbackFormStatus" aria-live="polite"></p>
@@ -1416,7 +1416,9 @@
           }, 450);
         });
 
-        $('#callbackForm').on('submit', function () {
+        $('#callbackForm').on('submit', async function (event) {
+          event.preventDefault();
+
           const form = this;
           const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your request securely...');
           const submitButton = form.querySelector('.tm-btn-submit');
@@ -1440,6 +1442,7 @@
             attachmentName: attachment ? attachment.name : '',
             attachmentType: attachment ? attachment.type : '',
             attachmentSize: attachment ? attachment.size : 0,
+            attachmentDataUrl: '',
           };
 
           if (replyToField && emailField) {
@@ -1474,30 +1477,45 @@
             submitButton.setAttribute('aria-busy', 'true');
           }
 
-          if (window.navigator && typeof window.navigator.sendBeacon === 'function') {
-            try {
-              const beaconBody = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-              window.navigator.sendBeacon('/api/callbacks', beaconBody);
-            } catch (error) {
-              // Ignore beacon errors; the form can still submit normally.
+          try {
+            if (attachment) {
+              payload.attachmentDataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = () => reject(reader.error || new Error('Unable to read attachment'));
+                reader['readAsDataURL'](attachment);
+              });
             }
-          } else if (window.fetch && typeof window.fetch === 'function') {
-            window.fetch('/api/callbacks', {
+
+            if (!window.fetch || typeof window.fetch !== 'function') {
+              throw new Error('This browser cannot submit the callback securely.');
+            }
+
+            const response = await window.fetch('/api/callbacks', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify(payload),
               keepalive: true,
-            }).catch(() => {});
-          }
+            });
 
-          if (submitButton) {
-            window.setTimeout(function () {
+            const body = await response.json().catch(() => ({}));
+            if (!response.ok || !body || !body.ok) {
+              throw new Error((body && body.error) || 'We could not save your request.');
+            }
+
+            $status.removeClass('is-error').addClass('is-success').text('Thank you. We have your request and will review it shortly.');
+          } catch (error) {
+            $status.removeClass('is-success').addClass('is-error').text(
+              error && error.message ? error.message : 'We could not send your request. Please try again or contact KUAC directly.',
+            );
+          } finally {
+            if (submitButton) {
               submitButton.disabled = false;
               submitButton.textContent = originalButtonText;
               submitButton.removeAttribute('aria-busy');
-            }, 12000);
+            }
           }
         });
 

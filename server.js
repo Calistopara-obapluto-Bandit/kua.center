@@ -552,6 +552,7 @@ function upsertCallbackRequest(payload) {
   const attachmentName = String(payload.attachmentName || '').trim();
   const attachmentType = String(payload.attachmentType || '').trim();
   const attachmentSize = Number(payload.attachmentSize || 0) || 0;
+  const attachmentDataUrl = String(payload.attachmentDataUrl || '').trim();
 
   if (!name || !email || !phone) {
     const err = new Error('Name, email, and phone are required');
@@ -569,6 +570,7 @@ function upsertCallbackRequest(payload) {
     attachmentName,
     attachmentType,
     attachmentSize,
+    attachmentDataUrl,
     sourceUrl: String(payload.sourceUrl || '').trim(),
     status: 'new',
     submittedAt: new Date().toISOString(),
