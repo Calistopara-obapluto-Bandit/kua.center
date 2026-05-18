@@ -720,7 +720,7 @@
             await navigator.clipboard.writeText(caseCode);
             setFormStatus('Case code copied.', 'success');
           } catch (error) {
-            setFormStatus('Your browser blocked copying. You can select the case code manually.', 'error');
+            setFormStatus('Copying was blocked on this device. You can select the case code manually.', 'error');
           }
         });
       })();
