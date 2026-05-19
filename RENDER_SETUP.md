@@ -1,6 +1,6 @@
 # Render Setup for KUAC
 
-This project is set up for Render as a static frontend plus a separate Node API service.
+This project is set up for Render as a static frontend plus a separate API service.
 
 ## Live Site
 
@@ -44,7 +44,7 @@ The public help page is served as static HTML, the callback form posts through F
 To rotate the private dashboard code:
 
 1. Update `dashboardAccessCode` in `config.js`.
-2. Redeploy the web service.
+2. Redeploy the API service.
 3. Share the new code with the KUAC staff who need dashboard access.
 
 ## Support Chat
