@@ -1088,8 +1088,12 @@
           });
           remoteCallbacks = Object.values((state && state.callbacks) || {});
         } catch (error) {
-          remoteSubmissions = [];
-          remoteCallbacks = [];
+          remoteSubmissions = loadStaticCallbacks().slice().sort((a, b) => {
+            const left = new Date(b.submittedAt || 0).getTime();
+            const right = new Date(a.submittedAt || 0).getTime();
+            return left - right;
+          });
+          remoteCallbacks = remoteSubmissions.slice();
         }
       }
 
@@ -1397,9 +1401,7 @@
         try {
           const result = await backend.request('/api/admin/session');
           if (!result || !result.authenticated) {
-            setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Server session required');
-            window.location.replace('agent-login.html');
-            return false;
+            throw new Error('Server session unavailable');
           }
 
           const expiresLabel = result.expiresAt
@@ -1411,6 +1413,19 @@
           setSessionChip(`<i class="far fa-shield-check" aria-hidden="true"></i> ${escapeHtml(expiresLabel)}`);
           return true;
         } catch (error) {
+          const raw = localStorage.getItem(STATIC_SESSION_KEY);
+          let session = null;
+          try {
+            session = raw ? JSON.parse(raw) : null;
+          } catch (storageError) {
+            session = null;
+          }
+
+          if (session && session.code === config.dashboardAccessCode) {
+            setSessionChip('<i class="far fa-shield-check" aria-hidden="true"></i> Static session active');
+            return true;
+          }
+
           setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Server session required');
           window.location.replace('agent-login.html');
           return false;

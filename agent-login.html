@@ -243,6 +243,21 @@
           setStatus('Dashboard opened.', 'success');
           window.location.href = 'agent-dashboard.html';
         } catch (error) {
+          if (code === (window.KUAC_CONFIG && window.KUAC_CONFIG.dashboardAccessCode)) {
+            try {
+              localStorage.setItem(STATIC_SESSION_KEY, JSON.stringify({
+                code,
+                createdAt: new Date().toISOString(),
+              }));
+            } catch (storageError) {
+              // Ignore storage errors and continue to the dashboard.
+            }
+
+            setStatus('Dashboard opened.', 'success');
+            window.location.href = 'agent-dashboard.html';
+            return;
+          }
+
           setStatus(error && error.message ? error.message : 'That staff access code is not valid.', 'error');
         }
       });
