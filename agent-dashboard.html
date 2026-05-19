@@ -844,6 +844,8 @@
       const ACCESS_STATE_KEY = 'kuac-private-chat-access';
       const DRAFT_STATE_KEY = 'kuac-private-chat-draft';
       const AGENT_CREDENTIALS_KEY = 'kuac-agent-issued-credentials';
+      const STATIC_SESSION_KEY = 'kuac-static-staff-session';
+      const STATIC_CALLBACKS_KEY = 'kuac-static-callbacks';
       const logoutButton = document.getElementById('logoutButton');
       const sessionChip = document.getElementById('sessionChip');
 
@@ -903,6 +905,10 @@
       function saveStateSnapshot() {
         localStorage.setItem(ACCESS_STATE_KEY, JSON.stringify(accessState || null));
         localStorage.setItem(DRAFT_STATE_KEY, JSON.stringify(draftState || {}));
+      }
+
+      function loadStaticCallbacks() {
+        return loadJson(STATIC_CALLBACKS_KEY, []);
       }
 
       function credentialKey(email, code) {
@@ -1063,10 +1069,13 @@
       }
 
       async function loadDashboardState() {
-        remoteSubmissions = [];
-        remoteCallbacks = [];
-
         if (!backend || !backend.available) {
+          remoteSubmissions = loadStaticCallbacks().slice().sort((a, b) => {
+            const left = new Date(b.submittedAt || 0).getTime();
+            const right = new Date(a.submittedAt || 0).getTime();
+            return left - right;
+          });
+          remoteCallbacks = remoteSubmissions.slice();
           return;
         }
 
@@ -1367,9 +1376,22 @@
 
       async function verifyDashboardSession() {
         if (!backend || !backend.available) {
-          setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Server session required');
-          window.location.replace('agent-login.html');
-          return false;
+          const raw = localStorage.getItem(STATIC_SESSION_KEY);
+          let session = null;
+          try {
+            session = raw ? JSON.parse(raw) : null;
+          } catch (error) {
+            session = null;
+          }
+
+          if (!session || session.code !== config.dashboardAccessCode) {
+            setSessionChip('<i class="far fa-lock" aria-hidden="true"></i> Static session required');
+            window.location.replace('agent-login.html');
+            return false;
+          }
+
+          setSessionChip('<i class="far fa-shield-check" aria-hidden="true"></i> Static session active');
+          return true;
         }
 
         try {
@@ -1403,6 +1425,8 @@
             } catch (error) {
               // Redirect even if the server logout request fails.
             }
+          } else {
+            localStorage.removeItem(STATIC_SESSION_KEY);
           }
 
           window.location.href = 'agent-login.html';
@@ -1481,7 +1505,7 @@
           note,
         };
 
-        let serverSynced = false;
+        let serverSynced = !backend || !backend.available;
         let serverIssuedCode = access;
         if (backend && backend.available) {
           try {

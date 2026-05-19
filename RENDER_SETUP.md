@@ -1,6 +1,6 @@
 # Render Setup for KUAC
 
-This project is set up for Render as a single Node web service that serves the public pages and the API together.
+This project is set up for Render as a static site that serves the public pages directly from the repo.
 
 ## Live Site
 
@@ -10,30 +10,27 @@ This project is set up for Render as a single Node web service that serves the p
 
 ## Service Type
 
-- Service name: `kua-center-api`
-- Type: `Web Service`
-- Environment: `Node`
+- Service name: `kua-center-static`
+- Type: `Static Site`
 - Build command: `npm run ci:validate`
-- Start command: `npm start`
-- Plan: `starter` or higher, so the service can use a persistent disk for saved case data
+- Publish path: `.`
 
 ## Required Render Settings
 
-Set `AGENT_DASHBOARD_PASSWORD` in Render if you want the private dashboard login to work against the server-backed session gate.
+The private dashboard login now uses the browser session storage fallback when the backend is unavailable.
 The private dashboard gate is configured in `config.js` through `dashboardAccessCode` for the staff login form.
-Set `KUAC_DATA_DIR` to the mounted disk path if you change the default data location. The current blueprint uses `/opt/render/project/src/data`.
 
 ## Copy-Paste Setup Note
 
 Use this quick note when setting up or updating Render:
 
 ```text
-Service name: kua-center-api
-Service type: Web Service
+Service name: kua-center-static
+Service type: Static Site
 Branch: main
-Start command: npm start
+Publish path: .
 Open /agent-login.html to access the private admin dashboard.
-The public help page and API are both served by the Node service.
+The public help page is served as static HTML, and the callback form posts through FormSubmit.
 ```
 
 ## Reset Admin Access
@@ -46,7 +43,7 @@ To rotate the private dashboard code:
 
 ## Support Chat
 
-- The public help page is Tawk-backed and is served by the Node web service on Render.
+- The public help page is Tawk-backed and is served as static HTML on Render.
 - `config.js` supplies the Tawk property ID, widget ID, and direct chat URL used by the help page.
 - The client dashboard uses the access code to open the assigned case, while Tawk handles the live help room.
 - The agent dashboard still links to the help page, but the live conversation itself is handled by Tawk.

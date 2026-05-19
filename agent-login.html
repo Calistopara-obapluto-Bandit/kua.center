@@ -190,6 +190,7 @@
 
     <script>
       const backend = window.KUAC_BACKEND || null;
+      const STATIC_SESSION_KEY = 'kuac-static-staff-session';
 
       const loginForm = document.getElementById('loginForm');
       const loginCode = document.getElementById('loginCode');
@@ -210,7 +211,22 @@
         }
 
         if (!backend || !backend.available) {
-          setStatus('The staff portal is unavailable from this preview. Open the deployed KUAC site to continue.', 'error');
+          if (code !== (window.KUAC_CONFIG && window.KUAC_CONFIG.dashboardAccessCode)) {
+            setStatus('That staff access code is not valid.', 'error');
+            return;
+          }
+
+          try {
+            localStorage.setItem(STATIC_SESSION_KEY, JSON.stringify({
+              code,
+              createdAt: new Date().toISOString(),
+            }));
+          } catch (error) {
+            // Ignore storage errors and continue to the dashboard.
+          }
+
+          setStatus('Dashboard opened.', 'success');
+          window.location.href = 'agent-dashboard.html';
           return;
         }
 

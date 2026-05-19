@@ -1,6 +1,7 @@
 window.KUAC_BACKEND = (function () {
   const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
   const config = window.KUAC_CONFIG || {};
+  const staticSiteMode = Boolean(config.staticSiteMode);
 
   function getApiBaseUrl() {
     const liveSiteUrl = String(config.liveSiteUrl || '').trim().replace(/\/$/, '');
@@ -68,7 +69,7 @@ window.KUAC_BACKEND = (function () {
   }
 
   return Object.freeze({
-    available: isHttp && typeof fetch === 'function',
+    available: !staticSiteMode && isHttp && typeof fetch === 'function',
     request,
     fileToDataUrl,
     fetchState: () => request('/api/state'),
