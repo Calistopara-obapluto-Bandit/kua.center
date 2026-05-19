@@ -1,6 +1,6 @@
 # Render Setup for KUAC
 
-This project is set up for Render as a static site that serves the public pages directly from the repo.
+This project is set up for Render as a static frontend plus a separate Node API service.
 
 ## Live Site
 
@@ -10,14 +10,18 @@ This project is set up for Render as a static site that serves the public pages 
 
 ## Service Type
 
-- Service name: `kua-center-static`
-- Type: `Static Site`
+- Static frontend service name: `kua-center-static`
+- Static frontend type: `Static Site`
+- API service name: `kua-center-api`
+- API service type: `Web Service`
 - Build command: `npm run ci:validate`
 - Publish path: `.`
+- API build command: `npm run ci:validate`
+- API start command: `npm start`
 
 ## Required Render Settings
 
-The private dashboard login now uses the browser session storage fallback when the backend is unavailable.
+The private dashboard login uses the API service when available and falls back to browser session storage if the API is not reachable.
 The private dashboard gate is configured in `config.js` through `dashboardAccessCode` for the staff login form.
 
 ## Copy-Paste Setup Note
@@ -25,12 +29,14 @@ The private dashboard gate is configured in `config.js` through `dashboardAccess
 Use this quick note when setting up or updating Render:
 
 ```text
-Service name: kua-center-static
-Service type: Static Site
+Static frontend service name: kua-center-static
+Static frontend type: Static Site
+API service name: kua-center-api
+API service type: Web Service
 Branch: main
 Publish path: .
 Open /agent-login.html to access the private admin dashboard.
-The public help page is served as static HTML, and the callback form posts through FormSubmit.
+The public help page is served as static HTML, the callback form posts through FormSubmit, and the API service stores callbacks for the dashboards.
 ```
 
 ## Reset Admin Access

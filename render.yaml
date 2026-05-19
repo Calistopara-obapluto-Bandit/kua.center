@@ -6,3 +6,18 @@ services:
     buildCommand: npm run ci:validate
     staticPublishPath: .
     autoDeployTrigger: commit
+  - type: web
+    runtime: node
+    name: kua-center-api
+    branch: main
+    buildCommand: npm run ci:validate
+    startCommand: npm start
+    autoDeployTrigger: commit
+    plan: starter
+    envVars:
+      - key: KUAC_DATA_DIR
+        value: /opt/render/project/src/data
+    disk:
+      name: kuac-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

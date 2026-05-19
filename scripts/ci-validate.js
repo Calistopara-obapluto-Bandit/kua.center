@@ -9,6 +9,7 @@ const REQUIRED_FILES = [
   'support-chat.html',
   'client-dashboard.html',
   'config.js',
+  'server.js',
   'render.yaml',
 ];
 
@@ -125,7 +126,12 @@ function main() {
     }
   }
 
-  console.log('Static validation passed.');
+  const result = spawnSync(process.execPath, ['--check', 'server.js'], { stdio: 'inherit', cwd: ROOT });
+  if (result.status !== 0) {
+    process.exit(result.status || 1);
+  }
+
+  console.log('Static and server validation passed.');
 }
 
 main();

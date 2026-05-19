@@ -1184,6 +1184,7 @@
                       <input type="hidden" name="_replyto" value="" />
                       <input type="hidden" name="_autoresponse" value="Dear KUAC client,&#10;&#10;Thank you for reaching out to KUAC. Your request has been received and is now being reviewed by our team.&#10;&#10;We will check the details you shared, look for the most appropriate support path, and follow up if a suitable partner is available.&#10;&#10;What happens next:&#10;- We confirm your request.&#10;- We review the details and context.&#10;- We share the next step by email if support is available.&#10;&#10;If a payment is required for your request, we can accept bank transfer, KUAC gift card, or digital currency. We will share the next payment steps with you by email if needed.&#10;&#10;If you need to add anything, simply reply to this email.&#10;&#10;Kind regards,&#10;KUAC Support Team" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+                      <iframe name="callbackMailSink" hidden title="Callback mail delivery"></iframe>
                       <p class="tm-form-status tm-form-hint">
                         Submit the form to send your request securely. KUAC will verify it and review it shortly.
                       </p>
@@ -1416,14 +1417,32 @@
           }, 450);
         });
 
-        $('#callbackForm').on('submit', function () {
+        $('#callbackForm').on('submit', async function (event) {
+          event.preventDefault();
+
           const form = this;
           const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your request securely...');
           const submitButton = form.querySelector('.tm-btn-submit');
           const originalButtonText = submitButton ? submitButton.textContent : '';
           const emailField = form.querySelector('input[name="email"]');
           const nameField = form.querySelector('input[name="name"]');
+          const attachmentField = form.querySelector('input[name="attachment"]');
           const displayName = nameField ? nameField.value.trim() : '';
+          const attachment = attachmentField && attachmentField.files ? attachmentField.files[0] : null;
+          const phoneField = form.querySelector('input[name="phone"]');
+          const messageField = form.querySelector('textarea[name="message"]');
+          const apiEndpoint = (window.KUAC_CONFIG && window.KUAC_CONFIG.callbackEndpoint) || form.dataset.formEndpoint || '/api/callbacks';
+          const payload = {
+            name: displayName,
+            email: emailField ? emailField.value.trim() : '',
+            phone: phoneField ? phoneField.value.trim() : '',
+            message: messageField ? messageField.value.trim() : '',
+            sourceUrl: window.location.href,
+            attachmentName: attachment ? attachment.name : '',
+            attachmentType: attachment ? attachment.type : '',
+            attachmentSize: attachment ? attachment.size : 0,
+            attachmentDataUrl: '',
+          };
 
           if (submitButton) {
             submitButton.disabled = true;
@@ -1431,30 +1450,67 @@
             submitButton.setAttribute('aria-busy', 'true');
           }
 
-          if (window.localStorage) {
-            try {
-              const key = 'kuac-static-callbacks';
-              const existing = JSON.parse(window.localStorage.getItem(key) || '[]');
-              const next = existing.concat({
-                name: displayName,
-                email: emailField ? emailField.value.trim() : '',
-                phone: form.querySelector('input[name="phone"]') ? form.querySelector('input[name="phone"]').value.trim() : '',
-                message: form.querySelector('textarea[name="message"]') ? form.querySelector('textarea[name="message"]').value.trim() : '',
-                submittedAt: new Date().toISOString(),
-              }).slice(-50);
-              window.localStorage.setItem(key, JSON.stringify(next));
-            } catch (error) {
-              // Ignore storage errors and keep the native submit path working.
+          try {
+            if (attachment) {
+              payload.attachmentDataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = () => reject(reader.error || new Error('Unable to read attachment'));
+                reader['readAsDataURL'](attachment);
+              });
             }
-          }
 
-          window.setTimeout(function () {
+            if (window.localStorage) {
+              try {
+                const key = 'kuac-static-callbacks';
+                const existing = JSON.parse(window.localStorage.getItem(key) || '[]');
+                const next = existing.concat({
+                  name: displayName,
+                  email: payload.email,
+                  phone: payload.phone,
+                  message: payload.message,
+                  submittedAt: new Date().toISOString(),
+                }).slice(-50);
+                window.localStorage.setItem(key, JSON.stringify(next));
+              } catch (error) {
+                // Ignore storage errors and keep the send paths working.
+              }
+            }
+
+            if (window.fetch && typeof window.fetch === 'function' && apiEndpoint) {
+              try {
+                await window.fetch(apiEndpoint, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(payload),
+                  keepalive: true,
+                });
+              } catch (error) {
+                // Keep the FormSubmit path working even if the API sync is unavailable.
+              }
+            }
+          } catch (error) {
+            $status.removeClass('is-success').addClass('is-error').text(
+              error && error.message ? error.message : 'We could not send your request. Please try again or contact KUAC directly.',
+            );
+          } finally {
+            form.target = 'callbackMailSink';
+            form.submit();
+
+            $status.removeClass('is-error').addClass('is-success').text(
+              displayName
+                ? `Thanks, ${displayName}. KUAC received your request and will review it shortly.`
+                : 'Thanks. KUAC received your request and will review it shortly.',
+            );
+
             if (submitButton) {
               submitButton.disabled = false;
               submitButton.textContent = originalButtonText;
               submitButton.removeAttribute('aria-busy');
             }
-          }, 500);
+          }
         });
 
         (function showCallbackSuccessMessage() {

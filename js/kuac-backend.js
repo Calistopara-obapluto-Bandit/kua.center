@@ -1,26 +1,24 @@
 window.KUAC_BACKEND = (function () {
   const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
   const config = window.KUAC_CONFIG || {};
-  const staticSiteMode = Boolean(config.staticSiteMode);
+  const apiBaseUrl = String(config.apiBaseUrl || config.callbackEndpoint || '').trim().replace(/\/$/, '');
 
   function getApiBaseUrl() {
-    const liveSiteUrl = String(config.liveSiteUrl || '').trim().replace(/\/$/, '');
-
-    if (!liveSiteUrl) {
+    if (!apiBaseUrl) {
       return '';
     }
 
     try {
       const currentUrl = new URL(window.location.href);
-      const liveUrl = new URL(liveSiteUrl);
-      if (currentUrl.origin === liveUrl.origin) {
+      const apiUrl = new URL(apiBaseUrl);
+      if (currentUrl.origin === apiUrl.origin) {
         return '';
       }
     } catch (error) {
-      // Fall back to the configured live site URL.
+      // Fall back to the configured API base URL.
     }
 
-    return liveSiteUrl;
+    return apiBaseUrl;
   }
 
   function apiUrl(path) {
@@ -69,7 +67,7 @@ window.KUAC_BACKEND = (function () {
   }
 
   return Object.freeze({
-    available: !staticSiteMode && isHttp && typeof fetch === 'function',
+    available: isHttp && typeof fetch === 'function' && Boolean(apiBaseUrl),
     request,
     fileToDataUrl,
     fetchState: () => request('/api/state'),
