@@ -1159,7 +1159,7 @@
                 </button>
                 <div class="collapse" id="callbackFormPanel">
                   <div class="tm-callback-form-panel">
-                    <form id="callbackForm" class="tm-callback-form" action="https://formsubmit.co/kua.center@gmail.com" method="POST" enctype="multipart/form-data" data-form-endpoint="https://formsubmit.co/kua.center@gmail.com">
+                    <form id="callbackForm" class="tm-callback-form" action="https://kua-center.onrender.com/api/callbacks" method="POST" enctype="application/x-www-form-urlencoded" data-form-endpoint="https://kua-center.onrender.com/api/callbacks">
                       <div class="row tm-callback-row">
                         <div class="col-md-6 mb-3">
                       <input id="name" name="name" type="text" placeholder="Full name" class="tm-input mb-0" required />
@@ -1177,13 +1177,7 @@
                         <input id="attachment" name="attachment" type="file" class="tm-input tm-file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx" />
                         <p class="tm-file-help">Optional. You can include a photo, ID scan, or other supporting file with the request.</p>
                       </div>
-                      <input type="hidden" name="_subject" value="KUAC | Support Request Received" />
-                      <input type="hidden" name="_template" value="box" />
                       <input type="hidden" name="_api_url" value="https://kua-center.onrender.com/api/callbacks" />
-                      <input type="hidden" name="_url" value="https://kua-center.onrender.com/" />
-                      <input type="hidden" name="_next" value="https://kua-center.onrender.com/?callback=sent#contact" />
-                      <input type="hidden" name="_replyto" value="" />
-                      <input type="hidden" name="_autoresponse" value="Dear KUAC client,&#10;&#10;Thank you for reaching out to KUAC. Your request has been received and is now being reviewed by our team.&#10;&#10;We will check the details you shared, look for the most appropriate support path, and follow up if a suitable partner is available.&#10;&#10;What happens next:&#10;- We confirm your request.&#10;- We review the details and context.&#10;- We share the next step by email if support is available.&#10;&#10;If a payment is required for your request, we can accept bank transfer, KUAC gift card, or digital currency. We will share the next payment steps with you by email if needed.&#10;&#10;If you need to add anything, simply reply to this email.&#10;&#10;Kind regards,&#10;KUAC Support Team" />
                       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                       <p class="tm-form-status tm-form-hint">
                         Submit the form to send your request securely. KUAC will verify it and review it shortly.
@@ -1424,13 +1418,10 @@
           const $status = $('#callbackFormStatus').removeClass('is-error is-success').text('Sending your request securely...');
           const submitButton = form.querySelector('.tm-btn-submit');
           const originalButtonText = submitButton ? submitButton.textContent : '';
-          const replyToField = form.querySelector('input[name="_replyto"]');
           const emailField = form.querySelector('input[name="email"]');
-          const autoresponseField = form.querySelector('input[name="_autoresponse"]');
           const nameField = form.querySelector('input[name="name"]');
           const attachmentField = form.querySelector('input[name="attachment"]');
           const displayName = nameField ? nameField.value.trim() : '';
-          const recipientName = displayName || 'KUAC client';
           const attachment = attachmentField && attachmentField.files ? attachmentField.files[0] : null;
           const phoneField = form.querySelector('input[name="phone"]');
           const messageField = form.querySelector('textarea[name="message"]');
@@ -1445,32 +1436,6 @@
             attachmentSize: attachment ? attachment.size : 0,
             attachmentDataUrl: '',
           };
-
-          if (replyToField && emailField) {
-            replyToField.value = emailField.value.trim();
-          }
-
-          if (autoresponseField) {
-            autoresponseField.value = [
-              `Dear ${recipientName},`,
-              '',
-              'Thank you for reaching out to KUAC. Your request has been received and is now being reviewed by our team.',
-              '',
-              'We will check the details you shared, look for the most appropriate support path, and follow up if a suitable partner is available.',
-              '',
-              'What happens next:',
-              '- We confirm your request.',
-              '- We review the details and context.',
-              '- We share the next step by email if support is available.',
-              '',
-              'If a payment is required for your request, we can accept bank transfer, KUAC gift card, or digital currency. We will share the next payment steps with you by email if needed.',
-              '',
-              'If you need to add anything, simply reply to this email.',
-              '',
-              'Kind regards,',
-              'KUAC Support Team',
-            ].join('\n');
-          }
 
           if (submitButton) {
             submitButton.disabled = true;

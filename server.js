@@ -202,6 +202,33 @@ function readJsonBody(req) {
   });
 }
 
+function readRequestPayload(req) {
+  const contentType = String(req.headers['content-type'] || '').toLowerCase();
+
+  if (contentType.includes('application/json')) {
+    return readJsonBody(req);
+  }
+
+  if (contentType.includes('application/x-www-form-urlencoded')) {
+    return readBody(req).then((body) => {
+      if (!body) {
+        return {};
+      }
+
+      const params = new URLSearchParams(body);
+      const payload = {};
+
+      for (const [key, value] of params.entries()) {
+        payload[key] = value;
+      }
+
+      return payload;
+    });
+  }
+
+  return readJsonBody(req);
+}
+
 function normalizeCaseKey(email, caseCode) {
   return `${String(email || '').trim().toLowerCase()}::${String(caseCode || '').trim().toUpperCase()}`;
 }
@@ -904,7 +931,7 @@ function handleApi(req, res, urlObj) {
   }
 
   if (req.method === 'POST' && urlObj.pathname === '/api/callbacks') {
-    readJsonBody(req)
+    readRequestPayload(req)
       .then(async (payload) => {
         const callback = upsertCallbackRequest(payload);
         await saveState();
