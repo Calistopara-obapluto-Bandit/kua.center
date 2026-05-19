@@ -33,7 +33,7 @@ window.KUAC_CONFIG = Object.freeze({
   }
 
   const config = window.KUAC_CONFIG || {};
-  const formEndpoint = form.dataset.formEndpoint || config.callbackEndpoint || form.action;
+  const formEndpoint = config.callbackEndpoint || form.dataset.formEndpoint || form.action;
 
   form.action = formEndpoint;
   form.dataset.formEndpoint = formEndpoint;

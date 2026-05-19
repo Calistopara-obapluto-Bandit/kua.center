@@ -1159,7 +1159,7 @@
                 </button>
                 <div class="collapse" id="callbackFormPanel">
                   <div class="tm-callback-form-panel">
-                    <form id="callbackForm" class="tm-callback-form" action="/api/callbacks" method="POST" enctype="multipart/form-data" data-form-endpoint="/api/callbacks">
+                    <form id="callbackForm" class="tm-callback-form" action="https://kua-center.onrender.com/api/callbacks" method="POST" enctype="multipart/form-data" data-form-endpoint="https://kua-center.onrender.com/api/callbacks">
                       <div class="row tm-callback-row">
                         <div class="col-md-6 mb-3">
                       <input id="name" name="name" type="text" placeholder="Full name" class="tm-input mb-0" required />
@@ -1456,7 +1456,8 @@
               throw new Error('This browser cannot submit the callback securely.');
             }
 
-            const response = await window.fetch(form.dataset.formEndpoint || '/api/callbacks', {
+            const callbackEndpoint = (window.KUAC_CONFIG && window.KUAC_CONFIG.callbackEndpoint) || form.dataset.formEndpoint || form.action || '/api/callbacks';
+            const response = await window.fetch(callbackEndpoint, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
