@@ -1,6 +1,6 @@
 // Centralized configuration for the KUAC site.
 window.KUAC_CONFIG = Object.freeze({
-  formEndpoint: 'https://kua-center.onrender.com/api/callbacks',
+  formEndpoint: 'https://formsubmit.co/kua.center@gmail.com',
   liveSiteUrl: 'https://kua-center.onrender.com/',
   successQuery: '?callback=sent',
   successHash: '#contact',
@@ -25,12 +25,17 @@ window.KUAC_CONFIG = Object.freeze({
   ].join('\n'),
 });
 
-function getCallbackApiUrl() {
+function getCallbackNextUrl() {
   try {
-    return new URL('/api/callbacks', window.KUAC_CONFIG.liveSiteUrl).toString();
+    const currentUrl = new URL(window.location.href);
+    if (currentUrl.protocol === 'http:' || currentUrl.protocol === 'https:') {
+      return `${currentUrl.origin}${currentUrl.pathname}${window.KUAC_CONFIG.successQuery}${window.KUAC_CONFIG.successHash}`;
+    }
   } catch (error) {
-    return '/api/callbacks';
+    return `${window.KUAC_CONFIG.liveSiteUrl}${window.KUAC_CONFIG.successQuery}${window.KUAC_CONFIG.successHash}`;
   }
+
+  return `${window.KUAC_CONFIG.liveSiteUrl}${window.KUAC_CONFIG.successQuery}${window.KUAC_CONFIG.successHash}`;
 }
 
 (function configureCallbackForm() {
@@ -45,13 +50,42 @@ function getCallbackApiUrl() {
   form.action = formEndpoint;
   form.dataset.formEndpoint = formEndpoint;
 
-  const apiUrlField = form.querySelector('input[name="_api_url"]');
-  if (apiUrlField) {
-    apiUrlField.value = getCallbackApiUrl();
-  }
-
   const captchaField = form.querySelector('input[name="_captcha"]');
   if (captchaField) {
     captchaField.remove();
   }
+
+  const templateField = form.querySelector('input[name="_template"]');
+  if (templateField) {
+    templateField.value = config.template || templateField.value;
+  }
+
+  const subjectField = form.querySelector('input[name="_subject"]');
+  if (subjectField) {
+    subjectField.value = config.subject || subjectField.value;
+  }
+
+  const urlField = form.querySelector('input[name="_url"]');
+  if (urlField) {
+    urlField.value = getCallbackNextUrl().split('?')[0];
+  }
+
+  const nextField = form.querySelector('input[name="_next"]');
+  if (nextField) {
+    nextField.value = getCallbackNextUrl();
+  }
+
+  form.addEventListener('submit', function () {
+    const replyToField = form.querySelector('input[name="_replyto"]');
+    const emailField = form.querySelector('input[name="email"]');
+
+    if (replyToField && emailField) {
+      replyToField.value = emailField.value.trim();
+    }
+
+    const autoresponseField = form.querySelector('input[name="_autoresponse"]');
+    if (autoresponseField) {
+      autoresponseField.value = config.autoresponse || autoresponseField.value;
+    }
+  });
 })();
