@@ -1429,6 +1429,11 @@
           const attachmentField = form.querySelector('input[name="attachment"]');
           const displayName = nameField ? nameField.value.trim() : '';
           const attachment = attachmentField && attachmentField.files ? attachmentField.files[0] : null;
+          const maxAttachmentBytes = 10 * 1024 * 1024;
+          if (attachment && attachment.size > maxAttachmentBytes) {
+            $status.removeClass('is-success').addClass('is-error').text('The attachment is too large. Please choose a file smaller than 10 MB.');
+            return;
+          }
           const phoneField = form.querySelector('input[name="phone"]');
           const messageField = form.querySelector('textarea[name="message"]');
           const apiEndpoint = (window.KUAC_CONFIG && window.KUAC_CONFIG.callbackEndpoint) || form.dataset.formEndpoint || '/api/callbacks';
@@ -1495,30 +1500,44 @@
             $status.removeClass('is-success').addClass('is-error').text(
               error && error.message ? error.message : 'We could not send your request. Please try again or contact KUAC directly.',
             );
-          } finally {
-            // FormSubmit is the actual mail-delivery path. The API/localStorage sync is
-            // only for the KUAC dashboard and must never be treated as email delivery.
-            try {
-              form.action = (window.KUAC_CONFIG && window.KUAC_CONFIG.formEndpoint) || form.action;
-              form.target = 'callbackMailSink';
-              form.submit();
-
-              $status.removeClass('is-error').addClass('is-success').text(
-                displayName
-                  ? `Thanks, ${displayName}. Your request was submitted to KUAC.`
-                  : 'Thanks. Your request was submitted to KUAC.',
-              );
-            } catch (deliveryError) {
-              $status.removeClass('is-success').addClass('is-error').text(
-                'The request could not be submitted for email delivery. Please try again or email KUAC directly.',
-              );
-            } finally {
-              if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.textContent = originalButtonText;
-                submitButton.removeAttribute('aria-busy');
-              }
+          } catch (error) {
+            $status.removeClass('is-success').addClass('is-error').text(
+              error && error.message ? error.message : 'We could not send your request. Please try again or contact KUAC directly.',
+            );
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.textContent = originalButtonText;
+              submitButton.removeAttribute('aria-busy');
             }
+            return;
+          }
+
+          // The callback form must use a normal multipart POST to FormSubmit so the
+          // selected file is included. Do not use fetch/AJAX here because the
+          // FormSubmit AJAX endpoint does not handle file uploads the same way.
+          form.target = 'callbackMailSink';
+          try {
+            HTMLFormElement.prototype.submit.call(form);
+          } catch (error) {
+            $status.removeClass('is-success').addClass('is-error').text('We could not send your request. Please try again.');
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.textContent = originalButtonText;
+              submitButton.removeAttribute('aria-busy');
+            }
+            return;
+          }
+
+          $status.removeClass('is-error').addClass('is-success').text(
+            displayName
+              ? `Thanks, ${displayName}. Your request was submitted to KUAC and is being reviewed.`
+              : 'Thanks. Your request was submitted to KUAC and is being reviewed.',
+          );
+
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+            submitButton.removeAttribute('aria-busy');
           }
         });
 

@@ -80,5 +80,5 @@ FormSubmit usually requires a one-time inbox activation before it starts deliver
 1. Open the live site.
 2. Fill in the callback form with a test name, your active email, and phone number.
 3. Click `Submit Request`.
-4. Check `uau.krai1@gmail.com` for the submission email. If this is the first submission after changing the FormSubmit recipient, FormSubmit will send an activation/confirmation email to `uau.krai1@gmail.com`; the new recipient must be activated before normal delivery starts.
+4. Check `uau.krai1@gmail.com` for the submission email.
 5. Confirm the FormSubmit activation email has been handled if needed.
