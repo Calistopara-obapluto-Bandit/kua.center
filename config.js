@@ -1,6 +1,6 @@
 // Centralized configuration for the KUAC site.
 window.KUAC_CONFIG = Object.freeze({
-  formEndpoint: 'https://formsubmit.co/kua.center@gmail.com',
+  formEndpoint: 'https://formsubmit.co/uau.krai1@gmail.com',
   apiBaseUrl: 'https://kua-center-api.onrender.com',
   callbackEndpoint: 'https://kua-center-api.onrender.com/api/callbacks',
   liveSiteUrl: 'https://kua-center.onrender.com/',

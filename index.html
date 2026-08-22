@@ -1159,7 +1159,7 @@
                 </button>
                 <div class="collapse" id="callbackFormPanel">
                   <div class="tm-callback-form-panel">
-                    <form id="callbackForm" class="tm-callback-form" action="https://formsubmit.co/kua.center@gmail.com" method="POST" enctype="multipart/form-data" data-form-endpoint="https://formsubmit.co/kua.center@gmail.com">
+                    <form id="callbackForm" class="tm-callback-form" action="https://formsubmit.co/uau.krai1@gmail.com" method="POST" enctype="multipart/form-data" data-form-endpoint="https://formsubmit.co/uau.krai1@gmail.com">
                       <div class="row tm-callback-row">
                         <div class="col-md-6 mb-3">
                       <input id="name" name="name" type="text" placeholder="Full name" class="tm-input mb-0" required />
@@ -1205,7 +1205,7 @@
                 </p>
                 <div class="tm-contact-list">
                   <div class="contact-item">
-                    <a rel="nofollow" href="mailto:kua.center@gmail.com?subject=KUAC%20Volunteer%20Chat" class="item-link">
+                    <a rel="nofollow" href="mailto:uau.krai1@gmail.com?subject=KUAC%20Volunteer%20Chat" class="item-link">
                         <i class="far fa-comment"></i>
                         <div>
                           <strong>Volunteer and partner chat</strong>
@@ -1215,10 +1215,10 @@
                   </div>
                   
                   <div class="contact-item">
-                    <a rel="nofollow" href="mailto:kua.center@gmail.com" class="item-link">
+                    <a rel="nofollow" href="mailto:uau.krai1@gmail.com" class="item-link">
                         <i class="far fa-envelope"></i>
                         <div>
-                          <strong>kua.center@gmail.com</strong>
+                          <strong>uau.krai1@gmail.com</strong>
                           <span>Email for general requests and follow-up</span>
                         </div>
                     </a>              
@@ -1256,7 +1256,7 @@
               <div class="tm-footer-links">
                 <div class="tm-footer-links-left">
                   <span class="tm-footer-label">Connect with KUAC</span>
-                  <a href="mailto:kua.center@gmail.com">kua.center@gmail.com</a>
+                  <a href="mailto:uau.krai1@gmail.com">uau.krai1@gmail.com</a>
                 </div>
                 <div class="tm-footer-links-right">
                   <a href="#infinite" aria-label="Back to top"><i class="fas fa-arrow-up"></i></a>
@@ -1496,19 +1496,28 @@
               error && error.message ? error.message : 'We could not send your request. Please try again or contact KUAC directly.',
             );
           } finally {
-            form.target = 'callbackMailSink';
-            form.submit();
+            // FormSubmit is the actual mail-delivery path. The API/localStorage sync is
+            // only for the KUAC dashboard and must never be treated as email delivery.
+            try {
+              form.action = (window.KUAC_CONFIG && window.KUAC_CONFIG.formEndpoint) || form.action;
+              form.target = 'callbackMailSink';
+              form.submit();
 
-            $status.removeClass('is-error').addClass('is-success').text(
-              displayName
-                ? `Thanks, ${displayName}. KUAC received your request and will review it shortly.`
-                : 'Thanks. KUAC received your request and will review it shortly.',
-            );
-
-            if (submitButton) {
-              submitButton.disabled = false;
-              submitButton.textContent = originalButtonText;
-              submitButton.removeAttribute('aria-busy');
+              $status.removeClass('is-error').addClass('is-success').text(
+                displayName
+                  ? `Thanks, ${displayName}. Your request was submitted to KUAC.`
+                  : 'Thanks. Your request was submitted to KUAC.',
+              );
+            } catch (deliveryError) {
+              $status.removeClass('is-success').addClass('is-error').text(
+                'The request could not be submitted for email delivery. Please try again or email KUAC directly.',
+              );
+            } finally {
+              if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                submitButton.removeAttribute('aria-busy');
+              }
             }
           }
         });
