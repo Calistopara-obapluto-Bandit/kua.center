@@ -16,14 +16,19 @@ window.KUAC_CONFIG = Object.freeze({
   subject: 'KUAC | Support Request Received',
   template: 'box',
   autoresponse: [
-    '<b>Hi {{ name }},</b>',
+    'Thank you for contacting KUAC.',
     '',
-    'Thank you for contacting KUAC. Your request has been received and is now being reviewed by our team.',
+    'Your request has been received successfully and is now being reviewed by our support team.',
     '',
-    'For reference, your ticket ID is <b>{{ ticketId }}</b>.',
+    'What happens next:',
+    '1. We review the details you submitted.',
+    '2. We check the most appropriate support path for your request.',
+    '3. We will contact you by email with the next steps if further assistance is available.',
     '',
-    'If a payment is required for your request, we can accept bank transfer, KUAC gift card, or digital currency.',
-    'We will share the next payment steps with you by email if needed.',
+    'If you need to add anything to your request, simply reply to this email.',
+    '',
+    'Kind regards,',
+    'KUAC Support Team',
   ].join('\n'),
 });
 
@@ -89,7 +94,10 @@ function getCallbackNextUrl() {
 
     const autoresponseField = form.querySelector('input[name="_autoresponse"]');
     if (autoresponseField) {
-      autoresponseField.value = config.autoresponse || autoresponseField.value;
+      const name = (emailField && form.querySelector('input[name="name"]')?.value || '').trim();
+      const greeting = name ? `Hello ${name},` : 'Hello,';
+      const message = config.autoresponse || autoresponseField.value;
+      autoresponseField.value = message.replace(/^Thank you for contacting KUAC\./, `${greeting}\n\nThank you for contacting KUAC.`);
     }
   });
 })();
